@@ -11,7 +11,9 @@ from app.repositories.base import BaseRepository
 class AuditLogRepository(BaseRepository[AuditLog]):
     model = AuditLog
 
-    async def list_by_user(self, user_id: uuid.UUID, limit: int = 100) -> list[AuditLog]:
+    async def list_by_user(
+        self, user_id: uuid.UUID, limit: int = 100
+    ) -> list[AuditLog]:
         result = await self._session.execute(
             select(AuditLog)
             .where(AuditLog.user_id == user_id)

@@ -5,6 +5,7 @@ Revises:
 Create Date: 2026-05-18
 
 """
+
 from typing import Sequence, Union
 
 import sqlalchemy as sa
@@ -24,8 +25,12 @@ def upgrade() -> None:
         sa.Column("email", sa.String(255), nullable=False),
         sa.Column("hashed_password", sa.String, nullable=False),
         sa.Column("role", sa.String(50), nullable=False, server_default="user"),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")),
-        sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.text("now()")),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+        ),
+        sa.Column(
+            "updated_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+        ),
         sa.UniqueConstraint("email", name="uq_users_email"),
     )
 
@@ -39,8 +44,12 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column("title", sa.String, nullable=True),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")),
-        sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.text("now()")),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+        ),
+        sa.Column(
+            "updated_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+        ),
     )
     op.create_index("ix_conversations_user_id", "conversations", ["user_id"])
 
@@ -55,7 +64,9 @@ def upgrade() -> None:
         ),
         sa.Column("role", sa.String(50), nullable=False),
         sa.Column("content", sa.Text, nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+        ),
     )
     op.create_index("ix_messages_conversation_id", "messages", ["conversation_id"])
 
@@ -71,7 +82,9 @@ def upgrade() -> None:
         sa.Column("content", sa.Text, nullable=False),
         # Placeholder: replace with pgvector Vector(1536) when pgvector is wired
         sa.Column("embedding", ARRAY(sa.Float), nullable=True),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+        ),
     )
     op.create_index("ix_memories_user_id", "memories", ["user_id"])
 
@@ -83,7 +96,9 @@ def upgrade() -> None:
         sa.Column("resource_type", sa.String(255), nullable=False),
         sa.Column("resource_id", sa.String, nullable=True),
         sa.Column("extra", JSONB, nullable=True),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+        ),
     )
 
     op.create_table(
@@ -91,8 +106,12 @@ def upgrade() -> None:
         sa.Column("id", UUID(as_uuid=True), primary_key=True),
         sa.Column("name", sa.String(255), nullable=False),
         sa.Column("config", JSONB, nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")),
-        sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.text("now()")),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+        ),
+        sa.Column(
+            "updated_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+        ),
         sa.UniqueConstraint("name", name="uq_widget_configs_name"),
     )
 
@@ -102,7 +121,9 @@ def upgrade() -> None:
         sa.Column("title", sa.String, nullable=False),
         sa.Column("source_url", sa.String, nullable=True),
         sa.Column("content_hash", sa.String(64), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+        ),
         sa.UniqueConstraint("content_hash", name="uq_documents_content_hash"),
     )
 
@@ -119,7 +140,9 @@ def upgrade() -> None:
         # Placeholder: replace with pgvector Vector(1536) when pgvector is wired
         sa.Column("embedding", ARRAY(sa.Float), nullable=True),
         sa.Column("chunk_index", sa.Integer, nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")
+        ),
     )
     op.create_index("ix_chunks_document_id", "chunks", ["document_id"])
 

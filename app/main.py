@@ -1,0 +1,35 @@
+import os
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI
+
+from app.api.middleware import RequestContextMiddleware
+from app.domain.errors import VaultUnavailableError
+from app.infra.logging import configure_logging, get_logger
+
+logger = get_logger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(application: FastAPI):
+    configure_logging(log_level=os.getenv("LOG_LEVEL", "INFO"))
+
+    from app.core.config import get_settings
+
+    try:
+        get_settings()
+    except VaultUnavailableError as exc:
+        raise RuntimeError(f"Startup aborted — Vault is not ready: {exc}") from exc
+
+    logger.info("app.started")
+    yield
+    logger.info("app.stopped")
+
+
+app = FastAPI(title="Maintainer's Copilot API", lifespan=lifespan)
+app.add_middleware(RequestContextMiddleware)
+
+
+@app.get("/healthz")
+async def health() -> dict:
+    return {"status": "ok"}

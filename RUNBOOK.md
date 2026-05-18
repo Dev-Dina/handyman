@@ -4,8 +4,16 @@
 
 ```bash
 cp .env.example .env
+# Edit .env to set real LLM/tracing keys if needed, then:
 docker compose up --build
 ```
+
+Startup order (automatic via depends_on):
+1. db, redis, minio, vault start
+2. vault-init seeds secrets into Vault and exits
+3. migrate runs `alembic upgrade head` and exits
+4. api, model_server start
+5. chatbot starts after api is healthy
 
 ## Day-to-day
 
@@ -18,6 +26,15 @@ docker compose up --build api
 
 # Apply migrations
 docker compose run --rm migrate
+
+# Tail all logs
+docker compose logs -f
+
+# Stop everything
+docker compose down
+
+# Stop and wipe volumes
+docker compose down -v
 ```
 
 ## Vault (local dev)

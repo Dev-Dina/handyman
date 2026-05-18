@@ -1,0 +1,162 @@
+name: handyman
+
+services:
+
+  # ── Infrastructure ──────────────────────────────────────────────────────────
+
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: handyman
+      POSTGRES_USER: handyman
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-localdev}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U handyman -d handyman"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9000/minio/health/live || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  vault:
+    image: hashicorp/vault
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_DEV_ROOT_TOKEN:-dev-root-token}
+      VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
+    ports:
+      - "${VAULT_PORT:-8200}:8200"
+    cap_add:
+      - IPC_LOCK
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8200/v1/sys/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Seeds all required secrets into Vault once and exits.
+  vault-init:
+    image: hashicorp/vault
+    depends_on:
+      vault:
+        condition: service_healthy
+    environment:
+      VAULT_ADDR: http://vault:8200
+      VAULT_TOKEN: ${VAULT_DEV_ROOT_TOKEN:-dev-root-token}
+      DB_PASSWORD: ${DB_PASSWORD:-localdev}
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes:
+      - ./docker/vault-init.sh:/vault-init.sh:ro
+    entrypoint: ["sh", "/vault-init.sh"]
+    restart: "no"
+
+  # ── Database migration ───────────────────────────────────────────────────────
+
+  migrate:
+    build: .
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://handyman:${DB_PASSWORD:-localdev}@db:5432/handyman
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  # ── Application services ─────────────────────────────────────────────────────
+
+  api:
+    build: .
+    environment:
+      VAULT_ADDR: http://vault:8200
+      VAULT_DEV_ROOT_TOKEN: ${VAULT_DEV_ROOT_TOKEN:-dev-root-token}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      ENVIRONMENT: ${ENVIRONMENT:-local}
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      vault-init:
+        condition: service_completed_successfully
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8000/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  model_server:
+    build:
+      context: .
+      dockerfile: docker/model_server.Dockerfile
+    ports:
+      - "${MODEL_SERVER_PORT:-8001}:8001"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8001/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  chatbot:
+    build:
+      context: .
+      dockerfile: docker/chatbot.Dockerfile
+    environment:
+      API_URL: http://api:8000
+    ports:
+      - "${CHATBOT_PORT:-8501}:8501"
+    depends_on:
+      api:
+        condition: service_healthy
+
+  widget:
+    build:
+      context: .
+      dockerfile: docker/widget.Dockerfile
+    ports:
+      - "3000:80"
+
+  host:
+    build:
+      context: .
+      dockerfile: docker/host.Dockerfile
+    ports:
+      - "8080:80"
+
+volumes:
+  db_data:
+  minio_data:

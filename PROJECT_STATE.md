@@ -22,8 +22,8 @@ TODO
 
 ## Current implementation status
 - [x] Repo skeleton
-- [ ] Docker compose
-- [ ] Vault dev service
+- [x] Docker compose
+- [x] Vault dev service
 - [x] API config loads secrets from Vault
 - [x] Tracing adapter
 - [x] Structured logging with request_id and trace_id

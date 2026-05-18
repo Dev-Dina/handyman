@@ -27,7 +27,7 @@ TODO
 - [x] API config loads secrets from Vault
 - [x] Tracing adapter
 - [x] Structured logging with request_id and trace_id
-- [ ] Alembic baseline
+- [x] Alembic baseline
 - [ ] Dataset fetch script
 - [ ] Label mapping
 - [ ] Time-based stratified splits

@@ -28,6 +28,24 @@ docker compose run --rm migrate
 # UI available at http://localhost:8200
 ```
 
+## Migrations
+
+```bash
+# Run baseline migration against local DB
+DATABASE_URL=postgresql+asyncpg://handyman:password@localhost:5432/handyman \
+  uv run alembic upgrade head
+
+# Generate a new migration after ORM model changes
+DATABASE_URL=postgresql+asyncpg://handyman:password@localhost:5432/handyman \
+  uv run alembic revision --autogenerate -m "describe change"
+
+# Rollback one revision
+DATABASE_URL=postgresql+asyncpg://handyman:password@localhost:5432/handyman \
+  uv run alembic downgrade -1
+```
+
+The `migrate` docker-compose service runs `alembic upgrade head` with `DATABASE_URL` injected.
+
 ## Useful checks
 
 ```bash

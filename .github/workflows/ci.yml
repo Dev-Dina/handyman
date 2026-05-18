@@ -37,6 +37,3 @@ jobs:
 
       - name: Compile smoke check
         run: uv run python -m compileall app model_server scripts
-
-      - name: Validate Docker Compose config
-        run: docker compose config

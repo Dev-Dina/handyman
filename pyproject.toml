@@ -17,6 +17,7 @@ dependencies = [
     "opentelemetry-instrumentation-fastapi>=0.46b0",
     "structlog>=24.1.0",
     "accelerate>=1.1.0",
+    "matplotlib>=3.10.9",
 ]
 
 [project.optional-dependencies]

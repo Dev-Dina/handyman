@@ -73,7 +73,8 @@ kubernetes/kubernetes
 - [x] ml/text_preprocessing.py (model_text, URL/<USER> normalisation, non-ASCII flags, --drop-mostly-non-ascii)
 - [x] ml/finetune.py (smoke mode, model_text wired, --drop-mostly-non-ascii flag)
 - [x] artifacts/smoke/ (bert-tiny, 2 steps, CPU, model card + safetensors + tokenizer)
-- [ ] reports/text_quality_report.json
+- [x] reports/text_quality_report.json
+- [x] ml/make_eda_figures.py (6 PNG figures in reports/figures/)
 - [ ] Classical ML baseline
 - [ ] Real transformer training + evaluation
 - [ ] LLM baseline
@@ -93,9 +94,9 @@ kubernetes/kubernetes
 None.
 
 ## Next 3 tasks
-1. Run text quality report (uv run python ml/text_preprocessing.py)
-2. Build classical ML baseline on same splits
-3. Run real transformer evaluation + model card
+1. Build classical ML baseline on same splits
+2. Run real transformer training + evaluation + model card
+3. Wire LLM baseline
 
 ## Commands
 ```bash

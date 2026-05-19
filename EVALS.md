@@ -1,8 +1,12 @@
 # Evaluation
 
 ## Classification eval
+
+Labels used: kubernetes/kubernetes mapped classes — bug / feature / docs / question
+(same 4 classes as label mapping in DECISIONS.md).
+
 Golden set:
-- 25 hand-curated issues
+- 25 hand-curated Kubernetes issues
 - separate from train/val/test where possible
 
 Metrics:
@@ -12,14 +16,18 @@ Metrics:
 - confusion matrix
 
 Models:
-- classical ML
+- classical ML baseline
 - fine-tuned transformer
 - LLM baseline
 
 Output:
 - reports/classification_eval_report.json
 
+**Note:** Metrics will be populated after real splits and training are complete.
+Do not invent or placeholder metric numbers.
+
 ## RAG eval
+
 Golden set:
 - 25 question / ideal answer / ground-truth chunks triples
 - 5 manually judged examples

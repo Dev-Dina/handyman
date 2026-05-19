@@ -8,9 +8,6 @@ import os
 import sys
 
 import hvac
-from dotenv import load_dotenv
-
-load_dotenv()
 
 VAULT_ADDR = os.environ.get("VAULT_ADDR", "http://localhost:8200")
 VAULT_TOKEN = os.environ.get("VAULT_DEV_ROOT_TOKEN", "dev-root-token")

@@ -49,20 +49,19 @@ services:
 
   vault:
     image: hashicorp/vault
+    command: server -dev
     environment:
+      SKIP_SETCAP: "true"
       VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_DEV_ROOT_TOKEN:-dev-root-token}
       VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
     ports:
       - "${VAULT_PORT:-8200}:8200"
-    cap_add:
-      - IPC_LOCK
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8200/v1/sys/health || exit 1"]
+      test: ["CMD", "vault", "status", "-address=http://127.0.0.1:8200"]
       interval: 5s
       timeout: 5s
       retries: 10
-
-  # Seeds all required secrets into Vault once and exits.
+      
   vault-init:
     image: hashicorp/vault
     depends_on:

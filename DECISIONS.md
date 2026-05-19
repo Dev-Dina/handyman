@@ -1,33 +1,100 @@
 # Decisions
 
 ## Dataset
-Chosen repo: TODO
 
-Reason:
-TODO
+**Chosen repo:** kubernetes/kubernetes
+
+**Why:**
+kubernetes/kubernetes is a large, actively maintained infrastructure project with
+tens of thousands of closed issues. Maintainers apply structured `kind/*` labels
+consistently, yielding clean signal for four target classes. The label set is
+simple (4 target labels, exact match, no normalisation needed) and each class
+has thousands of examples, giving a balanced supervised dataset.
 
 ## Label mapping
-| GitHub label | Project label |
-|---|---|
-| bug | bug |
-| feature | feature |
-| docs | docs |
-| question | question |
+
+**Status:** Draft. Will be confirmed after EDA review.
+
+Final classes: bug / feature / docs / question
+
+| GitHub label         | Project class |
+|----------------------|---------------|
+| kind/bug             | bug           |
+| kind/feature         | feature       |
+| kind/documentation   | docs          |
+| kind/support         | question      |
+
+Only issues carrying at least one of these four labels enter the supervised dataset.
+Issues with none of these labels are dropped and recorded in EDA reports.
+
+## Multi-label honesty policy
+
+Multi-label issues are **not hidden** and **not silently dropped**.
+
+1. Every issue's full GitHub label set is stored in `raw_labels` in the JSONL file.
+2. For each issue, the set of *target* labels found is computed (e.g. kind/bug + kind/feature).
+3. If exactly one target label is present → class assigned directly, no conflict.
+4. If multiple target labels are present → deterministic conflict resolution is applied
+   (see priority below) AND the issue is written to `reports/multilabel_conflicts.csv`
+   with: issue_number, title, target_labels_found, chosen_final_label, resolution_reason, html_url.
+5. The split report records: total conflict count, per-combination counts, examples,
+   and the conflict policy string.
+
+**Why transparency matters:**
+Hiding conflicts (e.g. by only fetching with negative label filters) would undercount
+real dataset ambiguity and make evaluation results misleading. Recording conflicts lets
+us audit resolution quality and revisit the priority later.
+
+## Conflict priority
+
+bug > docs > feature > question
+
+| Priority | Class       | Reason                                                              |
+|----------|-------------|---------------------------------------------------------------------|
+| 1        | bug         | Highest operational severity; a bug report is distinct              |
+| 2        | docs        | Distinct assignment type; must not be swallowed by feature/support  |
+| 3        | feature     | Product/change request; lower urgency than bugs or doc fixes        |
+| 4        | question    | Weakest signal; support/usage questions are least actionable        |
+
+## Fetching strategy
+
+Uses GitHub Search API with per-class label queries:
+
+    label:"kind/bug"           → up to 1000 closed issues
+    label:"kind/feature"       → up to 1000 closed issues
+    label:"kind/documentation" → up to 1000 closed issues
+    label:"kind/support"       → up to 1000 closed issues
+
+Issues appearing in multiple queries are deduplicated by issue_number.
+GitHub always returns the full label set in the API response, so first-seen wins.
+PRs are excluded by the `is:issue` Search API qualifier.
+Negative label filters are NOT used — overlaps are preserved and reported.
 
 ## Split strategy
-Time-based stratified split:
-- Train: older issues
-- Val: middle/recent issues
-- Test: strictly newer than train
 
-Reason:
-The project requires test to be more recent than train.
+Time-based stratified split per class:
+- Within each class, sort by created_at ascending.
+- Oldest 70% → train, next 15% → val, newest 15% → test.
+- Guarantees test is strictly newer than train within every class.
+- Both global and per-class temporal order are validated and reported.
+- Val/test fractions configurable via --val-frac / --test-frac flags.
+
+**Note:** Final split will be run only after EDA confirms label distribution is acceptable.
+
+## Unlabeled / unmapped handling
+
+Issues with no target label are:
+- Excluded from the supervised train/val/test splits.
+- Sampled and written to `reports/unlabeled_issues_sample.csv` for inspection.
+- Counted in `reports/label_eda.json` under `unlabeled_count`.
 
 ## Classical model
 TODO
 
 ## Fine-tuned transformer
-TODO
+
+Architecture: distilbert-base-uncased (full) / prajjwal1/bert-tiny (smoke).
+Labels: bug / docs / feature / question (same 4 classes, same IDs).
 
 ## LLM baseline
 TODO
@@ -54,13 +121,15 @@ TODO
 Chosen long-term memory type: episodic
 
 Reason:
-Episodic memory is easiest to demonstrate across conversations and fits maintainer preferences/actions.
+Episodic memory is easiest to demonstrate across conversations and fits maintainer
+preferences/actions.
 
 ## Redis TTL
 Short-term memory TTL: 24 hours
 
 Reason:
-Preserves active triage context across breaks without keeping temporary debugging context forever.
+Preserves active triage context across breaks without keeping temporary debugging
+context forever.
 
 ## Tracing backend
 TODO

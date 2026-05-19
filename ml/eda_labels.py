@@ -91,11 +91,11 @@ def _proceed_to_split(
 
 def _support_stats(unique_issues: list[dict], multi_class: list[dict]) -> dict:
     """Stats specific to support/question class rebalancing."""
-    support_raw = [i for i in unique_issues if _SUPPORT_LABEL in i.get("raw_labels", [])]
+    support_raw = [
+        i for i in unique_issues if _SUPPORT_LABEL in i.get("raw_labels", [])
+    ]
     support_with_conflict = [
-        i
-        for i in multi_class
-        if _SUPPORT_LABEL in i.get("raw_labels", [])
+        i for i in multi_class if _SUPPORT_LABEL in i.get("raw_labels", [])
     ]
     support_final_question = [
         i for i in unique_issues if _resolve(i.get("raw_labels", [])) == "question"
@@ -124,9 +124,7 @@ def main() -> int:
         return 1
 
     issues = [
-        json.loads(line)
-        for line in INPUT_PATH.open(encoding="utf-8")
-        if line.strip()
+        json.loads(line) for line in INPUT_PATH.open(encoding="utf-8") if line.strip()
     ]
     REPORTS_DIR.mkdir(exist_ok=True)
     (REPORTS_DIR / ".gitkeep").touch(exist_ok=True)

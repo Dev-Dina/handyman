@@ -301,7 +301,6 @@ def main() -> int:
         else:
             per_class_temporal[cls] = None
 
-
     # Conflict combinations summary
     conflict_combos: Counter = Counter()
     for c in conflicts:

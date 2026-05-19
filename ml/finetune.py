@@ -126,6 +126,7 @@ def main() -> int:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     import importlib.util as _ilu
+
     _spec = _ilu.spec_from_file_location(
         "text_preprocessing", Path(__file__).parent / "text_preprocessing.py"
     )
@@ -143,11 +144,15 @@ def main() -> int:
         test_rows = test_rows[:8]
 
     def _to_dataset(rows: list[dict]) -> Dataset:
-        texts = [r.get("model_text") or f"{r.get('title', '')} {r.get('body', '')}".strip() for r in rows]
+        texts = [
+            r.get("model_text") or f"{r.get('title', '')} {r.get('body', '')}".strip()
+            for r in rows
+        ]
         label_ids = [LABEL2ID.get(r.get("final_label", ""), 0) for r in rows]
         return Dataset.from_dict({"text": texts, "label": label_ids})
 
     from transformers import BertTokenizerFast
+
     try:
         tokenizer = AutoTokenizer.from_pretrained(model_name)
     except (ValueError, OSError):
@@ -166,6 +171,7 @@ def main() -> int:
     test_ds = _to_dataset(test_rows).map(_tokenize, batched=True)
 
     from transformers import BertForSequenceClassification
+
     try:
         model = AutoModelForSequenceClassification.from_pretrained(
             model_name,

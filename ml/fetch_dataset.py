@@ -199,8 +199,8 @@ def merge_issues(
 ) -> list[dict[str, Any]]:
     """Deduplicate issues appearing in multiple class queries.
 
-    GitHub returns the full label set on every API response, so the first
-    occurrence already contains all target labels.  First-seen wins.
+    When the same issue appears in multiple batches, merge their label sets so
+    all target labels are preserved for honest multi-label reporting downstream.
     """
     seen: dict[int, dict[str, Any]] = {}
     for batch in batches.values():
@@ -208,6 +208,13 @@ def merge_issues(
             num = issue["number"]
             if num not in seen:
                 seen[num] = issue
+            else:
+                # Merge label sets — union of names, preserving order
+                existing_names = {lbl["name"] for lbl in seen[num].get("labels", [])}
+                for lbl in issue.get("labels", []):
+                    if lbl["name"] not in existing_names:
+                        seen[num].setdefault("labels", []).append(lbl)
+                        existing_names.add(lbl["name"])
     return list(seen.values())
 
 
@@ -244,6 +251,17 @@ def parse_args() -> argparse.Namespace:
         help="maximum closed issues to fetch per target label (max 1000, Search API limit)",
     )
     p.add_argument("--output", type=Path, default=OUTPUT_PATH, help="output JSONL path")
+    p.add_argument(
+        "--supplement-label",
+        default=None,
+        help="extra GitHub label to fetch additional issues for (e.g. 'kind/support')",
+    )
+    p.add_argument(
+        "--supplement-count",
+        type=int,
+        default=500,
+        help="max extra issues to fetch for --supplement-label (default 500)",
+    )
     return p.parse_args()
 
 
@@ -258,6 +276,17 @@ def main() -> int:
         except RuntimeError as exc:
             warn(f"Failed to fetch label={label}: {exc}. Continuing.")
             batches[label] = []
+
+    if args.supplement_label:
+        sup_label = args.supplement_label
+        print(f"\nFetching supplement: label={sup_label} count={args.supplement_count}")
+        try:
+            batches[f"supplement:{sup_label}"] = fetch_class_issues(
+                args.repo, sup_label, token, args.supplement_count
+            )
+        except RuntimeError as exc:
+            warn(f"Failed supplement fetch label={sup_label}: {exc}. Continuing.")
+            batches[f"supplement:{sup_label}"] = []
 
     per_class_totals = {lbl: len(batch) for lbl, batch in batches.items()}
     all_issues = merge_issues(batches)

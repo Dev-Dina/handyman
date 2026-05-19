@@ -85,6 +85,12 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--lr", type=float, default=2e-5)
     p.add_argument("--max-len", type=int, default=128)
     p.add_argument("--output-dir", type=Path, default=ARTIFACTS_DIR)
+    p.add_argument(
+        "--drop-mostly-non-ascii",
+        action="store_true",
+        default=False,
+        help="Drop rows where non-ASCII ratio >= 0.30 before training.",
+    )
     return p.parse_args()
 
 
@@ -119,9 +125,17 @@ def main() -> int:
     output_dir = args.output_dir / run_name
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    train_rows = _read_csv(TRAIN_PATH)
-    val_rows = _read_csv(VAL_PATH)
-    test_rows = _read_csv(TEST_PATH)
+    import importlib.util as _ilu
+    _spec = _ilu.spec_from_file_location(
+        "text_preprocessing", Path(__file__).parent / "text_preprocessing.py"
+    )
+    _mod = _ilu.module_from_spec(_spec)  # type: ignore[arg-type]
+    _spec.loader.exec_module(_mod)  # type: ignore[union-attr]
+    preprocess_rows = _mod.preprocess_rows
+
+    train_rows = preprocess_rows(_read_csv(TRAIN_PATH), args.drop_mostly_non_ascii)
+    val_rows = preprocess_rows(_read_csv(VAL_PATH), args.drop_mostly_non_ascii)
+    test_rows = preprocess_rows(_read_csv(TEST_PATH), args.drop_mostly_non_ascii)
 
     if args.smoke:
         train_rows = train_rows[:16]
@@ -129,11 +143,15 @@ def main() -> int:
         test_rows = test_rows[:8]
 
     def _to_dataset(rows: list[dict]) -> Dataset:
-        texts = [f"{r.get('title', '')} {r.get('body', '')}".strip() for r in rows]
+        texts = [r.get("model_text") or f"{r.get('title', '')} {r.get('body', '')}".strip() for r in rows]
         label_ids = [LABEL2ID.get(r.get("final_label", ""), 0) for r in rows]
         return Dataset.from_dict({"text": texts, "label": label_ids})
 
-    tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
+    from transformers import BertTokenizerFast
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+    except (ValueError, OSError):
+        tokenizer = BertTokenizerFast.from_pretrained(model_name)
 
     def _tokenize(batch: dict) -> dict:
         return tokenizer(
@@ -147,13 +165,23 @@ def main() -> int:
     val_ds = _to_dataset(val_rows).map(_tokenize, batched=True)
     test_ds = _to_dataset(test_rows).map(_tokenize, batched=True)
 
-    model = AutoModelForSequenceClassification.from_pretrained(
-        model_name,
-        num_labels=len(LABELS),
-        id2label=ID2LABEL,
-        label2id=LABEL2ID,
-        ignore_mismatched_sizes=True,
-    )
+    from transformers import BertForSequenceClassification
+    try:
+        model = AutoModelForSequenceClassification.from_pretrained(
+            model_name,
+            num_labels=len(LABELS),
+            id2label=ID2LABEL,
+            label2id=LABEL2ID,
+            ignore_mismatched_sizes=True,
+        )
+    except (ValueError, OSError):
+        model = BertForSequenceClassification.from_pretrained(
+            model_name,
+            num_labels=len(LABELS),
+            id2label=ID2LABEL,
+            label2id=LABEL2ID,
+            ignore_mismatched_sizes=True,
+        )
 
     if args.smoke:
         training_args = TrainingArguments(

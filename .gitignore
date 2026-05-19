@@ -18,4 +18,5 @@ artifacts/
 .DS_Store
 CLAUDE.md
 CODEX.md
+AGENTS.md
 _local_dataset_exploration

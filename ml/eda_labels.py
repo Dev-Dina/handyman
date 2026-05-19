@@ -6,11 +6,12 @@ Run after ml/fetch_dataset.py:
 
 Reads:  data/raw/kubernetes_issues.jsonl
 Writes:
-    reports/label_eda.json
-    reports/label_counts.csv
-    reports/label_cooccurrence.csv
+    reports/kubernetes_label_eda.json
+    reports/kubernetes_label_counts.csv
+    reports/kubernetes_label_cooccurrence.csv
+    reports/kubernetes_multilabel_conflicts.csv
+    reports/kubernetes_class_balance_before_split.csv
     reports/unlabeled_issues_sample.csv
-    reports/multilabel_issues_sample.csv
 """
 
 from __future__ import annotations
@@ -18,14 +19,13 @@ from __future__ import annotations
 import csv
 import json
 import sys
-from collections import Counter
+from collections import Counter, defaultdict
 from itertools import combinations
 from pathlib import Path
 
 INPUT_PATH = Path("data/raw/kubernetes_issues.jsonl")
 REPORTS_DIR = Path("reports")
 
-# Same mapping as split_dataset.py — kept here so EDA is self-contained
 TARGET_LABELS: dict[str, str] = {
     "kind/bug": "bug",
     "kind/feature": "feature",
@@ -33,7 +33,6 @@ TARGET_LABELS: dict[str, str] = {
     "kind/support": "question",
 }
 
-# Conflict resolution priority (lower index = higher priority)
 _CONFLICT_PRIORITY: dict[str, int] = {
     "bug": 0,
     "docs": 1,
@@ -41,11 +40,18 @@ _CONFLICT_PRIORITY: dict[str, int] = {
     "question": 3,
 }
 
+_ALL_CLASSES = ["bug", "docs", "feature", "question"]
+
+# GitHub label that maps to "question" class
+_SUPPORT_LABEL = "kind/support"
+
 
 def _target_classes(raw_labels: list[str]) -> list[str]:
-    return list(
-        dict.fromkeys(TARGET_LABELS[lbl] for lbl in raw_labels if lbl in TARGET_LABELS)
-    )
+    seen: dict[str, None] = {}
+    for lbl in raw_labels:
+        if lbl in TARGET_LABELS:
+            seen[TARGET_LABELS[lbl]] = None
+    return list(seen)
 
 
 def _resolve(raw_labels: list[str]) -> str | None:
@@ -53,6 +59,60 @@ def _resolve(raw_labels: list[str]) -> str | None:
         set(_target_classes(raw_labels)), key=lambda c: _CONFLICT_PRIORITY.get(c, 99)
     )
     return classes[0] if classes else None
+
+
+def _write_csv(records: list[dict], path: Path, fields: list[str]) -> None:
+    with path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fields, extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows(records)
+
+
+def _proceed_to_split(
+    class_counts: Counter,
+    total: int,
+    usable: int,
+    conflict_count: int,
+) -> bool:
+    if total == 0 or usable == 0:
+        return False
+    nonzero = sum(1 for c in _ALL_CLASSES if class_counts[c] > 0)
+    smallest = min(class_counts[c] for c in _ALL_CLASSES)
+    usable_ratio = usable / total
+    conflict_ratio = conflict_count / total if total else 0
+    return (
+        nonzero >= 4
+        and smallest >= 50
+        and usable >= 200
+        and usable_ratio >= 0.30
+        and conflict_ratio <= 0.30
+    )
+
+
+def _support_stats(unique_issues: list[dict], multi_class: list[dict]) -> dict:
+    """Stats specific to support/question class rebalancing."""
+    support_raw = [i for i in unique_issues if _SUPPORT_LABEL in i.get("raw_labels", [])]
+    support_with_conflict = [
+        i
+        for i in multi_class
+        if _SUPPORT_LABEL in i.get("raw_labels", [])
+    ]
+    support_final_question = [
+        i for i in unique_issues if _resolve(i.get("raw_labels", [])) == "question"
+    ]
+    lost_to_conflict = len(support_raw) - len(support_final_question)
+    return {
+        "support_raw_count": len(support_raw),
+        "support_with_target_conflict_count": len(support_with_conflict),
+        "support_final_question_count": len(support_final_question),
+        "support_lost_to_higher_priority": lost_to_conflict,
+        "supplement_recommended": lost_to_conflict > 0,
+        "supplement_suggestion": (
+            f"--supplement-label kind/support --supplement-count {lost_to_conflict}"
+            if lost_to_conflict > 0
+            else "none needed"
+        ),
+    }
 
 
 def main() -> int:
@@ -63,45 +123,83 @@ def main() -> int:
         )
         return 1
 
-    issues = [json.loads(line) for line in INPUT_PATH.open(encoding="utf-8")]
+    issues = [
+        json.loads(line)
+        for line in INPUT_PATH.open(encoding="utf-8")
+        if line.strip()
+    ]
     REPORTS_DIR.mkdir(exist_ok=True)
     (REPORTS_DIR / ".gitkeep").touch(exist_ok=True)
 
-    total = len(issues)
-    all_raw_labels = [lbl for i in issues for lbl in i.get("raw_labels", [])]
-    label_counts = Counter(all_raw_labels)
+    total_rows = len(issues)
 
-    # Classify each issue
+    # Deduplicate by issue_number
+    seen_numbers: dict[int, dict] = {}
+    for issue in issues:
+        num = issue["issue_number"]
+        if num not in seen_numbers:
+            seen_numbers[num] = issue
+    unique_issues = list(seen_numbers.values())
+    duplicate_count = total_rows - len(unique_issues)
+
+    # Classify each unique issue
     unlabeled: list[dict] = []
     single_class: list[dict] = []
     multi_class: list[dict] = []
 
-    for issue in issues:
-        classes = _target_classes(issue.get("raw_labels", []))
-        unique = sorted(set(classes), key=lambda c: _CONFLICT_PRIORITY.get(c, 99))
-        if not unique:
+    for issue in unique_issues:
+        classes = list(
+            dict.fromkeys(
+                sorted(
+                    set(_target_classes(issue.get("raw_labels", []))),
+                    key=lambda c: _CONFLICT_PRIORITY.get(c, 99),
+                )
+            )
+        )
+        if not classes:
             unlabeled.append(issue)
-        elif len(unique) == 1:
+        elif len(classes) == 1:
             single_class.append(issue)
         else:
             multi_class.append(issue)
 
+    # Raw GitHub label counts (across all unique issues)
+    all_raw_labels = [lbl for i in unique_issues for lbl in i.get("raw_labels", [])]
+    label_counts: Counter = Counter(all_raw_labels)
+
     # Class counts before resolution (each target class counted independently)
-    class_counts_raw: Counter = Counter()
-    for issue in issues:
+    class_counts_raw: Counter = Counter({c: 0 for c in _ALL_CLASSES})
+    for issue in unique_issues:
         for cls in set(_target_classes(issue.get("raw_labels", []))):
             class_counts_raw[cls] += 1
 
     # Class counts after conflict resolution
-    class_counts_resolved: Counter = Counter()
-    for issue in issues:
+    class_counts_resolved: Counter = Counter({c: 0 for c in _ALL_CLASSES})
+    for issue in unique_issues:
         cls = _resolve(issue.get("raw_labels", []))
         if cls:
             class_counts_resolved[cls] += 1
 
-    # Label co-occurrence
+    # Date range per class (after resolution)
+    dates_by_class: dict[str, list[str]] = defaultdict(list)
+    for issue in unique_issues:
+        cls = _resolve(issue.get("raw_labels", []))
+        dt = issue.get("created_at")
+        if cls and dt:
+            dates_by_class[cls].append(dt)
+
+    date_range_per_class: dict[str, dict] = {}
+    for cls in _ALL_CLASSES:
+        dates = sorted(dates_by_class.get(cls, []))
+        date_range_per_class[cls] = {
+            "oldest": dates[0] if dates else None,
+            "newest": dates[-1] if dates else None,
+            "count": len(dates),
+        }
+
+    # Label co-occurrence (across unique issues)
     cooccur: Counter = Counter()
-    for issue in issues:
+    for issue in unique_issues:
         lbls = sorted(set(issue.get("raw_labels", [])))
         for pair in combinations(lbls, 2):
             cooccur[pair] += 1
@@ -117,46 +215,96 @@ def main() -> int:
         )
         conflict_combos[combo] += 1
 
-    # Date range
-    dates = sorted(i.get("created_at", "")[:7] for i in issues if i.get("created_at"))
+    # Date range overall
+    all_dates = sorted(
+        i.get("created_at", "")[:7] for i in unique_issues if i.get("created_at")
+    )
+
+    usable = len(single_class) + len(multi_class)
+    proceed = _proceed_to_split(
+        class_counts_resolved, len(unique_issues), usable, len(multi_class)
+    )
+    support_info = _support_stats(unique_issues, multi_class)
 
     # ── write reports ──────────────────────────────────────────────────────────
 
-    with (REPORTS_DIR / "label_counts.csv").open(
-        "w", newline="", encoding="utf-8"
-    ) as f:
-        writer = csv.DictWriter(f, fieldnames=["rank", "label", "count"])
-        writer.writeheader()
-        writer.writerows(
+    _write_csv(
+        [
             {"rank": i + 1, "label": lbl, "count": cnt}
             for i, (lbl, cnt) in enumerate(label_counts.most_common())
-        )
+        ],
+        REPORTS_DIR / "kubernetes_label_counts.csv",
+        ["rank", "label", "count"],
+    )
 
-    with (REPORTS_DIR / "label_cooccurrence.csv").open(
-        "w", newline="", encoding="utf-8"
-    ) as f:
-        writer = csv.DictWriter(f, fieldnames=["label_a", "label_b", "count"])
-        writer.writeheader()
-        writer.writerows(
+    _write_csv(
+        [
             {"label_a": a, "label_b": b, "count": cnt}
             for (a, b), cnt in cooccur.most_common(50)
-        )
+        ],
+        REPORTS_DIR / "kubernetes_label_cooccurrence.csv",
+        ["label_a", "label_b", "count"],
+    )
 
-    with (REPORTS_DIR / "unlabeled_issues_sample.csv").open(
-        "w", newline="", encoding="utf-8"
-    ) as f:
-        writer = csv.DictWriter(
-            f,
-            fieldnames=[
-                "issue_number",
-                "title",
-                "raw_labels",
-                "created_at",
-                "html_url",
-            ],
-        )
-        writer.writeheader()
-        writer.writerows(
+    _write_csv(
+        [
+            {
+                "issue_number": i["issue_number"],
+                "title": (i.get("title") or "")[:120],
+                "target_labels_found": "|".join(
+                    sorted(
+                        set(_target_classes(i.get("raw_labels", []))),
+                        key=lambda c: _CONFLICT_PRIORITY.get(c, 99),
+                    )
+                ),
+                "chosen_final_label": _resolve(i.get("raw_labels", [])),
+                "resolution_reason": "conflict_resolved_priority:"
+                + "+".join(
+                    sorted(
+                        set(_target_classes(i.get("raw_labels", []))),
+                        key=lambda c: _CONFLICT_PRIORITY.get(c, 99),
+                    )
+                ),
+                "raw_labels": "|".join(i.get("raw_labels", [])),
+                "html_url": i.get("html_url", ""),
+            }
+            for i in multi_class
+        ],
+        REPORTS_DIR / "kubernetes_multilabel_conflicts.csv",
+        [
+            "issue_number",
+            "title",
+            "target_labels_found",
+            "chosen_final_label",
+            "resolution_reason",
+            "raw_labels",
+            "html_url",
+        ],
+    )
+
+    _write_csv(
+        [
+            {
+                "class": cls,
+                "count_after_resolution": class_counts_resolved[cls],
+                "count_before_resolution": class_counts_raw[cls],
+                "oldest_created_at": date_range_per_class[cls]["oldest"] or "",
+                "newest_created_at": date_range_per_class[cls]["newest"] or "",
+            }
+            for cls in _ALL_CLASSES
+        ],
+        REPORTS_DIR / "kubernetes_class_balance_before_split.csv",
+        [
+            "class",
+            "count_after_resolution",
+            "count_before_resolution",
+            "oldest_created_at",
+            "newest_created_at",
+        ],
+    )
+
+    _write_csv(
+        [
             {
                 "issue_number": i["issue_number"],
                 "title": (i.get("title") or "")[:120],
@@ -165,45 +313,23 @@ def main() -> int:
                 "html_url": i.get("html_url", ""),
             }
             for i in unlabeled[:100]
-        )
-
-    with (REPORTS_DIR / "multilabel_issues_sample.csv").open(
-        "w", newline="", encoding="utf-8"
-    ) as f:
-        writer = csv.DictWriter(
-            f,
-            fieldnames=[
-                "issue_number",
-                "title",
-                "raw_labels",
-                "target_classes",
-                "created_at",
-            ],
-        )
-        writer.writeheader()
-        writer.writerows(
-            {
-                "issue_number": i["issue_number"],
-                "title": (i.get("title") or "")[:120],
-                "raw_labels": "|".join(i.get("raw_labels", [])),
-                "target_classes": "|".join(
-                    sorted(
-                        set(_target_classes(i.get("raw_labels", []))),
-                        key=lambda c: _CONFLICT_PRIORITY.get(c, 99),
-                    )
-                ),
-                "created_at": i.get("created_at", ""),
-            }
-            for i in multi_class[:100]
-        )
+        ],
+        REPORTS_DIR / "unlabeled_issues_sample.csv",
+        ["issue_number", "title", "raw_labels", "created_at", "html_url"],
+    )
 
     report: dict = {
-        "total_issues": total,
+        "total_raw_rows": total_rows,
+        "unique_issue_count": len(unique_issues),
+        "duplicate_count": duplicate_count,
         "unlabeled_count": len(unlabeled),
         "single_class_count": len(single_class),
         "multi_class_conflict_count": len(multi_class),
+        "usable_for_supervised_learning": usable,
         "class_counts_before_resolution": dict(class_counts_raw),
         "class_counts_after_resolution": dict(class_counts_resolved),
+        "date_range_per_class": date_range_per_class,
+        "support_question_stats": support_info,
         "unique_raw_labels": len(label_counts),
         "top30_raw_labels": [
             {"label": lbl, "count": cnt} for lbl, cnt in label_counts.most_common(30)
@@ -216,25 +342,43 @@ def main() -> int:
             {"classes": list(combo), "count": cnt}
             for combo, cnt in conflict_combos.most_common(10)
         ],
-        "date_range_start": dates[0] if dates else None,
-        "date_range_end": dates[-1] if dates else None,
-        "months_covered": len(set(dates)),
+        "conflict_examples": [
+            {
+                "issue_number": i["issue_number"],
+                "title": (i.get("title") or "")[:80],
+                "raw_labels": i.get("raw_labels", []),
+                "chosen": _resolve(i.get("raw_labels", [])),
+            }
+            for i in multi_class[:10]
+        ],
+        "date_range_start": all_dates[0] if all_dates else None,
+        "date_range_end": all_dates[-1] if all_dates else None,
+        "months_covered": len(set(all_dates)),
         "target_label_mapping": TARGET_LABELS,
         "conflict_priority": list(_CONFLICT_PRIORITY.keys()),
+        "proceed_to_split": proceed,
     }
-    (REPORTS_DIR / "label_eda.json").write_text(
+
+    (REPORTS_DIR / "kubernetes_label_eda.json").write_text(
         json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
 
     print(
-        f"total={total}  single_class={len(single_class)}  "
+        f"total_rows={total_rows}  unique={len(unique_issues)}  "
+        f"duplicates={duplicate_count}"
+    )
+    print(
+        f"single_class={len(single_class)}  "
         f"conflicts={len(multi_class)}  unlabeled={len(unlabeled)}"
     )
     print(f"class_counts_before_resolution: {dict(class_counts_raw)}")
     print(f"class_counts_after_resolution:  {dict(class_counts_resolved)}")
+    print(f"support_stats: {support_info}")
     print(
-        f"date_range: {dates[0] if dates else 'N/A'} to {dates[-1] if dates else 'N/A'}"
+        f"date_range: {all_dates[0] if all_dates else 'N/A'} "
+        f"to {all_dates[-1] if all_dates else 'N/A'}"
     )
+    print(f"proceed_to_split: {proceed}")
     print(f"reports saved to {REPORTS_DIR}/")
     return 0
 

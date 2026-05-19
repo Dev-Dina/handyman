@@ -13,9 +13,14 @@ Split strategy:
   Oldest 70% → train, next 15% → val, newest 15% → test.
   This guarantees test is strictly newer than train within every class.
 
+Class cap (--max-per-class):
+  If set, only the oldest N issues per class are kept after conflict resolution.
+  Applied before splitting so time-ordering is preserved.
+
 Usage:
     uv run python ml/split_dataset.py
     uv run python ml/split_dataset.py --val-frac 0.15 --test-frac 0.15
+    uv run python ml/split_dataset.py --max-per-class 600
 """
 
 from __future__ import annotations
@@ -114,11 +119,43 @@ def _write_csv(records: list[dict], path: Path, fields: list[str]) -> None:
         writer.writerows(records)
 
 
+def _apply_class_cap(
+    labeled: list[dict],
+    max_per_class: int,
+) -> tuple[list[dict], dict[str, int], dict[str, int]]:
+    """Keep oldest max_per_class issues per final_label, sorted by created_at.
+
+    Returns (capped_records, counts_before, counts_after).
+    """
+    by_label: dict[str, list[dict]] = defaultdict(list)
+    for r in labeled:
+        by_label[r["final_label"]].append(r)
+
+    counts_before = {cls: len(rows) for cls, rows in by_label.items()}
+    capped: list[dict] = []
+    counts_after: dict[str, int] = {}
+
+    for cls, rows in by_label.items():
+        rows.sort(key=lambda r: r.get("created_at") or "")
+        kept = rows[:max_per_class]
+        capped.extend(kept)
+        counts_after[cls] = len(kept)
+
+    return capped, counts_before, counts_after
+
+
 def _make_splits(
     records: list[dict],
     val_frac: float,
     test_frac: float,
 ) -> tuple[list[dict], list[dict], list[dict]]:
+    """Per-class chronological stratified split.
+
+    Within each class: oldest 70% → train, next 15% → val, newest 15% → test.
+    Test is newer than train within each class, preserving all four classes for
+    macro-F1 and per-class F1 evaluation. Global temporal order is not guaranteed.
+    See split_note in the report.
+    """
     by_label: dict[str, list[dict]] = defaultdict(list)
     for r in records:
         by_label[r["final_label"]].append(r)
@@ -154,6 +191,12 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--conflicts", type=Path, default=CONFLICTS_PATH)
     p.add_argument("--val-frac", type=float, default=0.15)
     p.add_argument("--test-frac", type=float, default=0.15)
+    p.add_argument(
+        "--max-per-class",
+        type=int,
+        default=None,
+        help="cap each class to oldest N issues before splitting (default: no cap)",
+    )
     return p.parse_args()
 
 
@@ -209,11 +252,20 @@ def main() -> int:
         )
         return 1
 
-    # Save all labeled issues pre-split
+    # Save all labeled issues pre-cap (full picture)
     _write_csv(labeled, LABELED_PATH, _CSV_FIELDS)
 
     # Save conflict report (transparent, not hidden)
     _write_csv(conflicts, args.conflicts, _CONFLICT_FIELDS)
+
+    counts_before_cap = dict(Counter(r["final_label"] for r in labeled))
+    counts_after_cap: dict[str, int] | None = None
+
+    # Apply optional per-class cap
+    if args.max_per_class is not None:
+        labeled, counts_before_cap, counts_after_cap = _apply_class_cap(
+            labeled, args.max_per_class
+        )
 
     train, val, test = _make_splits(labeled, args.val_frac, args.test_frac)
 
@@ -249,6 +301,7 @@ def main() -> int:
         else:
             per_class_temporal[cls] = None
 
+
     # Conflict combinations summary
     conflict_combos: Counter = Counter()
     for c in conflicts:
@@ -261,6 +314,9 @@ def main() -> int:
         "raw_issues": len(raw),
         "dropped_unmapped": dropped,
         "labeled_total": len(labeled),
+        "class_cap": args.max_per_class,
+        "class_counts_before_cap": counts_before_cap,
+        "class_counts_after_cap": counts_after_cap,
         "multi_target_conflicts": len(conflicts),
         "conflict_policy": "bug > docs > feature > question",
         "conflict_combinations": [
@@ -278,6 +334,13 @@ def main() -> int:
         "oldest_test_date": oldest_test,
         "temporal_order_ok": temporal_ok,
         "per_class_temporal_ok": per_class_temporal,
+        "split_note": (
+            "Per-class chronological stratification is used intentionally. "
+            "A strict global chronological split caused the docs class to disappear "
+            "from validation/test because all docs issues predate the global val/test cutoff. "
+            "Per-class split preserves all four classes for macro-F1 and per-class F1 evaluation. "
+            "Test examples are newer than train examples within each class, but not globally newer across all classes."
+        ),
         "val_frac": args.val_frac,
         "test_frac": args.test_frac,
         "target_label_mapping": TARGET_LABELS,
@@ -289,10 +352,17 @@ def main() -> int:
     )
 
     print(
-        f"raw={len(raw)} labeled={len(labeled)} "
+        f"raw={len(raw)} labeled_total={len(labeled)} "
         f"dropped={dropped} conflicts={len(conflicts)}"
     )
+    if args.max_per_class is not None:
+        print(f"class_cap={args.max_per_class}")
+        print(f"counts_before_cap={counts_before_cap}")
+        print(f"counts_after_cap={counts_after_cap}")
     print(f"train={len(train)} val={len(val)} test={len(test)}")
+    print(f"train_class_counts={dict(Counter(r['final_label'] for r in train))}")
+    print(f"val_class_counts={dict(Counter(r['final_label'] for r in val))}")
+    print(f"test_class_counts={dict(Counter(r['final_label'] for r in test))}")
     print(f"temporal_order_ok={temporal_ok}")
     print(f"per_class_temporal_ok={per_class_temporal}")
     print(f"conflicts: {args.conflicts}  report: {args.report}")

@@ -81,25 +81,40 @@ The `migrate` docker-compose service runs `alembic upgrade head` with `DATABASE_
 
 Requires GitHub token in Vault (see above). Run in order.
 
+Vault env for local dev (already in .env):
+```
+VAULT_ADDR=http://127.0.0.1:8200
+VAULT_DEV_ROOT_TOKEN=dev-root-token
+```
+GitHub token path in Vault: `secret/github`, key: `token`
+
 ```powershell
-# 1. Validate dataset viability (sample 300 issues, writes reports/dataset_validation_kubernetes.json)
+# 1. Validate dataset viability (sample 300 issues)
+#    Writes reports/dataset_validation_kubernetes.json
 uv run python scripts/validate_github_dataset.py --repo kubernetes/kubernetes --sample-size 300
 
-# 2. Fetch per-class dataset (writes data/raw/kubernetes_issues.jsonl)
-#    Fetches up to 1000 issues per target label via Search API (~100 s with token)
+# 2. Fetch per-class dataset (~100 s with token)
+#    Writes data/raw/kubernetes_issues.jsonl
 uv run python ml/fetch_dataset.py --repo kubernetes/kubernetes --per-class 1000
 
-# 3. Run label EDA (writes reports/label_eda.json + CSV reports)
+#    Optional: supplement question class if EDA shows imbalance (run after step 3)
+uv run python ml/fetch_dataset.py --repo kubernetes/kubernetes --per-class 1000 --supplement-label "kind/support" --supplement-count 1000
+
+# 3. Run label EDA — review before splitting
+#    Writes reports/kubernetes_label_eda.json + kubernetes_*.csv reports
 uv run python ml/eda_labels.py
 
-# 4. Build train/val/test splits (writes data/processed/train|val|test.csv + labeled_issues.csv)
-#    Also writes reports/multilabel_conflicts.csv and reports/split_report.json
+# 4. Build train/val/test splits
+#    Writes data/processed/train|val|test.csv + labeled_issues.csv
+#    Also writes reports/kubernetes_multilabel_conflicts.csv and reports/split_report.json
 uv run python ml/split_dataset.py
 
-# 5. Smoke-test fine-tuning (prajjwal1/bert-tiny, 2 steps, CPU, writes artifacts/smoke/)
+# 5. Smoke-test fine-tuning (prajjwal1/bert-tiny, 2 steps, CPU)
+#    Writes artifacts/smoke/
 uv run python ml/finetune.py --smoke
 
-# 6. Full fine-tuning (distilbert-base-uncased, 3 epochs, writes artifacts/full/)
+# 6. Full fine-tuning (distilbert-base-uncased, 3 epochs)
+#    Writes artifacts/full/
 uv run python ml/finetune.py
 ```
 

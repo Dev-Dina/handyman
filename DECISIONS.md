@@ -81,6 +81,8 @@ Time-based stratified split per class:
 
 **Note:** Final split will be run only after EDA confirms label distribution is acceptable.
 
+**Temporal disclaimer:** A strict global chronological split caused the docs class to disappear from validation/test because all docs issues predate the global val/test cutoff. We therefore used per-class chronological stratification to preserve all four classes for macro-F1 and per-class F1 evaluation. Test examples are newer than train examples within each class, but not globally newer across all classes.
+
 ## Unlabeled / unmapped handling
 
 Issues with no target label are:

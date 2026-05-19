@@ -56,20 +56,40 @@ def fig_01_class_counts(eda: dict, plt) -> None:
     x = np.arange(len(classes))
     w = 0.35
     fig, ax = plt.subplots(figsize=(8, 5))
-    bars_b = ax.bar(x - w / 2, [before[c] for c in classes], w,
-                    label="Before resolution", color="#4C72B0", alpha=0.85)
-    bars_a = ax.bar(x + w / 2, [after[c] for c in classes], w,
-                    label="After resolution", color="#DD8452", alpha=0.85)
+    bars_b = ax.bar(
+        x - w / 2,
+        [before[c] for c in classes],
+        w,
+        label="Before resolution",
+        color="#4C72B0",
+        alpha=0.85,
+    )
+    bars_a = ax.bar(
+        x + w / 2,
+        [after[c] for c in classes],
+        w,
+        label="After resolution",
+        color="#DD8452",
+        alpha=0.85,
+    )
 
     for bar in (*bars_b, *bars_a):
-        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 10,
-                str(int(bar.get_height())), ha="center", va="bottom", fontsize=9)
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height() + 10,
+            str(int(bar.get_height())),
+            ha="center",
+            va="bottom",
+            fontsize=9,
+        )
 
     ax.set_xticks(x)
     ax.set_xticklabels(classes, fontsize=11)
     ax.set_ylabel("Issue count")
-    ax.set_title("Class counts before vs after multi-label conflict resolution\n"
-                 "(kubernetes/kubernetes, 3923 unique issues)")
+    ax.set_title(
+        "Class counts before vs after multi-label conflict resolution\n"
+        "(kubernetes/kubernetes, 3923 unique issues)"
+    )
     ax.legend()
     ax.set_ylim(0, max(before[c] for c in classes) * 1.15)
     fig.tight_layout()
@@ -91,19 +111,29 @@ def fig_02_split_class_balance(sr: dict, plt) -> None:
     split_colors = ["#4C72B0", "#55A868", "#C44E52"]
 
     fig, ax = plt.subplots(figsize=(9, 5))
-    for (split_name, counts), offset, color in zip(splits.items(), offsets, split_colors):
+    for (split_name, counts), offset, color in zip(
+        splits.items(), offsets, split_colors
+    ):
         vals = [counts.get(c, 0) for c in _CLASSES]
         bars = ax.bar(x + offset, vals, w, label=split_name, color=color, alpha=0.85)
         for bar in bars:
-            ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 2,
-                    str(int(bar.get_height())), ha="center", va="bottom", fontsize=8)
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height() + 2,
+                str(int(bar.get_height())),
+                ha="center",
+                va="bottom",
+                fontsize=8,
+            )
 
     ax.set_xticks(x)
     ax.set_xticklabels(_CLASSES, fontsize=11)
     ax.set_ylabel("Issue count")
-    ax.set_title("Per-class counts per split\n"
-                 f"(cap={sr['class_cap']}/class · train={sr['train_count']} "
-                 f"val={sr['val_count']} test={sr['test_count']})")
+    ax.set_title(
+        "Per-class counts per split\n"
+        f"(cap={sr['class_cap']}/class · train={sr['train_count']} "
+        f"val={sr['val_count']} test={sr['test_count']})"
+    )
     ax.legend()
     ax.set_ylim(0, max(sr["train_class_counts"].get(c, 0) for c in _CLASSES) * 1.20)
     fig.tight_layout()
@@ -122,12 +152,19 @@ def fig_03_top_labels(label_rows: list[dict], plt) -> None:
     fig, ax = plt.subplots(figsize=(10, 6))
     bars = ax.barh(labels[::-1], counts[::-1], color=colors[::-1], alpha=0.85)
     for bar in bars:
-        ax.text(bar.get_width() + 10, bar.get_y() + bar.get_height() / 2,
-                str(int(bar.get_width())), va="center", fontsize=8)
+        ax.text(
+            bar.get_width() + 10,
+            bar.get_y() + bar.get_height() / 2,
+            str(int(bar.get_width())),
+            va="center",
+            fontsize=8,
+        )
 
     ax.set_xlabel("Occurrence count")
-    ax.set_title("Top 20 GitHub labels in the dataset\n"
-                 "(red = target labels used for classification)")
+    ax.set_title(
+        "Top 20 GitHub labels in the dataset\n"
+        "(red = target labels used for classification)"
+    )
     ax.set_xlim(0, max(counts) * 1.12)
     fig.tight_layout()
     _save(fig, "03_top_kubernetes_labels.png")
@@ -143,14 +180,22 @@ def fig_04_conflict_combinations(eda: dict, plt) -> None:
     fig, ax = plt.subplots(figsize=(9, 5))
     bars = ax.bar(range(len(labels)), counts, color="#DD8452", alpha=0.85)
     for bar, cnt in zip(bars, counts):
-        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 1,
-                str(cnt), ha="center", va="bottom", fontsize=9)
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height() + 1,
+            str(cnt),
+            ha="center",
+            va="bottom",
+            fontsize=9,
+        )
 
     ax.set_xticks(range(len(labels)))
     ax.set_xticklabels(labels, rotation=30, ha="right", fontsize=10)
     ax.set_ylabel("Count")
-    ax.set_title(f"Multi-label conflict combinations (total={total_conflicts})\n"
-                 "Policy: bug > docs > feature > question")
+    ax.set_title(
+        f"Multi-label conflict combinations (total={total_conflicts})\n"
+        "Policy: bug > docs > feature > question"
+    )
     ax.set_ylim(0, max(counts) * 1.15)
     fig.tight_layout()
     _save(fig, "04_multilabel_conflict_combinations.png")
@@ -160,10 +205,18 @@ def fig_04_conflict_combinations(eda: dict, plt) -> None:
 def fig_05_text_quality_by_split(tq: dict, plt) -> None:
     splits_data = {s["split"]: s for s in tq["splits"]}
     split_names = ["train", "val", "test"]
-    metrics = ["non_ascii_rows", "mostly_non_ascii_candidates",
-               "empty_body_rows", "very_long_rows"]
-    metric_labels = ["Non-ASCII rows", "Mostly non-ASCII\ncandidates",
-                     "Empty body", "Very long rows\n(>8000 chars)"]
+    metrics = [
+        "non_ascii_rows",
+        "mostly_non_ascii_candidates",
+        "empty_body_rows",
+        "very_long_rows",
+    ]
+    metric_labels = [
+        "Non-ASCII rows",
+        "Mostly non-ASCII\ncandidates",
+        "Empty body",
+        "Very long rows\n(>8000 chars)",
+    ]
 
     import numpy as np
 
@@ -179,15 +232,23 @@ def fig_05_text_quality_by_split(tq: dict, plt) -> None:
         bars = ax.bar(x + offset, vals, w, label=split_name, color=color, alpha=0.85)
         for bar in bars:
             if bar.get_height() > 0:
-                ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.5,
-                        str(int(bar.get_height())), ha="center", va="bottom", fontsize=8)
+                ax.text(
+                    bar.get_x() + bar.get_width() / 2,
+                    bar.get_height() + 0.5,
+                    str(int(bar.get_height())),
+                    ha="center",
+                    va="bottom",
+                    fontsize=8,
+                )
 
     ax.set_xticks(x)
     ax.set_xticklabels(metric_labels, fontsize=10)
     ax.set_ylabel("Row count")
-    ax.set_title("Text quality flags by split\n"
-                 f"(mostly-non-ASCII threshold={tq['mostly_non_ascii_threshold']:.0%}  "
-                 f"very-long threshold={tq['very_long_threshold']:,} chars)")
+    ax.set_title(
+        "Text quality flags by split\n"
+        f"(mostly-non-ASCII threshold={tq['mostly_non_ascii_threshold']:.0%}  "
+        f"very-long threshold={tq['very_long_threshold']:,} chars)"
+    )
     ax.legend()
     fig.tight_layout()
     _save(fig, "05_text_quality_by_split.png")
@@ -205,15 +266,28 @@ def fig_06_very_long_by_class(tq: dict, plt) -> None:
     x = np.arange(len(classes))
     w = 0.35
     fig, ax = plt.subplots(figsize=(8, 5))
-    bars_vl = ax.bar(x - w / 2, very_long, w, label="Very long rows (>8000 chars)",
-                     color="#C44E52", alpha=0.85)
-    bars_na = ax.bar(x + w / 2, non_ascii, w, label="Non-ASCII rows",
-                     color="#8172B2", alpha=0.85)
+    bars_vl = ax.bar(
+        x - w / 2,
+        very_long,
+        w,
+        label="Very long rows (>8000 chars)",
+        color="#C44E52",
+        alpha=0.85,
+    )
+    bars_na = ax.bar(
+        x + w / 2, non_ascii, w, label="Non-ASCII rows", color="#8172B2", alpha=0.85
+    )
 
     for bar in (*bars_vl, *bars_na):
         if bar.get_height() > 0:
-            ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.5,
-                    str(int(bar.get_height())), ha="center", va="bottom", fontsize=9)
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height() + 0.5,
+                str(int(bar.get_height())),
+                ha="center",
+                va="bottom",
+                fontsize=9,
+            )
 
     ax.set_xticks(x)
     ax.set_xticklabels(classes, fontsize=11)
@@ -241,6 +315,7 @@ def main() -> int:
 
     try:
         import matplotlib
+
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
     except ImportError as exc:

@@ -109,11 +109,19 @@ uv run python ml/eda_labels.py
 #    Also writes reports/kubernetes_multilabel_conflicts.csv and reports/split_report.json
 uv run python ml/split_dataset.py
 
-# 5. Smoke-test fine-tuning (prajjwal1/bert-tiny, 2 steps, CPU)
+# 5. Train classical TF-IDF + LogisticRegression baseline
+#    Writes artifacts/classical/ and reports/classical_*
+uv run python ml/classical_baseline.py
+
+# 6. Compare classical TF-IDF models
+#    Writes reports/classical/, reports/figures/08-09_*.png, and artifacts/classical/best_model.*
+uv run python ml/classical/compare_classical.py
+
+# 7. Smoke-test fine-tuning (prajjwal1/bert-tiny, 2 steps, CPU)
 #    Writes artifacts/smoke/
 uv run python ml/finetune.py --smoke
 
-# 6. Full fine-tuning (distilbert-base-uncased, 3 epochs)
+# 8. Full fine-tuning (distilbert-base-uncased, 3 epochs)
 #    Writes artifacts/full/
 uv run python ml/finetune.py
 ```

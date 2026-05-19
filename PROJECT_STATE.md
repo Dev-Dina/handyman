@@ -75,7 +75,8 @@ kubernetes/kubernetes
 - [x] artifacts/smoke/ (bert-tiny, 2 steps, CPU, model card + safetensors + tokenizer)
 - [x] reports/text_quality_report.json
 - [x] ml/make_eda_figures.py (6 PNG figures in reports/figures/)
-- [ ] Classical ML baseline
+- [x] Classical ML baseline (TF-IDF + LogisticRegression, accuracy 0.713889, macro_f1 0.693839)
+- [x] Classical model comparison (6 models, best=LogisticRegression, val_macro_f1 0.701875, test_macro_f1 0.693839)
 - [ ] Real transformer training + evaluation
 - [ ] LLM baseline
 
@@ -94,9 +95,9 @@ kubernetes/kubernetes
 None.
 
 ## Next 3 tasks
-1. Build classical ML baseline on same splits
-2. Run real transformer training + evaluation + model card
-3. Wire LLM baseline
+1. Run real transformer training + evaluation + model card
+2. Wire LLM baseline
+3. Compare classical, transformer, and LLM baseline metrics
 
 ## Commands
 ```bash
@@ -108,6 +109,8 @@ uv run python ml/fetch_dataset.py --repo kubernetes/kubernetes --per-class 1000
 uv run python ml/eda_labels.py
 uv run python ml/split_dataset.py --max-per-class 600
 uv run python ml/text_preprocessing.py
+uv run python ml/classical_baseline.py
+uv run python ml/classical/compare_classical.py
 uv run python ml/finetune.py --smoke
 uv run python ml/finetune.py
 ```

@@ -128,6 +128,9 @@ Failed experiments archived: `data/experiments/failed/` + `reports/experiments/f
 - [x] Three-way comparison — reports/classifier_three_way_comparison.json/csv + figures 15-18
 - [x] Final deployment decision — CodeBERT primary, LogisticRegression fallback
 - [x] Classification golden set candidates — evals/golden/classification_golden_candidates.csv (48 rows, 12/class; pending manual curation)
+- [x] Tools API architecture — schemas, routes, infra scaffold (app/api/schemas/, app/api/routes/, app/infra/ollama_client.py)
+- [x] NER endpoint — POST /api/v1/tools/entities LIVE; calls extract_entities_service
+- [x] Summarization endpoint — POST /api/v1/tools/summarize LIVE; Problem/Expected/Evidence/Component prompt via OllamaClient; 503 on unavailable
 
 ### Official classifier dataset
 
@@ -166,8 +169,8 @@ none
 
 ## Next 3 tasks
 1. Manually curate evals/golden/classification_golden_candidates.csv into evals/golden/classification_golden.jsonl (25 issues, fill gold_label)
-2. Wire NER endpoint (app/services/tools/entity_extractor.py exists)
-3. Summarization endpoint
+2. Manually curate evals/golden/classification_golden_candidates.csv into classification_golden.jsonl
+3. Smoke test tools API endpoints against running docker compose stack
 
 ## Commands
 ```bash

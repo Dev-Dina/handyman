@@ -289,11 +289,34 @@ Candidate pool: sourced from `data/raw/kubernetes_issues.jsonl`, excluding all 2
 
 ---
 
-## 17. Remaining Tasks
+## 17. Tools API Architecture
+
+Endpoint contracts defined. Both endpoints LIVE.
+
+| Endpoint | Method | Status |
+|---|---|---|
+| `/api/v1/tools/entities` | POST | LIVE — deterministic rule-based NER, no model |
+| `/api/v1/tools/summarize` | POST | LIVE — Ollama local LLM; 503 if unreachable |
+
+**Layer map:**
+
+```
+app/api/schemas/tools.py          EntityExtract/Summarize Request+Response
+app/api/routes/tools.py           HTTP-only router; maps domain errors → HTTP codes
+app/services/tools/__init__.py    extract_entities_service, summarize_service (stub)
+app/services/tools/entity_extractor.py  rule-based NER (existing)
+app/infra/ollama_client.py        OllamaClient — async httpx scaffold for future summarize
+app/domain/errors.py              ToolInputError, OllamaUnavailableError (new)
+```
+
+---
+
+## 18. Remaining Tasks
 
 - [x] Run Ollama LLM baseline — DONE (llama3_full, macro_f1=0.5554)
 - [x] Three-way comparison table + figures (15-18) — DONE
 - [x] Final deployment decision — DONE (CodeBERT primary, LogisticRegression fallback)
+- [x] NER endpoint — LIVE at POST /api/v1/tools/entities
+- [x] Tools API architecture — schemas, routes, infra scaffold in place
 - [ ] Classification golden set — candidates generated; manually curate 25 into `classification_golden.jsonl`
-- [ ] NER endpoint — `app/services/tools/entity_extractor.py` exists, wire to API
-- [ ] Summarization endpoint
+- [x] Summarization endpoint — LIVE; Problem/Expected/Evidence/Component; 503 on Ollama unavailable

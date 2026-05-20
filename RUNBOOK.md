@@ -258,6 +258,78 @@ data/archive_numpy/        numpy project archived data
 - Transformer and LLM baselines must use `data/processed/` only.
 - `reports/figures/` is the live output folder; `reports/official/figures/` is a read-only snapshot.
 
+## Tools API
+
+Two NLP tool endpoints exposed at `/api/v1/tools/`. Both are designed to be called by the chatbot over HTTP as tool calls.
+
+### POST /api/v1/tools/entities — NER (LIVE)
+
+Deterministic rule-based extractor. No model inference. No GPU. No Ollama.
+
+```bash
+curl -s -X POST http://localhost:8000/api/v1/tools/entities \
+  -H "Content-Type: application/json" \
+  -d '{"text": "kubectl get pods fails with ImagePullBackOff on v1.29.0"}' \
+  | python -m json.tool
+```
+
+Expected response shape:
+```json
+{
+  "entities_by_type": {
+    "versions": ["v1.29.0"],
+    "commands": ["kubectl get pods"],
+    "components": [],
+    "errors": ["ImagePullBackOff"],
+    "resources": [],
+    "paths": [],
+    "images": [],
+    "urls": []
+  },
+  "total_count": 3
+}
+```
+
+### POST /api/v1/tools/summarize — Summarization (LIVE — requires Ollama)
+
+Structured four-part summary: **Problem / Expected / Evidence / Component**.  
+Requires Ollama running locally with `llama3:latest`. Returns 503 if Ollama is unreachable.
+
+```bash
+# Start Ollama in a separate terminal first
+ollama serve
+ollama pull llama3:latest   # one-time
+
+curl -s -X POST http://localhost:8000/api/v1/tools/summarize \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Pod crashlooping due to OOM on node after v1.29.0 upgrade. kubectl describe pod shows OOMKilled. Expected: pod restarts gracefully. Memory limit is 512Mi.",
+    "max_chars": 400
+  }' \
+  | python -m json.tool
+```
+
+Expected response shape:
+```json
+{
+  "summary": "1. Problem — ...\n2. Expected — ...\n3. Evidence — ...\n4. Component — ...",
+  "model": "llama3:latest",
+  "latency_seconds": 4.2
+}
+```
+
+### Architecture
+
+```
+schemas/tools.py          API contracts (Pydantic)
+routes/tools.py           HTTP-only — no business logic, no SQLAlchemy
+services/tools/__init__.py service layer — calls entity_extractor or OllamaClient
+infra/ollama_client.py    async httpx client — OllamaUnavailableError on failure
+domain/errors.py          ToolInputError, OllamaUnavailableError
+```
+
+Config values (base URL, timeout, model) are module-level constants in `app/infra/ollama_client.py`.
+
 ## Useful checks
 
 ```bash

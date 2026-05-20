@@ -11,7 +11,7 @@ def _():
     import matplotlib.pyplot as plt
 
     DATA_DIR = Path("data/processed")
-    Path("reports") # noqa: E402
+    Path("reports")  # noqa: E402
     Path("reports/official/figures")
 
     train_path = DATA_DIR / "train.csv"

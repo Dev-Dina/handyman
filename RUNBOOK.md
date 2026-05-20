@@ -118,12 +118,20 @@ uv run python ml/classical_baseline.py
 uv run python ml/classical/compare_classical.py
 
 # 7. Smoke-test fine-tuning (prajjwal1/bert-tiny, 2 steps, CPU)
-#    Writes artifacts/smoke/
-uv run python ml/finetune.py --smoke
+#    Writes artifacts/transformer/smoke/
+.\.venv-gpu\Scripts\python.exe ml\finetune.py --smoke
 
-# 8. Full fine-tuning (distilbert-base-uncased, 3 epochs)
-#    Writes artifacts/full/
-uv run python ml/finetune.py
+# 8. Full fine-tuning with run name (e.g. codebert)
+#    Writes artifacts/transformer/<run_name>/ + reports/transformer/<run_name>/
+.\.venv-gpu\Scripts\python.exe ml\finetune.py --model microsoft/codebert-base --run-name codebert_base_e3_len384 --epochs 3 --batch-size 4 --max-len 384
+
+# 9. LLM zero-shot baseline (Ollama, no GPU)
+#    Writes reports/llm/<run_name>/
+uv run python ml/llm_baseline.py --run-name llama3_full
+
+# 10. Generate classifier presentation figures
+#     Writes reports/official/figures/10-14_*.png
+uv run python ml/make_classifier_figures.py
 ```
 
 ML extras required for classical baseline (no Torch):
@@ -165,6 +173,32 @@ Vault token path for GitHub:
 - Path:     secret/github
 - Key:      token
 
+## LLM baseline (Ollama local)
+
+> **Do not interrupt if a run is active — check `reports/llm/` first.**
+
+Requires Ollama running locally with `llama3:latest` pulled. No API key. No Vault.
+
+```powershell
+# Start Ollama (separate terminal, leave running)
+ollama serve
+
+# Pull model (one-time)
+ollama pull llama3:latest
+
+# Smoke run (10 rows)
+uv run python ml/llm_baseline.py --limit 10
+
+# Full run on official test split (360 rows)
+uv run python ml/llm_baseline.py --run-name llama3_full
+
+# Resume interrupted run
+uv run python ml/llm_baseline.py --run-name llama3_full --resume
+```
+
+Outputs per run: `reports/llm/<run_name>/llm_eval.json`, `llm_predictions.csv`, `llm_raw_responses.jsonl`  
+Summary: `reports/llm/llm_runs_summary.csv`
+
 ## Artifact layout
 
 ### Official (do not modify)
@@ -180,11 +214,17 @@ reports/
   split_report.json                    official split metadata
   text_quality_report.json             text quality audit
   classical/                           OFFICIAL classical baseline (LogisticRegression 0.694)
-  transformer_eval.json                transformer test metrics (after GPU run)
-  transformer_training_history.json    per-epoch training log (after GPU run)
-  figures/                             active figure output
-  official/figures/                    snapshot of official presentation figures
+  transformer/                         transformer run reports (per-run subdirs + runs_summary.csv)
+  llm/                                 LLM baseline reports (per-run subdirs + runs_summary.csv)
+  official/figures/                    presentation figures 01-14 (read-only snapshot)
   artifact_manifest.json               full path manifest
+
+artifacts/
+  classical/                           best_model.joblib + metadata
+  transformer/<run_name>/              model/ + model_card.json per encoder run
+
+docs/
+  CLASSIFIER_TRACK_REPORT.md          living classifier track report
 ```
 
 ### Failed experiments (archived — do not use as training inputs)

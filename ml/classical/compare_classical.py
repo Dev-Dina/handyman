@@ -21,16 +21,23 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from ml.classifier_config import (  # noqa: E402
+    LABELS as _LABELS,
+    OFFICIAL_CLASSICAL_REPORT_DIR,
+    OFFICIAL_TEST_PATH,
+    OFFICIAL_TRAIN_PATH,
+    OFFICIAL_VAL_PATH,
+)
 from ml.text_preprocessing import preprocess_rows  # noqa: E402
 
-TRAIN_PATH = Path("data/processed/train.csv")
-VAL_PATH = Path("data/processed/val.csv")
-TEST_PATH = Path("data/processed/test.csv")
+TRAIN_PATH = OFFICIAL_TRAIN_PATH
+VAL_PATH = OFFICIAL_VAL_PATH
+TEST_PATH = OFFICIAL_TEST_PATH
 ARTIFACTS_DIR = Path("artifacts/classical")
-REPORTS_DIR = Path("reports/classical")
+REPORTS_DIR = OFFICIAL_CLASSICAL_REPORT_DIR
 FIGURES_DIR = Path("reports/figures")
 
-LABELS = ["bug", "feature", "docs", "question"]
+LABELS = list(_LABELS)
 VECTORIZER_SETTINGS: dict[str, Any] = {
     "lowercase": True,
     "ngram_range": (1, 2),

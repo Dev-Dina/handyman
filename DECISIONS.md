@@ -149,14 +149,38 @@ Source scripts remain in `ml/` as documentation (do not delete).
 
 ## Fine-tuned transformer
 
-Architecture: distilbert-base-uncased (full) / prajjwal1/bert-tiny (smoke).
-Labels: bug / docs / feature / question (same 4 classes, same IDs).
+**Chosen encoder:** microsoft/codebert-base  
+**Run:** codebert_base_e3_len384 (3 epochs, batch 4, max_len 384, lr 2e-5)  
+**Labels:** bug / docs / feature / question (same 4 classes, same IDs).
+
+### Encoder comparison
+
+| run_name | model | epochs | max_len | test_macro_f1 | question_f1 |
+|---|---|---|---|---|---|
+| bert-tiny | prajjwal1/bert-tiny | 3 | 128 | 0.5634 | 0.3624 |
+| electra_small_e5_len384 | google/electra-small-discriminator | 5 | 384 | 0.6909 | 0.3922 |
+| **codebert_base_e3_len384** | **microsoft/codebert-base** | **3** | **384** | **0.7061** | 0.2909 |
+| minilm_l12_e5_len384 | microsoft/MiniLM-L12-H384-uncased | 5 | 384 | 0.6332 | **0.4510** |
+
+**Why CodeBERT:** highest test macro-F1 among encoders and beats the classical baseline (+0.012). Pre-training on code-related corpora aligns with kubernetes issues (commands, YAML, logs, paths, versions).
+
+**Note:** MiniLM has the best question_f1 (0.451) but is worst overall. Pending LLM baseline; final deployment choice deferred.
+
+### Freeze policy
+
+No frozen encoder layers. Full fine-tuning used.
+
+- Training set has 1 680 balanced examples — not extremely small.
+- Kubernetes issues contain domain-specific text: commands, YAML, logs, paths, versions, stack traces. Encoder adaptation was desirable.
+- No measured overfitting: best_val_macro_f1=0.6971, test_macro_f1=0.7061 (gap +0.009).
+- Partial freezing was not adopted because there was no overfitting signal requiring it.
 
 ## LLM baseline
 TODO
 
 ## Deployment model choice
-TODO after metrics.
+TODO — deferred until LLM baseline and three-way comparison complete.  
+Current draft: microsoft/codebert-base (test_macro_f1=0.7061).
 
 ## Embedding model comparison
 TODO

@@ -7,10 +7,54 @@ Week 7 Maintainer's Copilot
 Thursday night working demo, Friday 10-minute presentation.
 
 ## Current phase
-Phase 1 â€” DL/NLP track
+Phase 1 - DL/NLP track
 
 ## Chosen repo
 kubernetes/kubernetes
+
+---
+
+## Temporary active-run note
+
+While llama3_full is running, do not move/delete `reports/llm/llama3_full/` or edit cached prediction files (`llm_raw_responses.jsonl`). Resume is safe once the run completes.
+
+---
+
+## Current official classifier status
+
+| Track | Model | test_macro_f1 | test_accuracy | Status |
+|---|---|---|---|---|
+| Classical baseline | LogisticRegression (TF-IDF) | 0.6938 | 0.7139 | LOCKED — official |
+| Best transformer | microsoft/codebert-base | 0.7061 | 0.7500 | LOCKED — best encoder |
+| LLM baseline | llama3:latest (Ollama) | pending | pending | run in progress |
+
+Deployment draft: CodeBERT (best F1). Final decision after LLM result.
+
+Official data: `data/processed/` — LOCKED (1680 train / 360 val / 360 test, 420/90/90 per class)
+
+Failed experiments archived: `data/experiments/failed/` + `reports/experiments/failed/`
+
+---
+
+## Where to find things
+
+| What | Path |
+|---|---|
+| Official figures (presentation) | `reports/official/figures/` (01-14) |
+| EDA + classical reports | `reports/classical/`, `reports/kubernetes_*.json/csv` |
+| Transformer run reports | `reports/transformer/` (per-run subdirs) |
+| Transformer runs summary | `reports/transformer/transformer_runs_summary.csv` |
+| LLM baseline reports | `reports/llm/` (per-run subdirs) |
+| LLM runs summary | `reports/llm/llm_runs_summary.csv` |
+| Failed experiment reports | `reports/experiments/failed/` |
+| Raw dataset | `data/raw/kubernetes_issues.jsonl` |
+| Official splits | `data/processed/train.csv`, `val.csv`, `test.csv` |
+| Classical model artifact | `artifacts/classical/best_model.joblib` |
+| Transformer model artifacts | `artifacts/transformer/<run_name>/` |
+| Living classifier report | `docs/CLASSIFIER_TRACK_REPORT.md` |
+| Full path manifest | `reports/artifact_manifest.json` |
+
+---
 
 ## Phase 0 â€” Foundation (VERIFIED COMPLETE)
 
@@ -80,10 +124,13 @@ kubernetes/kubernetes
 - [x] Support-only augmentation experiment (ABLATION â€” not adopted; augmented test_macro_f1 0.680766 < original 0.693839, question F1 0.272727)
 - [x] Clean single-target count script (augmented raw data: bug 956, feature 963, docs 849, question 1000; 600/class possible)
 - [x] Cleaned processed splits materialized (raw data/processed/ preserved; data/processed_cleaned/ created with model_text + quality flags)
-- [x] ml/finetune.py â€” manual PyTorch loop (AdamW + DataLoader); no Trainer/TrainingArguments/datasets/pandas/numpy; saves best by val macro-F1; writes transformer_training_history.json + transformer_eval.json
-- [ ] Create .venv-gpu (CUDA, local) and verify torch.cuda.is_available()
-- [ ] Real transformer training + evaluation (runs from .venv-gpu, not uv)
-- [ ] LLM baseline
+- [x] ml/finetune.py - manual PyTorch loop (AdamW + DataLoader); no Trainer/TrainingArguments/datasets/pandas/numpy; saves best by val macro-F1; --run-name/--reports-dir per-run isolation; writes reports/transformer/<run_name>/transformer_{eval,training_history}.json + artifacts/transformer/<run_name>/; appends reports/transformer/transformer_runs_summary.csv
+- [x] Create .venv-gpu (CUDA, local), torch.cuda.is_available()=True, CUDA GPU verified
+- [x] Transformer encoder comparison: bert-tiny/electra-small/codebert-base/minilm-l12 -- COMPLETE; best=microsoft/codebert-base test_macro_f1=0.7061
+- [x] docs/CLASSIFIER_TRACK_REPORT.md -- living classifier report created
+- [x] ml/make_classifier_figures.py -- 5 classifier figures (10-14) in reports/official/figures/
+- [x] ml/classifier_config.py -- centralized constants (LABELS, paths, known metrics, Ollama defaults); used by finetune.py, llm_baseline.py, make_classifier_figures.py, compare_classical.py
+- [ ] LLM baseline run -- ml/llm_baseline.py ready, run IN PROGRESS (llama3_full, reports/llm/llama3_full/)
 
 ### Official classifier dataset
 data/processed/train.csv â€” 1680 rows, 420/class
@@ -111,12 +158,12 @@ Augmented splits (data/processed_augmented/) are experiment artifacts only.
 - Redaction before logs/traces/memory
 
 ## Current blockers
-None.
+LLM baseline (llama3_full) running — do not interrupt reports/llm/ or related files.
 
 ## Next 3 tasks
-1. Create .venv-gpu (CUDA), verify torch.cuda.is_available(), run ml/finetune.py --smoke then full
-2. Review transformer test metrics in reports/transformer_eval.json
-3. Wire LLM baseline (zero-shot classification via Claude API)
+1. Wait for llama3_full result in reports/llm/llama3_full/llm_eval.json; record macro_f1
+2. Generate three-way comparison table + figures (classical / CodeBERT / LLM)
+3. Create 25-example classification golden set + wire NER endpoint
 
 ## Commands
 ```bash

@@ -2,15 +2,16 @@
 Fine-tune a sequence classification model on GitHub issue labels.
 
 Usage:
-    uv run python ml/finetune.py --smoke        # quick smoke test (2 steps, tiny model)
-    uv run python ml/finetune.py                # full training (distilbert, 3 epochs)
+    python ml/finetune.py --smoke        # 2-step smoke test, CPU
+    python ml/finetune.py                # full training, CUDA if available
 
-Outputs saved to artifacts/<run_name>/:
-    model/          HuggingFace model checkpoint
-    model_card.json metadata, hyperparameters, data hash, metrics
+No pandas, no datasets, no Trainer. Uses csv stdlib + torch + transformers.
 
-Requires ML extras:
-    uv sync --extra ml
+Outputs:
+    artifacts/<run>/model/                      saved model + tokenizer
+    artifacts/<run>/model_card.json             metadata, hyperparams, metrics
+    reports/transformer_training_history.json   per-epoch loss + val metrics
+    reports/transformer_eval.json               test-set evaluation
 """
 
 from __future__ import annotations
@@ -18,6 +19,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import importlib.util
 import json
 import sys
 from datetime import UTC, datetime
@@ -27,6 +29,7 @@ TRAIN_PATH = Path("data/processed/train.csv")
 VAL_PATH = Path("data/processed/val.csv")
 TEST_PATH = Path("data/processed/test.csv")
 ARTIFACTS_DIR = Path("artifacts")
+REPORTS_DIR = Path("reports")
 
 LABELS = ["bug", "docs", "feature", "question"]
 LABEL2ID = {lbl: i for i, lbl in enumerate(LABELS)}
@@ -45,6 +48,49 @@ def _sha256_prefix(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()[:16]
 
 
+def _load_preprocessor():  # type: ignore[return]
+    spec = importlib.util.spec_from_file_location(
+        "text_preprocessing", Path(__file__).parent / "text_preprocessing.py"
+    )
+    mod = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
+    spec.loader.exec_module(mod)  # type: ignore[union-attr]
+    return mod.preprocess_rows
+
+
+def _pure_metrics(preds: list[int], refs: list[int]) -> dict:
+    """Accuracy, macro-F1, and per-class P/R/F1 — pure Python, no numpy."""
+    n = len(refs)
+    accuracy = sum(p == r for p, r in zip(preds, refs)) / n if n else 0.0
+    per_class: dict[str, dict] = {}
+    for label_id, label_name in ID2LABEL.items():
+        tp = sum(1 for p, r in zip(preds, refs) if p == label_id and r == label_id)
+        fp = sum(1 for p, r in zip(preds, refs) if p == label_id and r != label_id)
+        fn = sum(1 for p, r in zip(preds, refs) if p != label_id and r == label_id)
+        precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
+        recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+        f1 = (
+            2 * precision * recall / (precision + recall)
+            if (precision + recall) > 0
+            else 0.0
+        )
+        per_class[label_name] = {
+            "precision": round(precision, 4),
+            "recall": round(recall, 4),
+            "f1": round(f1, 4),
+        }
+    macro_f1 = sum(v["f1"] for v in per_class.values()) / len(per_class)
+    return {
+        "accuracy": round(accuracy, 4),
+        "macro_f1": round(macro_f1, 4),
+        "per_class": per_class,
+    }
+
+
+def _write_json(path: Path, data: object) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
 def _write_model_card(
     path: Path,
     architecture: str,
@@ -54,18 +100,19 @@ def _write_model_card(
     metrics: dict | None,
     timestamp: str,
 ) -> None:
-    card = {
-        "architecture": architecture,
-        "hyperparameters": hyperparams,
-        "data_hash": data_hash,
-        "split_counts": split_counts,
-        "metrics": metrics,
-        "labels": LABELS,
-        "label2id": LABEL2ID,
-        "timestamp": timestamp,
-    }
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(card, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    _write_json(
+        path,
+        {
+            "architecture": architecture,
+            "data_hash": data_hash,
+            "hyperparameters": hyperparams,
+            "label2id": LABEL2ID,
+            "labels": LABELS,
+            "metrics": metrics,
+            "split_counts": split_counts,
+            "timestamp": timestamp,
+        },
+    )
 
 
 def parse_args() -> argparse.Namespace:
@@ -76,9 +123,7 @@ def parse_args() -> argparse.Namespace:
         help="Smoke test: prajjwal1/bert-tiny, 2 steps, CPU only.",
     )
     p.add_argument(
-        "--model",
-        default=None,
-        help="HuggingFace model name (overrides default).",
+        "--model", default=None, help="HuggingFace model name (overrides default)."
     )
     p.add_argument("--epochs", type=int, default=3)
     p.add_argument("--batch-size", type=int, default=16)
@@ -106,34 +151,41 @@ def main() -> int:
             return 1
 
     try:
-        from datasets import Dataset
+        import torch
+        from torch.optim import AdamW
+        from torch.utils.data import DataLoader
+        from torch.utils.data import Dataset as TorchDataset
         from transformers import (
             AutoModelForSequenceClassification,
             AutoTokenizer,
-            Trainer,
-            TrainingArguments,
+            BertForSequenceClassification,
+            BertTokenizerFast,
         )
     except ImportError as exc:
         print(
-            f"ERROR: ML deps missing. Run: uv sync --extra ml\n{exc}",
+            f"ERROR: ML deps missing. Install torch + transformers.\n{exc}",
             file=sys.stderr,
         )
         return 1
 
-    model_name = args.model or (SMOKE_MODEL if args.smoke else FULL_MODEL)
-    run_name = "smoke" if args.smoke else "full"
-    output_dir = args.output_dir / run_name
-    output_dir.mkdir(parents=True, exist_ok=True)
+    # ── dataset ───────────────────────────────────────────────────────────────
 
-    import importlib.util as _ilu
+    class IssueDataset(TorchDataset):  # type: ignore[type-arg]
+        def __init__(self, encodings: dict, labels: list[int]) -> None:
+            self._enc = {k: torch.tensor(v) for k, v in encodings.items()}
+            self._labels = torch.tensor(labels, dtype=torch.long)
 
-    _spec = _ilu.spec_from_file_location(
-        "text_preprocessing", Path(__file__).parent / "text_preprocessing.py"
-    )
-    _mod = _ilu.module_from_spec(_spec)  # type: ignore[arg-type]
-    _spec.loader.exec_module(_mod)  # type: ignore[union-attr]
-    preprocess_rows = _mod.preprocess_rows
+        def __len__(self) -> int:
+            return len(self._labels)
 
+        def __getitem__(self, idx: int) -> dict:
+            item = {k: v[idx] for k, v in self._enc.items()}
+            item["labels"] = self._labels[idx]
+            return item
+
+    # ── data loading ──────────────────────────────────────────────────────────
+
+    preprocess_rows = _load_preprocessor()
     train_rows = preprocess_rows(_read_csv(TRAIN_PATH), args.drop_mostly_non_ascii)
     val_rows = preprocess_rows(_read_csv(VAL_PATH), args.drop_mostly_non_ascii)
     test_rows = preprocess_rows(_read_csv(TEST_PATH), args.drop_mostly_non_ascii)
@@ -143,34 +195,49 @@ def main() -> int:
         val_rows = val_rows[:8]
         test_rows = test_rows[:8]
 
-    def _to_dataset(rows: list[dict]) -> Dataset:
-        texts = [
+    def _texts(rows: list[dict]) -> list[str]:
+        return [
             r.get("model_text") or f"{r.get('title', '')} {r.get('body', '')}".strip()
             for r in rows
         ]
-        label_ids = [LABEL2ID.get(r.get("final_label", ""), 0) for r in rows]
-        return Dataset.from_dict({"text": texts, "label": label_ids})
 
-    from transformers import BertTokenizerFast
+    def _label_ids(rows: list[dict]) -> list[int]:
+        return [LABEL2ID.get(r.get("final_label", ""), 0) for r in rows]
+
+    model_name = args.model or (SMOKE_MODEL if args.smoke else FULL_MODEL)
+    run_name = "smoke" if args.smoke else "full"
+    output_dir = args.output_dir / run_name
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     try:
         tokenizer = AutoTokenizer.from_pretrained(model_name)
     except (ValueError, OSError):
         tokenizer = BertTokenizerFast.from_pretrained(model_name)
 
-    def _tokenize(batch: dict) -> dict:
-        return tokenizer(
-            batch["text"],
-            truncation=True,
-            max_length=args.max_len,
-            padding="max_length",
+    def _encode(texts: list[str]) -> dict:
+        return dict(
+            tokenizer(
+                texts,
+                truncation=True,
+                max_length=args.max_len,
+                padding="max_length",
+            )
         )
 
-    train_ds = _to_dataset(train_rows).map(_tokenize, batched=True)
-    val_ds = _to_dataset(val_rows).map(_tokenize, batched=True)
-    test_ds = _to_dataset(test_rows).map(_tokenize, batched=True)
+    train_ds = IssueDataset(_encode(_texts(train_rows)), _label_ids(train_rows))
+    val_ds = IssueDataset(_encode(_texts(val_rows)), _label_ids(val_rows))
+    test_ds = IssueDataset(_encode(_texts(test_rows)), _label_ids(test_rows))
 
-    from transformers import BertForSequenceClassification
+    train_loader = DataLoader(train_ds, batch_size=args.batch_size, shuffle=True)
+    val_loader = DataLoader(val_ds, batch_size=args.batch_size)
+    test_loader = DataLoader(test_ds, batch_size=args.batch_size)
+
+    # ── model ─────────────────────────────────────────────────────────────────
+
+    device = torch.device(
+        "cuda" if torch.cuda.is_available() and not args.smoke else "cpu"
+    )
+    print(f"model={model_name}  smoke={args.smoke}  device={device}")
 
     try:
         model = AutoModelForSequenceClassification.from_pretrained(
@@ -188,68 +255,155 @@ def main() -> int:
             label2id=LABEL2ID,
             ignore_mismatched_sizes=True,
         )
+    model = model.to(device)
+
+    optimizer = AdamW(model.parameters(), lr=args.lr)
+
+    # ── smoke: 2 steps, CPU, no val ───────────────────────────────────────────
 
     if args.smoke:
-        training_args = TrainingArguments(
-            output_dir=str(output_dir / "checkpoints"),
-            max_steps=2,
-            per_device_train_batch_size=args.batch_size,
-            eval_strategy="no",
-            save_strategy="no",
-            report_to="none",
-            logging_steps=1,
-            use_cpu=True,
+        model.train()
+        for step, batch in enumerate(train_loader):
+            if step >= 2:
+                break
+            batch = {k: v.to(device) for k, v in batch.items()}
+            optimizer.zero_grad()
+            loss = model(**batch).loss
+            loss.backward()
+            optimizer.step()
+            print(f"  smoke step {step + 1}/2  loss={loss.item():.4f}")
+
+        model.save_pretrained(str(output_dir / "model"))
+        tokenizer.save_pretrained(str(output_dir / "model"))
+        _write_model_card(
+            output_dir / "model_card.json",
+            architecture=model_name,
+            hyperparams={
+                "batch_size": args.batch_size,
+                "epochs": 0,
+                "lr": args.lr,
+                "max_len": args.max_len,
+                "smoke": True,
+            },
+            data_hash=_sha256_prefix(TRAIN_PATH),
+            split_counts={
+                "train": len(train_rows),
+                "val": len(val_rows),
+                "test": len(test_rows),
+            },
+            metrics=None,
+            timestamp=datetime.now(tz=UTC).isoformat(),
         )
-    else:
-        training_args = TrainingArguments(
-            output_dir=str(output_dir / "checkpoints"),
-            num_train_epochs=args.epochs,
-            per_device_train_batch_size=args.batch_size,
-            per_device_eval_batch_size=args.batch_size,
-            learning_rate=args.lr,
-            eval_strategy="epoch",
-            save_strategy="epoch",
-            load_best_model_at_end=True,
-            metric_for_best_model="eval_loss",
-            report_to="none",
-            logging_steps=50,
+        print(f"smoke model saved: {output_dir / 'model'}")
+        return 0
+
+    # ── full training loop ────────────────────────────────────────────────────
+
+    def _evaluate(loader: DataLoader) -> dict:  # type: ignore[type-arg]
+        model.eval()
+        all_preds: list[int] = []
+        all_refs: list[int] = []
+        total_loss = 0.0
+        with torch.no_grad():
+            for batch in loader:
+                batch = {k: v.to(device) for k, v in batch.items()}
+                out = model(**batch)
+                total_loss += out.loss.item()
+                all_preds.extend(torch.argmax(out.logits, dim=-1).tolist())
+                all_refs.extend(batch["labels"].tolist())
+        m = _pure_metrics(all_preds, all_refs)
+        m["loss"] = round(total_loss / max(len(loader), 1), 4)
+        return m
+
+    best_val_macro_f1 = -1.0
+    best_state: dict | None = None
+    history: list[dict] = []
+
+    for epoch in range(1, args.epochs + 1):
+        model.train()
+        train_loss = 0.0
+        for batch in train_loader:
+            batch = {k: v.to(device) for k, v in batch.items()}
+            optimizer.zero_grad()
+            loss = model(**batch).loss
+            loss.backward()
+            optimizer.step()
+            train_loss += loss.item()
+
+        avg_train_loss = round(train_loss / max(len(train_loader), 1), 4)
+        val_m = _evaluate(val_loader)
+
+        print(
+            f"epoch {epoch}/{args.epochs}  train_loss={avg_train_loss}"
+            f"  val_loss={val_m['loss']}  val_macro_f1={val_m['macro_f1']}"
+            f"  val_acc={val_m['accuracy']}"
+        )
+        history.append(
+            {
+                "epoch": epoch,
+                "train_loss": avg_train_loss,
+                "val_accuracy": val_m["accuracy"],
+                "val_loss": val_m["loss"],
+                "val_macro_f1": val_m["macro_f1"],
+                "val_per_class": val_m["per_class"],
+            }
         )
 
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        train_dataset=train_ds,
-        eval_dataset=val_ds if not args.smoke else None,
-    )
+        if val_m["macro_f1"] > best_val_macro_f1:
+            best_val_macro_f1 = val_m["macro_f1"]
+            best_state = {k: v.cpu().clone() for k, v in model.state_dict().items()}
+            print(f"  ↑ new best val_macro_f1={best_val_macro_f1}")
 
-    import torch
+    # ── restore best, evaluate test ───────────────────────────────────────────
 
-    device = "cuda" if torch.cuda.is_available() and not args.smoke else "cpu"
-    print(f"model={model_name} smoke={args.smoke} device={device}")
-    trainer.train()
+    if best_state is not None:
+        model.load_state_dict(best_state)
 
-    metrics: dict | None = None
-    try:
-        test_results = trainer.evaluate(test_ds)
-        metrics = {
-            k: round(v, 4) if isinstance(v, float) else v
-            for k, v in test_results.items()
-        }
-    except Exception:  # noqa: BLE001
-        pass
+    test_m = _evaluate(test_loader)
+    print(f"\ntest accuracy:  {test_m['accuracy']}")
+    print(f"test macro_f1:  {test_m['macro_f1']}")
+    for cls, scores in test_m["per_class"].items():
+        print(
+            f"  {cls}: precision={scores['precision']}"
+            f"  recall={scores['recall']}  f1={scores['f1']}"
+        )
+
+    # ── save artifacts ────────────────────────────────────────────────────────
 
     model.save_pretrained(str(output_dir / "model"))
     tokenizer.save_pretrained(str(output_dir / "model"))
+
+    _write_json(
+        REPORTS_DIR / "transformer_training_history.json",
+        {
+            "best_val_macro_f1": best_val_macro_f1,
+            "epochs": args.epochs,
+            "history": history,
+            "model": model_name,
+            "run_name": run_name,
+        },
+    )
+
+    _write_json(
+        REPORTS_DIR / "transformer_eval.json",
+        {
+            "best_val_macro_f1": best_val_macro_f1,
+            "model": model_name,
+            "run_name": run_name,
+            "test_metrics": test_m,
+            "timestamp": datetime.now(tz=UTC).isoformat(),
+        },
+    )
 
     _write_model_card(
         output_dir / "model_card.json",
         architecture=model_name,
         hyperparams={
-            "epochs": args.epochs if not args.smoke else 1,
             "batch_size": args.batch_size,
+            "epochs": args.epochs,
             "lr": args.lr,
             "max_len": args.max_len,
-            "smoke": args.smoke,
+            "smoke": False,
         },
         data_hash=_sha256_prefix(TRAIN_PATH),
         split_counts={
@@ -257,14 +411,14 @@ def main() -> int:
             "val": len(val_rows),
             "test": len(test_rows),
         },
-        metrics=metrics,
+        metrics=test_m,
         timestamp=datetime.now(tz=UTC).isoformat(),
     )
 
     print(f"model saved: {output_dir / 'model'}")
-    print(f"model card: {output_dir / 'model_card.json'}")
-    if metrics:
-        print(f"test metrics: {metrics}")
+    print(f"model card:  {output_dir / 'model_card.json'}")
+    print(f"eval:        {REPORTS_DIR / 'transformer_eval.json'}")
+    print(f"history:     {REPORTS_DIR / 'transformer_training_history.json'}")
     return 0
 
 

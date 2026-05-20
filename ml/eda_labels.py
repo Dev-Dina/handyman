@@ -3,19 +3,15 @@ Label EDA for the fetched Kubernetes issues dataset.
 
 Run after ml/fetch_dataset.py:
     uv run python ml/eda_labels.py
+    uv run python ml/eda_labels.py --input data/raw/kubernetes_issues_augmented.jsonl --prefix kubernetes_augmented
 
-Reads:  data/raw/kubernetes_issues.jsonl
-Writes:
-    reports/kubernetes_label_eda.json
-    reports/kubernetes_label_counts.csv
-    reports/kubernetes_label_cooccurrence.csv
-    reports/kubernetes_multilabel_conflicts.csv
-    reports/kubernetes_class_balance_before_split.csv
-    reports/unlabeled_issues_sample.csv
+Reads:  --input  (default: data/raw/kubernetes_issues.jsonl)
+Writes: --reports-dir / --prefix_*.{json,csv}
 """
 
 from __future__ import annotations
 
+import argparse
 import csv
 import json
 import sys
@@ -23,8 +19,9 @@ from collections import Counter, defaultdict
 from itertools import combinations
 from pathlib import Path
 
-INPUT_PATH = Path("data/raw/kubernetes_issues.jsonl")
-REPORTS_DIR = Path("reports")
+_DEFAULT_INPUT = Path("data/raw/kubernetes_issues.jsonl")
+_DEFAULT_REPORTS_DIR = Path("reports")
+_DEFAULT_PREFIX = "kubernetes"
 
 TARGET_LABELS: dict[str, str] = {
     "kind/bug": "bug",
@@ -115,19 +112,50 @@ def _support_stats(unique_issues: list[dict], multi_class: list[dict]) -> dict:
     }
 
 
-def main() -> int:
-    if not INPUT_PATH.exists():
+def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Label EDA for a fetched GitHub issues JSONL dataset."
+    )
+    parser.add_argument(
+        "--input",
+        type=Path,
+        default=_DEFAULT_INPUT,
+        help="Path to the input JSONL file (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--reports-dir",
+        type=Path,
+        default=_DEFAULT_REPORTS_DIR,
+        dest="reports_dir",
+        help="Directory to write report files (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--prefix",
+        type=str,
+        default=_DEFAULT_PREFIX,
+        help="Filename prefix for all output files (default: %(default)s)",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = _parse_args(argv)
+    input_path: Path = args.input
+    reports_dir: Path = args.reports_dir
+    prefix: str = args.prefix
+
+    if not input_path.exists():
         print(
-            f"ERROR: {INPUT_PATH} not found. Run ml/fetch_dataset.py first.",
+            f"ERROR: {input_path} not found. Run ml/fetch_dataset.py first.",
             file=sys.stderr,
         )
         return 1
 
     issues = [
-        json.loads(line) for line in INPUT_PATH.open(encoding="utf-8") if line.strip()
+        json.loads(line) for line in input_path.open(encoding="utf-8") if line.strip()
     ]
-    REPORTS_DIR.mkdir(exist_ok=True)
-    (REPORTS_DIR / ".gitkeep").touch(exist_ok=True)
+    reports_dir.mkdir(exist_ok=True)
+    (reports_dir / ".gitkeep").touch(exist_ok=True)
 
     total_rows = len(issues)
 
@@ -231,7 +259,7 @@ def main() -> int:
             {"rank": i + 1, "label": lbl, "count": cnt}
             for i, (lbl, cnt) in enumerate(label_counts.most_common())
         ],
-        REPORTS_DIR / "kubernetes_label_counts.csv",
+        reports_dir / f"{prefix}_label_counts.csv",
         ["rank", "label", "count"],
     )
 
@@ -240,7 +268,7 @@ def main() -> int:
             {"label_a": a, "label_b": b, "count": cnt}
             for (a, b), cnt in cooccur.most_common(50)
         ],
-        REPORTS_DIR / "kubernetes_label_cooccurrence.csv",
+        reports_dir / f"{prefix}_label_cooccurrence.csv",
         ["label_a", "label_b", "count"],
     )
 
@@ -268,7 +296,7 @@ def main() -> int:
             }
             for i in multi_class
         ],
-        REPORTS_DIR / "kubernetes_multilabel_conflicts.csv",
+        reports_dir / f"{prefix}_multilabel_conflicts.csv",
         [
             "issue_number",
             "title",
@@ -291,7 +319,7 @@ def main() -> int:
             }
             for cls in _ALL_CLASSES
         ],
-        REPORTS_DIR / "kubernetes_class_balance_before_split.csv",
+        reports_dir / f"{prefix}_class_balance_before_split.csv",
         [
             "class",
             "count_after_resolution",
@@ -312,7 +340,7 @@ def main() -> int:
             }
             for i in unlabeled[:100]
         ],
-        REPORTS_DIR / "unlabeled_issues_sample.csv",
+        reports_dir / f"{prefix}_unlabeled_issues_sample.csv",
         ["issue_number", "title", "raw_labels", "created_at", "html_url"],
     )
 
@@ -357,7 +385,7 @@ def main() -> int:
         "proceed_to_split": proceed,
     }
 
-    (REPORTS_DIR / "kubernetes_label_eda.json").write_text(
+    (reports_dir / f"{prefix}_label_eda.json").write_text(
         json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
 
@@ -377,7 +405,7 @@ def main() -> int:
         f"to {all_dates[-1] if all_dates else 'N/A'}"
     )
     print(f"proceed_to_split: {proceed}")
-    print(f"reports saved to {REPORTS_DIR}/")
+    print(f"reports saved to {reports_dir}/ (prefix={prefix})")
     return 0
 
 

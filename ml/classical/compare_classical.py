@@ -56,9 +56,20 @@ def data_hash(paths: list[Path]) -> str:
     return digest.hexdigest()
 
 
-def rows_to_xy(rows: list[dict[str, Any]]) -> tuple[list[str], list[str]]:
+def rows_to_xy(
+    rows: list[dict[str, Any]], text_col: str = "model_text"
+) -> tuple[list[str], list[str]]:
+    def _text(row: dict[str, Any]) -> str:
+        if text_col and (v := row.get(text_col)):
+            return str(v)
+        if v := row.get("model_text"):
+            return str(v)
+        title = str(row.get("title") or "")
+        body = str(row.get("body") or "")
+        return f"{title} {body}".strip()
+
     return (
-        [str(row.get("model_text") or "") for row in rows],
+        [_text(row) for row in rows],
         [str(row.get("final_label") or "") for row in rows],
     )
 
@@ -257,6 +268,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--test", type=Path, default=TEST_PATH)
     parser.add_argument("--output-dir", type=Path, default=ARTIFACTS_DIR)
     parser.add_argument("--reports-dir", type=Path, default=REPORTS_DIR)
+    parser.add_argument(
+        "--text-column",
+        type=str,
+        default="model_text",
+        dest="text_column",
+        help="Column to use as classifier input text (default: model_text). "
+        "Falls back to model_text then title+body if column missing.",
+    )
     return parser.parse_args()
 
 
@@ -287,9 +306,9 @@ def main() -> int:
     validate_labels(val_rows, "val")
     validate_labels(test_rows, "test")
 
-    train_texts, train_labels = rows_to_xy(train_rows)
-    val_texts, val_labels = rows_to_xy(val_rows)
-    test_texts, test_labels = rows_to_xy(test_rows)
+    train_texts, train_labels = rows_to_xy(train_rows, args.text_column)
+    val_texts, val_labels = rows_to_xy(val_rows, args.text_column)
+    test_texts, test_labels = rows_to_xy(test_rows, args.text_column)
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
     args.reports_dir.mkdir(parents=True, exist_ok=True)

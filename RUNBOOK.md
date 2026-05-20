@@ -126,9 +126,37 @@ uv run python ml/finetune.py --smoke
 uv run python ml/finetune.py
 ```
 
-ML extras required for finetune:
+ML extras required for classical baseline (no Torch):
 ```bash
 uv sync --extra ml
+```
+
+## GPU training environment (local only — NOT Docker)
+
+> **Policy:**
+> - Main project env (`.venv`) and Docker builds contain **no Torch**.
+> - Do not run `uv sync --all-extras` — it will attempt to download `torch` (2.6 GB).
+> - Do not let agents run `uv sync`, `pip install`, or any package install commands.
+> - Transformer fine-tuning runs exclusively from `.venv-gpu` (CUDA, Windows-local).
+> - Docker builds never install Torch; all production inference uses the API or model_server.
+
+### Create `.venv-gpu` (one-time, Windows PowerShell with CUDA GPU)
+
+```powershell
+py -3.12 -m venv .venv-gpu
+.\.venv-gpu\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install torch --index-url https://download.pytorch.org/whl/cu128
+pip install transformers datasets accelerate scikit-learn pandas numpy joblib matplotlib
+python -c "import torch; print(torch.__version__); print(torch.cuda.is_available()); print(torch.version.cuda); print(torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU only')"
+```
+
+### Run transformer fine-tuning from `.venv-gpu`
+
+```powershell
+.\.venv-gpu\Scripts\Activate.ps1
+python ml/finetune.py --smoke
+python ml/finetune.py
 ```
 
 Vault token path for GitHub:
@@ -136,6 +164,52 @@ Vault token path for GitHub:
 - Token:    VAULT_TOKEN=dev-root-token
 - Path:     secret/github
 - Key:      token
+
+## Artifact layout
+
+### Official (do not modify)
+
+```
+data/
+  raw/kubernetes_issues.jsonl          official raw dataset
+  processed/                           OFFICIAL classifier splits (train/val/test) — LOCKED
+
+reports/
+  kubernetes_label_eda.json            official EDA
+  kubernetes_*.csv                     official EDA CSVs
+  split_report.json                    official split metadata
+  text_quality_report.json             text quality audit
+  classical/                           OFFICIAL classical baseline (LogisticRegression 0.694)
+  transformer_eval.json                transformer test metrics (after GPU run)
+  transformer_training_history.json    per-epoch training log (after GPU run)
+  figures/                             active figure output
+  official/figures/                    snapshot of official presentation figures
+  artifact_manifest.json               full path manifest
+```
+
+### Failed experiments (archived — do not use as training inputs)
+
+| Experiment | test_macro_f1 | Data | Reports |
+|---|---|---|---|
+| Support-only augmentation | 0.681 | `data/experiments/failed/support_augmented/` | `reports/experiments/failed/support_augmented/` |
+| Cleaned splits | 0.694 (no gain) | `data/experiments/failed/cleaned_splits/` | `reports/experiments/failed/cleaned_splits/` |
+| Strict text preprocessing | 0.638 | `data/experiments/failed/strict_text/` | `reports/experiments/failed/strict_text/` |
+
+Source scripts (`ml/create_strict_text_splits.py`, `ml/clean_processed_splits.py`) remain in `ml/` as documentation.
+
+### Archive
+
+```
+reports/archive/           legacy single-run reports (superseded)
+reports/archive_numpy/     numpy project archived reports
+data/archive_numpy/        numpy project archived data
+```
+
+**Rules:**
+- Never delete — move to `experiments/failed/` or `archive/` instead.
+- `data/processed/` is LOCKED. Do not replace it with any experiment output.
+- Transformer and LLM baselines must use `data/processed/` only.
+- `reports/figures/` is the live output folder; `reports/official/figures/` is a read-only snapshot.
 
 ## Useful checks
 

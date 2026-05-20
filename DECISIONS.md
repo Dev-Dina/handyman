@@ -91,7 +91,61 @@ Issues with no target label are:
 - Counted in `reports/label_eda.json` under `unlabeled_count`.
 
 ## Classical model
-TODO
+
+Best model: LogisticRegression (TF-IDF).
+val_macro_f1: 0.701875 — test_macro_f1: 0.693839.
+Artifacts: artifacts/classical/best_model.*
+
+## Support-only augmentation experiment (ablation — not adopted)
+
+**What was tried:**
+Fetched additional `kind/support` issues via `--supplement-label kind/support` to address the 405 issues lost to multi-label conflict resolution.
+Resulted in `data/raw/kubernetes_issues_augmented.jsonl` (4 304 unique issues) and splits in `data/processed_augmented/`.
+
+**Results:**
+
+| Metric | Original split | Augmented split |
+|---|---|---|
+| Val macro-F1 | — | 0.840244 |
+| Test macro-F1 | 0.693839 | 0.680766 |
+| Question test F1 | — | 0.272727 |
+
+**Decision: do not adopt.**
+The augmented split improved validation macro-F1 but degraded test macro-F1 and left the question class weak (test F1 0.272727). The gap between val and test F1 (0.84 → 0.68) signals overfitting to the augmented distribution. The original balanced split (420/class train, 90/class val/test) remains the official classifier dataset.
+
+**Official dataset:**
+- `data/processed/train.csv` — 1 680 rows, 420/class
+- `data/processed/val.csv` — 360 rows, 90/class
+- `data/processed/test.csv` — 360 rows, 90/class
+
+Augmented data and splits archived under `data/experiments/failed/support_augmented/` and `reports/experiments/failed/support_augmented/`.
+
+## Classifier dataset — final decision (LOCKED)
+
+**Official dataset:** `data/processed/` — 420/class train, 90/class val/test. Locked.
+
+Three alternative preprocessing/data strategies were evaluated and rejected:
+
+| Experiment | test_macro_f1 | vs baseline | Decision |
+|---|---|---|---|
+| Original (baseline) | 0.693839 | — | **OFFICIAL** |
+| Support-only augmentation | 0.680766 | -0.013 | Rejected — val/test gap, weak question F1 |
+| Cleaned splits (processed_cleaned) | 0.693839 | 0.000 | Rejected — no improvement |
+| Strict text preprocessing | 0.637926 | -0.056 | Rejected — worse across all models |
+
+**Ruling:** Original balanced split with default `model_text` preprocessing is the official classifier dataset. All experiments archived under `data/experiments/failed/` and `reports/experiments/failed/`.
+
+Transformer and LLM baselines must use `data/processed/` only.
+
+## Failed experiment archive locations
+
+| Experiment | Data | Reports |
+|---|---|---|
+| Support-only augmentation | `data/experiments/failed/support_augmented/` | `reports/experiments/failed/support_augmented/` |
+| Cleaned splits | `data/experiments/failed/cleaned_splits/` | `reports/experiments/failed/cleaned_splits/` |
+| Strict text | `data/experiments/failed/strict_text/` | `reports/experiments/failed/strict_text/` |
+
+Source scripts remain in `ml/` as documentation (do not delete).
 
 ## Fine-tuned transformer
 

@@ -128,9 +128,11 @@ Failed experiments archived: `data/experiments/failed/` + `reports/experiments/f
 - [x] Three-way comparison — reports/classifier_three_way_comparison.json/csv + figures 15-18
 - [x] Final deployment decision — CodeBERT primary, LogisticRegression fallback
 - [x] Classification golden set candidates — evals/golden/classification_golden_candidates.csv (48 rows, 12/class; pending manual curation)
+- [x] Classification golden set curated — evals/golden/classification_golden_curated.csv (25 rows, gold_label + curator_notes filled)
 - [x] Tools API architecture — schemas, routes, infra scaffold (app/api/schemas/, app/api/routes/, app/infra/ollama_client.py)
 - [x] NER endpoint — POST /api/v1/tools/entities LIVE; calls extract_entities_service
 - [x] Summarization endpoint — POST /api/v1/tools/summarize LIVE; Problem/Expected/Evidence/Component prompt via OllamaClient; 503 on unavailable
+- [x] Tools API smoke check — POST /entities verified (entities_by_type + total_count); POST /summarize verified (summary + model=llama3:latest + latency_seconds=18.39)
 
 ### Official classifier dataset
 
@@ -168,9 +170,9 @@ data/experiments/failed/strict_text/         strict preprocessing — rejected, 
 none
 
 ## Next 3 tasks
-1. Manually curate evals/golden/classification_golden_candidates.csv into evals/golden/classification_golden.jsonl (25 issues, fill gold_label)
-2. Manually curate evals/golden/classification_golden_candidates.csv into classification_golden.jsonl
-3. Smoke test tools API endpoints against running docker compose stack
+1. Convert evals/golden/classification_golden_curated.csv into evals/golden/classification_golden.jsonl (25 rows, JSONL format)
+2. Wire classifier inference endpoint (POST /api/v1/tools/classify) using CodeBERT artifact
+3. Integrate tools endpoints into chatbot as callable tool calls
 
 ## Commands
 ```bash

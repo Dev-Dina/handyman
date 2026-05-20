@@ -295,17 +295,17 @@ Endpoint contracts defined. Both endpoints LIVE.
 
 | Endpoint | Method | Status |
 |---|---|---|
-| `/api/v1/tools/entities` | POST | LIVE — deterministic rule-based NER, no model |
-| `/api/v1/tools/summarize` | POST | LIVE — Ollama local LLM; 503 if unreachable |
+| `/api/v1/tools/entities` | POST | LIVE — deterministic rule-based NER, no model — smoke tested |
+| `/api/v1/tools/summarize` | POST | LIVE — Ollama local LLM; 503 if unreachable — smoke tested (~18s latency) |
 
 **Layer map:**
 
 ```
 app/api/schemas/tools.py          EntityExtract/Summarize Request+Response
 app/api/routes/tools.py           HTTP-only router; maps domain errors → HTTP codes
-app/services/tools/__init__.py    extract_entities_service, summarize_service (stub)
+app/services/tools/__init__.py    extract_entities_service, summarize_service
 app/services/tools/entity_extractor.py  rule-based NER (existing)
-app/infra/ollama_client.py        OllamaClient — async httpx scaffold for future summarize
+app/infra/ollama_client.py        OllamaClient — async httpx client (llama3:latest)
 app/domain/errors.py              ToolInputError, OllamaUnavailableError (new)
 ```
 
@@ -316,7 +316,8 @@ app/domain/errors.py              ToolInputError, OllamaUnavailableError (new)
 - [x] Run Ollama LLM baseline — DONE (llama3_full, macro_f1=0.5554)
 - [x] Three-way comparison table + figures (15-18) — DONE
 - [x] Final deployment decision — DONE (CodeBERT primary, LogisticRegression fallback)
-- [x] NER endpoint — LIVE at POST /api/v1/tools/entities
+- [x] NER endpoint — LIVE at POST /api/v1/tools/entities — smoke tested
 - [x] Tools API architecture — schemas, routes, infra scaffold in place
+- [x] Summarization endpoint — LIVE; Problem/Expected/Evidence/Component; 503 on Ollama unavailable — smoke tested (~18s latency)
+- [x] Tools API smoke check — both endpoints manually verified end-to-end
 - [ ] Classification golden set — candidates generated; manually curate 25 into `classification_golden.jsonl`
-- [x] Summarization endpoint — LIVE; Problem/Expected/Evidence/Component; 503 on Ollama unavailable

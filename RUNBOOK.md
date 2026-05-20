@@ -318,6 +318,28 @@ Expected response shape:
 }
 ```
 
+### Manual smoke check (no docker required)
+
+```bash
+# Verify app imports and start uvicorn
+uv run python -c "from app.main import app; print(app.title)"
+uv run uvicorn app.main:app --port 8000
+
+# In a second terminal — NER (no Ollama needed)
+curl -s -X POST http://localhost:8000/api/v1/tools/entities \
+  -H "Content-Type: application/json" \
+  -d '{"text": "kubectl get pods fails with ImagePullBackOff on v1.29.0"}' \
+  | python -m json.tool
+
+# Summarize (requires: ollama serve + ollama pull llama3:latest in a separate terminal)
+curl -s -X POST http://localhost:8000/api/v1/tools/summarize \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Pod crashlooping due to OOM on node after v1.29.0 upgrade. kubectl describe pod shows OOMKilled. Expected: pod restarts gracefully. Memory limit is 512Mi.", "max_chars": 400}' \
+  | python -m json.tool
+```
+
+Both endpoints verified 2026-05-20: entities returns `entities_by_type + total_count`; summarize returns `summary + model=llama3:latest + latency_seconds≈18`.
+
 ### Architecture
 
 ```

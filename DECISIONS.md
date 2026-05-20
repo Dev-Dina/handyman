@@ -176,11 +176,43 @@ No frozen encoder layers. Full fine-tuning used.
 - Partial freezing was not adopted because there was no overfitting signal requiring it.
 
 ## LLM baseline
-TODO
+
+**Model:** llama3:latest (Ollama local)  
+**Approach:** Zero-shot classification via structured JSON prompt. No fine-tuning. No API key.  
+**Run:** llama3_full — 360 test rows, temperature 0.0, max_chars 6000.
+
+| Metric | Value |
+|---|---|
+| accuracy | 0.585 |
+| macro_f1 | 0.5554 |
+| question_f1 | 0.2385 |
+| avg latency | 24.9 s/sample |
+| total time | ~2.5 hours |
+
+**Finding:** Zero-shot macro-F1 (0.555) is 0.139 below fine-tuned CodeBERT and 0.138 below classical TF-IDF baseline. The model over-predicts `bug` (recall 0.956, precision 0.432) and fails on `question` (F1 0.239). Despite zero cost and no training, zero-shot LLM is not competitive with even a simple TF-IDF classifier on this domain.
+
+Artifacts: `reports/llm/llama3_full/`
 
 ## Deployment model choice
-TODO — deferred until LLM baseline and three-way comparison complete.  
-Current draft: microsoft/codebert-base (test_macro_f1=0.7061).
+
+**Decision: FINAL**
+
+| Track | Model | test_macro_f1 | test_accuracy | deployment |
+|---|---|---|---|---|
+| Classical | LogisticRegression (TF-IDF) | 0.6938 | 0.7139 | operational fallback |
+| **Transformer** | **microsoft/codebert-base** | **0.7061** | **0.7500** | **PRIMARY** |
+| LLM zero-shot | llama3:latest | 0.5554 | 0.5850 | not selected |
+
+**Primary:** microsoft/codebert-base  
+Artifact: `artifacts/transformer/codebert_base_e3_len384/`  
+Rationale: Highest test macro-F1 and accuracy. Pre-training on code-related corpora fits kubernetes issues (YAML, commands, logs, paths, versions). Full fine-tune with no overfitting signal.
+
+**Operational fallback:** LogisticRegression (TF-IDF)  
+Artifact: `artifacts/classical/best_model.joblib`  
+Rationale: Only 0.012 below CodeBERT on macro-F1. No GPU required. ~110 000× faster per-sample inference (0.22 ms vs 24.9 s/sample for Ollama; GPU inference for CodeBERT not measured but expected to be <10 ms). Useful if GPU is unavailable or latency budget is tight.
+
+**LLM not selected:**  
+Lowest macro-F1 (0.5554) and slowest inference (24.9 s/sample). Unsuitable for production classification at this accuracy level without few-shot examples or fine-tuning.
 
 ## Embedding model comparison
 TODO

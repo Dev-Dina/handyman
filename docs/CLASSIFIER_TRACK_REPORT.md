@@ -12,11 +12,12 @@ Four-class issue classifier (bug / docs / feature / question) for `kubernetes/ku
 |---|---|---|---|---|
 | Classical baseline | LogisticRegression (TF-IDF) | **0.6938** | 0.7139 | LOCKED |
 | Transformer — best | microsoft/codebert-base | **0.7061** | 0.7500 | LOCKED |
-| LLM baseline | llama3:latest (Ollama) | pending | pending | run in progress |
+| LLM baseline | llama3:latest (Ollama) | **0.5554** | 0.5850 | LOCKED |
 
-**Current deployment draft:** microsoft/codebert-base (full fine-tune, 3 epochs).  
-Beats classical baseline by +0.012 macro-F1 on held-out test set.  
-**Final decision deferred** until LLM baseline result is recorded.
+**Final deployment decision: microsoft/codebert-base** (full fine-tune, 3 epochs).  
+Beats classical baseline by +0.012 macro-F1. Beats LLM zero-shot by +0.151 macro-F1.  
+Operational fallback: LogisticRegression (TF-IDF) — close F1, no GPU required.  
+Three-way comparison: `reports/classifier_three_way_comparison.json/csv`.
 
 ---
 
@@ -161,19 +162,20 @@ Defense:
 
 ---
 
-## 12. Current Deployment Choice (Draft)
+## 12. Final Deployment Decision
 
 | Attribute | Value |
 |---|---|
 | Model | microsoft/codebert-base |
 | Artifact | `artifacts/transformer/codebert_base_e3_len384/` |
 | Labels | bug / docs / feature / question |
-| Input | `model_text` (title + body, URL/<USER> normalized) |
+| Input | `model_text` (title + body, URL/`<USER>` normalized) |
 | Max length | 384 tokens |
 | Inference | `AutoModelForSequenceClassification` via transformers |
 | Serving | model_server container (no Torch in main app) |
+| Operational fallback | LogisticRegression (TF-IDF) — `artifacts/classical/best_model.joblib` |
 
-**Final deployment decision deferred** until after LLM baseline and three-way comparison.
+**Decision: FINAL.** CodeBERT has the best held-out test macro-F1 (0.7061) and accuracy (0.7500) across all three tracks. LogisticRegression is retained as operational fallback — only 0.012 lower macro-F1, no GPU required, ~110 000× faster per-sample inference.
 
 ---
 
@@ -195,18 +197,41 @@ Earlier EDA and classical figures: `reports/official/figures/01–09_*.png`
 
 ## 14. LLM Baseline (Ollama local)
 
-**Status: script ready, run pending.**
+**Status: COMPLETE — llama3_full**
 
 Script: `ml/llm_baseline.py`  
 Prompt: `prompts/llm_baseline_classifier.md`  
 Provider: Ollama local HTTP API (no API key, no Vault)  
-Default model: `llama3:latest`
+Model: `llama3:latest`  
+Run: `llama3_full` (360 test rows, zero-shot, temperature 0.0)
 
-Outputs:
-- `reports/llm/<run_name>/llm_eval.json`
-- `reports/llm/<run_name>/llm_predictions.csv`
-- `reports/llm/<run_name>/llm_raw_responses.jsonl`
-- `reports/llm/llm_runs_summary.csv`
+### Results
+
+| Metric | Value |
+|---|---|
+| accuracy | 0.5850 |
+| macro_f1 | **0.5554** |
+| weighted_f1 | 0.5549 |
+| valid_predictions | 359 / 360 |
+| avg_latency | 24.9 s/sample |
+| total_time | ~2.5 hours |
+| cost | $0 |
+
+Per-class F1:
+
+| Class | Precision | Recall | F1 |
+|---|---|---|---|
+| bug | 0.432 | 0.956 | **0.595** |
+| docs | 0.818 | 0.607 | 0.697 |
+| feature | 0.760 | 0.633 | 0.691 |
+| question | 0.684 | 0.144 | **0.239** |
+
+Notes:
+- `bug` has very high recall (0.956) but low precision — model over-predicts bug.
+- `question` has the worst F1 (0.239), consistent with all three tracks.
+- Zero-shot macro-F1 (0.555) is 0.139 below fine-tuned CodeBERT and 0.138 below classical baseline.
+
+Artifacts: `reports/llm/llama3_full/`
 
 ```powershell
 # Smoke run (10 rows)
@@ -219,15 +244,56 @@ uv run python ml/llm_baseline.py --run-name llama3_full
 uv run python ml/llm_baseline.py --run-name llama3_full --resume
 ```
 
-Results will be added here after the run completes.
+---
+
+## 15. Three-Way Comparison
+
+| Track | Model | test_macro_f1 | test_accuracy | question_f1 | deployment |
+|---|---|---|---|---|---|
+| Classical | LogisticRegression (TF-IDF) | 0.6938 | 0.7139 | 0.355 | fallback |
+| **Transformer** | **microsoft/codebert-base** | **0.7061** | **0.7500** | 0.291 | **PRIMARY** |
+| LLM zero-shot | llama3:latest (Ollama) | 0.5554 | 0.5850 | 0.239 | not selected |
+
+Artifacts: `reports/classifier_three_way_comparison.json`, `reports/classifier_three_way_comparison.csv`  
+Figures: `reports/official/figures/15–18_three_way_*.png`
+
+Script: `ml/make_three_way_classifier_comparison.py`
 
 ---
 
-## 15. Remaining Tasks
+## 16. Classification Golden Set
 
-- [ ] Run Ollama LLM baseline (ollama serve + uv run python ml/llm_baseline.py)
-- [ ] Three-way comparison table (classical 0.694 / CodeBERT 0.706 / LLM ?)
-- [ ] Classification golden set — manually verified labels for presentation
-- [ ] NER endpoint — entity extractor wired to API (`app/services/tools/entity_extractor.py` exists)
+**Status: candidates generated, curation pending.**
+
+A 25-issue hand-curated golden set for spot-checking and presentation demos.
+Separate from the official test split (`data/processed/test.csv`).
+
+| File | Status |
+|---|---|
+| `evals/golden/classification_golden_candidates.csv` | 48 candidates (12/class) — needs curation |
+| `evals/golden/classification_golden.jsonl` | not yet created — final 25 after curation |
+| `evals/golden/README.md` | curation instructions |
+
+Script: `ml/create_classification_golden_candidates.py`
+
+Candidate pool: sourced from `data/raw/kubernetes_issues.jsonl`, excluding all 2400 issue_numbers in the official splits.
+
+| Class | Candidates available | Selected for review |
+|---|---|---|
+| bug | 797 | 12 |
+| feature | 388 | 12 |
+| docs | 306 | 12 |
+| question | 19 | 12 |
+
+**Next step:** open `evals/golden/classification_golden_candidates.csv`, fill `gold_label` for 25 issues, save as `classification_golden.jsonl`.
+
+---
+
+## 17. Remaining Tasks
+
+- [x] Run Ollama LLM baseline — DONE (llama3_full, macro_f1=0.5554)
+- [x] Three-way comparison table + figures (15-18) — DONE
+- [x] Final deployment decision — DONE (CodeBERT primary, LogisticRegression fallback)
+- [ ] Classification golden set — candidates generated; manually curate 25 into `classification_golden.jsonl`
+- [ ] NER endpoint — `app/services/tools/entity_extractor.py` exists, wire to API
 - [ ] Summarization endpoint
-- [ ] Final deployment decision after three-way comparison

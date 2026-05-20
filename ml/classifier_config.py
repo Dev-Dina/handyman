@@ -40,6 +40,7 @@ OFFICIAL_FIGURES_DIR = Path("reports/official/figures")
 
 CLASSICAL_TEST_MACRO_F1: float = 0.693839  # LogisticRegression, TF-IDF
 CODEBERT_TEST_MACRO_F1: float = 0.7061  # microsoft/codebert-base, 3 epochs
+LLM_LLAMA3_TEST_MACRO_F1: float = 0.5554  # llama3:latest zero-shot via Ollama
 
 # ── Ollama / LLM baseline defaults ───────────────────────────────────────────
 

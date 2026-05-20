@@ -129,9 +129,14 @@ uv run python ml/classical/compare_classical.py
 #    Writes reports/llm/<run_name>/
 uv run python ml/llm_baseline.py --run-name llama3_full
 
-# 10. Generate classifier presentation figures
+# 10. Generate classifier presentation figures (10-14)
 #     Writes reports/official/figures/10-14_*.png
 uv run python ml/make_classifier_figures.py
+
+# 11. Generate three-way comparison figures and artifacts (after LLM baseline)
+#     Writes reports/classifier_three_way_comparison.json/csv
+#     Writes reports/official/figures/15-18_*.png
+uv run python ml/make_three_way_classifier_comparison.py
 ```
 
 ML extras required for classical baseline (no Torch):
@@ -162,9 +167,11 @@ python -c "import torch; print(torch.__version__); print(torch.cuda.is_available
 ### Run transformer fine-tuning from `.venv-gpu`
 
 ```powershell
-.\.venv-gpu\Scripts\Activate.ps1
-python ml/finetune.py --smoke
-python ml/finetune.py
+# Smoke test
+.\.venv-gpu\Scripts\python.exe ml\finetune.py --smoke
+
+# Full run with explicit run name (example: codebert-base, 3 epochs)
+.\.venv-gpu\Scripts\python.exe ml\finetune.py --model microsoft/codebert-base --run-name codebert_base_e3_len384 --epochs 3 --batch-size 4 --max-len 384
 ```
 
 Vault token path for GitHub:

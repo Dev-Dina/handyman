@@ -1,0 +1,1115 @@
+issue_number,title,body_preview,raw_labels,suggested_label,gold_label,curator_notes,created_at,closed_at,html_url
+128103,Pod status not getting updated to Failed when pod is hard-evicted by Kubelet,"### What happened?
+
+We have some pods that have a termination grace period of 3600sec. When such a pod gets evicted by the kubelet due to ephemeral storage shortage, the sequence of steps that we expect would happen is:
+
+1. kubelet updates pod status to `Failed`
+2. kubelet instructs container runtime to terminate containers without any grace period
+3. a `DELETE` for that pod is issued to the apiserver
+
+However, we don't see (1) happen. The pod status remains `Running` until step (3). This issue is further exacerbated by the fact that our version of kube is afflicted by #115819 wherein the termination grace-period of containers is respected, even though it isn't supposed to be.
+
+As a result of this, what ends up happening is:
+1. The pod's containers get `SIGTERM` (pod status remains `Running`)
+2. Containers take 3600s to shutdown
+3. Pod gets deleted from apiserver
+
+This means there is a 1hr window where the pod is available as an 'endpoint' even though the containers have received SIGTERM (and are no longer accepting new connections) until the pod is deleted from the apiserver.
+
+---
+
+Events from the pod when it gets evicted:
+```
+ Warning  Evicted              3m…",kind/bug; sig/node; needs-triage,bug,,,2024-10-15T19:43:53Z,2024-10-16T17:34:35Z,https://github.com/kubernetes/kubernetes/issues/128103
+128832,"Conflicting topologySpreadConstraints, podManagementPolicy: OrderedReady  and PVCs can lead to unschedulable pods in StatefulSets","### What happened?
+
+I honestly don't know if this is a real bug or not, since it seems like the configuration conflicts with itself. I thought I'd file a bug and see what sig-scheduling says, since the behaviour isn't obvious to the user until the situation occurs.
+
+With a StatefulSet it's possible to end up in a situation (after an outage) where some of these Pods are unable to schedule, if the StatefulSet has the following rules:
+1. 5 replicas
+2. A volumeClaimTemplates
+3. Across 3 zones
+4. `podManagementPolicy: OrderedReady`
+5. A topologySpreadConstraints matching `topologyKey: topology.kubernetes.io/zone` with `maxSkew: 1`
+
+Example StatefulSet below.
+
+When deploying a StatefulSet with this configuration, if 2 Pods are lost, one in the single-pod-zone and another Pod with a lower number, then the StatefulSet is stuck can't replace those Pods due to a conflict of scheduling rules.
+
+Let me try explain with some diagrams.
+
+---
+
+After applying the example StatefulSet, the Pods land in a configuration as such:
+![image](<URL>
+(Note, each Pod also has a related PVC with it)
+
+This makes sense with all the rules configured and all Pods are healthy.
+
+When `pod-1` and…",kind/bug; sig/scheduling; lifecycle/rotten; needs-triage,bug,,,2024-11-18T11:09:30Z,2025-12-26T11:17:16Z,https://github.com/kubernetes/kubernetes/issues/128832
+129453,"can MountPath contain  "":"" ?","### What happened?
+
+<URL>
+```
+	RecursiveReadOnly *RecursiveReadOnlyMode
+	// Required. If the path is not an absolute path (e.g. some/path) it
+	// will be prepended with the appropriate root prefix for the operating
+	// system.  On Linux this is '/', on Windows this is 'C:\'.
+	MountPath string
+```
+but
+<URL>
+```
+	// Path within the container at which the volume should be mounted.  Must
+	// not contain ':'.
+	MountPath string `json:""mountPath"" protobuf:""bytes,3,opt,name=mountPath""`
+```
+some people use mountpath:/etc/localtime:ro (k8s should use readonly:true)  will not work on containerd but work on docker.
+
+### What did you expect to happen?
+
+mountPath  can't contain  "":"" 
+
+### How can we reproduce it (as minimally and precisely as possible)?
+
+set mountpath:/etc/localtime:ro 
+
+### Anything else we need to know?
+
+_No response_
+
+### Kubernetes version
+
+any
+
+### Cloud provider
+
+no 
+
+### OS version
+
+<details>
+
+```console
+# On Linux:
+$ cat /etc/os-release
+# paste output here
+$ uname -a
+# paste output here
+
+# On Windows:
+C:\> wmic os get Caption, Version, BuildNumber, OSArchitecture
+# paste output here
+```
+
+</details>
+
+
+### Install t…",kind/bug; priority/backlog; sig/storage; sig/node; sig/windows; triage/accepted,bug,,,2025-01-02T11:40:10Z,2026-05-04T18:14:41Z,https://github.com/kubernetes/kubernetes/issues/129453
+130271,Kubelet's e2e tests need a new mechanism for private image pull tests,"### What happened?
+
+Current private image pull e2e tests for kubelet rely on hardcoded credentials to a public repo that is getting decommissioned as a part of <URL> These tests will permafail once that happens.
+
+### What did you expect to happen?
+
+The tests should be written in such a way that they don't depend on external infrastructure. A possible solution might be to stand up an in-cluster registry and populate it with the necessary images.
+
+### How can we reproduce it (as minimally and precisely as possible)?
+
+Wait for <URL> to finish and try running some of the tests that rely on the secret from <URL> like the `ImageCredentialProvider` tests.
+
+**Node conformance** test `[sig-node] Container Runtime blackbox test when running a container with a new image should be able to pull from private registry with secret [NodeConformance]` is among those that will be affected.
+
+### Anything else we need to know?
+
+Raised by <USER> in a couple places, like <URL>
+
+### Kubernetes version
+
+<details>
+all supported
+</details>
+
+### Cloud provider
+
+<details>
+irrelevant
+</details>
+
+### OS version
+
+<details>
+
+```console
+--
+```
+
+</details>
+
+### Install tools
+
+<details>
+
+</details>
+
+### Container run…",kind/bug; area/test; priority/important-soon; sig/node; kind/failing-test; triage/accepted,bug,,,2025-02-19T13:13:19Z,2025-10-30T14:48:08Z,https://github.com/kubernetes/kubernetes/issues/130271
+131171,DaemonSets should be scheduled before Deployments on new Nodes,"### What happened?
+
+We're trying to reduce AWS EC2 costs by reducing the number of nodes to 0 automatically during times the enter cluster is not needed using an autoscaling_schedule (see e.g. <URL> We have observed that, when a single node is started after no nodes at all have been available, the kube-scheduler may start a large number of Deployments on that node, leaving insufficient resources (in our case memory) for the pods of all DaemonSets to be started on that node. That situation was not rectified automatically after adding more nodes to the cluster, instead, I had to cordon the server and terminate some pods on the first node for them to be moved to another node.
+
+It would be preferable if resources for DaemonSets were reserved before Workloads that are not tied to nodes (Deployments, ReplicaSets, ...) are scheduled.
+
+### What did you expect to happen?
+
+Resources for DaemonSets were reserved before Workloads that are not tied to nodes (Deployments, ReplicaSets, ...) are scheduled.
+
+### How can we reproduce it (as minimally and precisely as possible)?
+
+1. configure a cluster with 0 worker nodes
+2. create daemonset that use a significant amount of resources
+3. create Deploy…",kind/bug; sig/scheduling; lifecycle/rotten; needs-triage,bug,,,2025-04-04T15:02:46Z,2026-04-11T06:33:29Z,https://github.com/kubernetes/kubernetes/issues/131171
+131866,[ServiceCIDR] - Automatic allocation of second/additional range not occurring,"### What happened?
+
+Having added an additional ServiceCIDR range to my AKS instance, and having exhausted my original range, new services are failing to be created 
+""Error from server (InternalError): error when creating ""STDIN"": Internal error occurred: failed to allocate a serviceIP: range is full""
+The new secondary/additional range is not being used to allocate IPs. 
+
+If I add a clusterIP from the new range and manually deploy a service, this succeeds and works fine, proving the range itself is valid and recognised as such. But the automatic element of the system doing this does not appear to be occuring. 
+
+### What did you expect to happen?
+
+For IP allocation to services to be fairly randomised between the available ranges. Or at a bear minimum, for the original range to be used until exhausted, and then the secondary/additional ranges to be picked up and used onwards. 
+
+### How can we reproduce it (as minimally and precisely as possible)?
+
+AKS 1.33 (preview) cluster. Add additional Service-CIDR. Depending on your original CIDR range size, create dummy services to essentially exhaust all of the original range IPs. 
+Something like (change values to suit):
+
+for i in $(seq 1 200);…",kind/bug; sig/network; needs-triage,bug,,,2025-05-20T14:01:46Z,2025-05-21T10:02:47Z,https://github.com/kubernetes/kubernetes/issues/131866
+132660,Kubelet continuously tries to reconnect to DRA plugin socket that no longer exists,"### What happened?
+
+I installed an intentionally poorly-written DRA driver implementing [seamless upgrades](<URL> whose kubelet plugin performs no cleanup of its registration and DRA sockets when it shuts down.
+
+After running `kubectl rollout restart daemonset` to create a new pod, new registration and DRA sockets are created but the old ones remain seemingly indefinitely (#128696).
+
+Separate from that issue, even if I manually `rm` either only the DRA socket or both the DRA and registration sockets on the node directly, kubelet still seems to try to be reaching the DRA sockets for old pods. I see the following logs like this start almost immediately, then exponentially back off for about 30m until they stop.
+
+```
+Jul 01 16:40:16 dra-example-driver-cluster-worker kubelet[1974]: W0701 16:40:16.920794    1974 logging.go:55] [core] [Channel #17 SubChannel #18]grpc: addrConn.createTransport failed to connect to {Addr: ""/var/lib/kubelet/plugins/gpu.example.com/dra-dc56a2e0-058b-455e-9da5-82a4a9d8c372.sock"", ServerName: ""localhost"", Attributes: {""<%!p(networktype.keyType=grpc.internal.transport.networktype)>"": ""unix"" }, BalancerAttributes: {""<%!p(pickfirstleaf.managedByPickfirstKeyType={…",kind/bug; triage/accepted; wg/device-management,bug,,,2025-07-01T18:36:13Z,2025-08-06T15:55:52Z,https://github.com/kubernetes/kubernetes/issues/132660
+133474,Frequent churn between EndpointSlice objects,"### What happened?
+
+We are running a single control-plane k3s cluster in our lab. The cluster has about 56 high-power bare metal nodes. The cluster is used primarily by our developers and our CICD. We create kubevirt VMs for dev and testing. 
+
+Recently as our cluster grew to serve a 100+ kubevirt VMs (running in pods), we noticed significant uptick in the number of ssh and nslookup failures by our CICD system when trying to communicate with the VMs. On average, we would see 1 in 100 or so attempts fail to resolve the VMs IP address. The lookups happened based on the VM name. We use a single headless Service for all of our VMs. 
+
+We wrote a small script to see if we could reproduce the issue. The script would send DNS lookups (dig) to all running healthy VMs (VM status = ready). We noticed that coredns would occasionally return NXDOMAIN for perfectly healthy VMs. Importantly, those VMs were not going through any state transition. The NXDOMIANs would be short-lived, usually < 10 seconds and then it go back to resolving correctly. Again, it's important to note that the VMs(and their pods) for which the NXDOMAIN was received were not transitioning states during this period. 
+
+To see wh…",kind/bug; sig/network; triage/needs-information,bug,,,2025-08-11T21:43:19Z,2026-01-27T18:35:50Z,https://github.com/kubernetes/kubernetes/issues/133474
+134100,DRA consumable capacity failed to allocate the same device once device consumes counterSet,"### What happened?
+
+The device that consumed counterSet is skipped if the counter is not left enough even it was selected and allowMultipleAllocations is set.
+
+The reason is that the checkAvailableCounters is called and return false as it is selected once before the capacity will be checked.
+
+<URL>
+
+### What did you expect to happen?
+
+The device which is once consumed capacity from the counterSet should be able to allocated if there is enough capacity left for another request.  Meaning that the alloc.checkAvailableCounters should be skipped - do not check, do not consume.
+
+### How can we reproduce it (as minimally and precisely as possible)?
+
+counterSet0: 4
+device1 (allowMultipleAllocations): consume 3 from counterSet0
+device2 (allowMultipleAllocations): consume 4 from counterSet0
+
+req0: request capacity 1
+req1: request capacity 1
+
+req0 can get device 1 but req1 is failed to get the same device
+
+### Anything else we need to know?
+
+_No response_
+
+### Kubernetes version
+
+<details>
+
+```console
+$ kubectl version
+# paste output here
+```
+
+</details>
+
+### Cloud provider
+
+<details>
+
+</details>
+
+### OS version
+
+<details>
+
+```console
+# On Linux:
+$ cat /etc/os-release
+# paste output here
+$ un…",kind/bug; sig/node; priority/important-longterm; triage/accepted,bug,,,2025-09-17T06:33:48Z,2025-10-29T06:52:02Z,https://github.com/kubernetes/kubernetes/issues/134100
+135083,kubectl v1.33.5 flagged with multiple Go stdlib vulnerabilities,"### What happened?
+
+The kubectl [v1.33.5](<URL> is flagged with the following security vulnerabilities related to the Go stdlib used:
+
+CVE-2025-61725
+
+CVE-2025-58188  
+
+CVE-2025-47912 
+
+ CVE-2025-58186 
+
+CVE-2025-61724
+
+CVE-2025-61723 
+
+CVE-2025-58189
+
+CVE-2025-58185 
+
+CVE-2025-58187
+
+CVE-2025-58183
+
+### What did you expect to happen?
+
+Please build using go1.24.8+.
+
+### How can we reproduce it (as minimally and precisely as possible)?
+
+`syft -o json kubectl | grype `
+
+### Anything else we need to know?
+
+_No response_
+
+### Kubernetes version
+
+<details>
+
+```console
+$ kubectl version
+Client Version: v1.33.5
+Kustomize Version: v5.6.0
+Server Version: v1.32.9-eks-113cf36
+```
+
+</details>
+
+### Cloud provider
+
+<details>
+AWS
+</details>
+
+### OS version
+
+<details>
+
+```console
+# On Linux:
+$ cat /etc/os-release
+NAME=""Alpine Linux""
+ID=alpine
+VERSION_ID=3.22.1
+PRETTY_NAME=""Alpine Linux v3.22""
+HOME_URL=""<URL>
+BUG_REPORT_URL=""<URL>
+$ uname -a
+Linux our-user-name 6.1.155-176.282.amzn2023.x86_64 #1 SMP PREEMPT_DYNAMIC Tue Oct  7 15:53:25 UTC 2025 x86_64 GNU/Linux
+
+```
+
+</details>
+
+### Install tools
+
+<details>
+
+</details>
+
+### Container runtime (CRI) and version (if applicable)
+
+<details>
+
+</details>…",kind/bug; sig/release; sig/security; needs-triage,bug,,,2025-11-03T23:19:35Z,2025-11-04T02:58:51Z,https://github.com/kubernetes/kubernetes/issues/135083
+135901,Kubelet cannot handle multiple ResourceClaims if one is already prepared,"### What happened?
+
+When using Dynamic Resource Allocation (DRA) with ResourceClaims, kubelet fails with:
+
+    Error: internal error: unable to get claim info for ResourceClaim <name>
+
+The error occurs when:
+1. A first pod is created that references a single ResourceClaim.
+2. A second pod is created that references the same ResourceClaim plus an additional one.
+
+The failure happens during container creation, after scheduling succeeded.
+
+The issue is reproducible using the dra-example-driver from kubernetes-sigs.
+
+Potential spots where log may occurs:
+<URL>
+<URL>
+<URL>
+
+### What did you expect to happen?
+
+The second pod should successfully start with both ResourceClaims prepared.
+
+Notably, the same set of ResourceClaims works correctly when requested in the opposite order:
+- When the first pod uses both ResourceClaims, and the second pod uses only one - Works ✅ 
+- When the first pod uses one ResourceClaim, and the second pod then uses both - Not working 🔴 
+
+### How can we reproduce it (as minimally and precisely as possible)?
+
+1. Deploy the dra-example-driver:
+   <URL>
+
+2. Create two ResourceClaims:
+```yaml
+apiVersion: resource.k8s.io/v1
+kind: ResourceClaim
+metadata:
+  name: first-r…",kind/bug; sig/node; triage/accepted; wg/device-management,bug,,,2025-12-23T10:31:10Z,2026-01-20T10:38:51Z,https://github.com/kubernetes/kubernetes/issues/135901
+137331,Link file ownership of projected serviceAccountToken is not set properly,"### What happened?
+
+When creating a pod with a projected `serviceAccountToken` volume and all containers have the same `runAsUser`, kubelet configure the file owner UID of the token file to the the `runAsUser`.
+
+However, the existing implementation only sets the file owner of file in the timestamped directory. The link file is still owned by root. This is because `pkg/volume/util/atomic_writer_linux.go#chown` makes use of `os.Chown()`, which applies changes to the link's target instead of the link file itself.
+
+We can use `os.Lchown()` to configure owner UID of the link file properly.
+
+```
+$ ls -lA
+total 0
+drwxr-xr-x    2 root     root            60 Mar  1 19:17 ..2026_03_01_19_17_08.1191223127
+lrwxrwxrwx    1 root     root            32 Mar  1 19:17 ..data -> ..2026_03_01_19_17_08.1191223127
+lrwxrwxrwx    1 root     root            12 Mar  1 19:17 token -> ..data/token
+
+$ ls -lA ..2026_03_01_19_17_08.1191223127/
+total 4
+-rw-------    1 1000     root          1089 Mar  1 19:17 token
+
+$ ls -lA ..data/
+total 4
+-rw-------    1 1000     root          1089 Mar  1 19:17 token
+```
+
+### What did you expect to happen?
+
+Both the file in the timestamped directory and the link file should be o…",kind/bug; sig/storage; needs-triage,bug,,,2026-03-01T19:19:33Z,2026-03-10T13:59:13Z,https://github.com/kubernetes/kubernetes/issues/137331
+127061,[Pod Auto Scaler] Why use Pod Request Resource As Base?,"### What would you like to be added?
+
+Why do we decide to use Pod's request as the basis for calculating indicators? Usually our scenario is to use limit to set the threshold.
+
+<URL>
+
+### Why is this needed?
+
+support limit as base resource",sig/autoscaling; kind/feature; lifecycle/rotten; needs-triage,feature,,,2024-09-02T08:52:19Z,2025-02-18T18:16:14Z,https://github.com/kubernetes/kubernetes/issues/127061
+127746,Add a confirmation parameter to all k8s API that delete collections.,"### What would you like to be added?
+
+Add a confirmation parameter to all k8s API that delete collections.
+
+Like the following:
+```
+DELETE api/v1/namespaces/{namespace}/pods?confirm=true
+DELETE api/v1/namespaces/{namespace}/secrets?confirm=true
+DELETE api/v1/nodes?confirm=true
+```
+
+### Why is this needed?
+
+### The current design of the k8s API for deleting collections is unreasonable. 
+
+For instance, `DELETE api/v1/namespaces/{namespace}/pods` deletes all pods under a specific namespace, while `DELETE api/v1/namespaces/{namespace}/pods/{name}` deletes a specific pod under a specific namespace. This may seem normal at first glance, but it's not a good design. 
+
+Take this scenario as an example: if a user wants to delete pod1 under ns1, their URI should be `api/v1/namespaces/ns1/pods/pod1`, however, due to negligence or a bug in their program, the pod name might be left empty, which would change their URI to `api/v1/namespaces/ns1/pods/`. What would happen then? It would result in the deletion of all pods under ns1, which could be disastrous. The issues would be more severe with `DELETE api/v1/nodes`.
+
+##### This issue can occur with the Python client, for example,…",priority/awaiting-more-evidence; sig/api-machinery; kind/feature; triage/unresolved; needs-triage,feature,,,2024-09-30T06:50:06Z,2024-10-06T17:44:14Z,https://github.com/kubernetes/kubernetes/issues/127746
+128440,DRA: Is it possible to add a new resource: ClusterResourceClaim?,"### What would you like to be added?
+
+We plan to develop a DRA plugin for networking (possibly related to CNI drivers). For ease of use, we may create a ResourceClaim in advance and declare some additional configurations in the opaqueConfig. If there is a cluster-scope ResourceClaim, then pods in different namespaces can use the same ResourceClaim. Currently, ResourceClaim is namespace-scope, meaning each namespace must create at least one ResourceClaim.
+
+### Why is this needed?
+
+add a new resource: ClusterResourceClaim",sig/node; kind/feature; lifecycle/rotten; needs-triage; wg/device-management,feature,,,2024-10-30T08:11:26Z,2025-07-11T10:51:53Z,https://github.com/kubernetes/kubernetes/issues/128440
+128937,Enhance WarningsOnCreate and WarningsOnUpdate methods to Return Empty Slice Instead of Nil for Consistent and Robust Behavior,"### What would you like to be added?
+
+`WarningsOnUpdate` and `WarningsOnCreate` methods needes to be updated to return an empty slice instead of nil.
+
+### Why is this needed?
+
+The change in `WarningsOnUpdate` to return an empty slice (`[]string{}`) instead of `nil` is needed for the following reasons:
+
+---
+
+### **1. Consistency**
+  Returning an empty slice (`[]string{}`) instead of `nil` ensures consistent behavior. A caller of the method can always expect a slice, making it easier to handle the response uniformly without needing additional `nil` checks.
+  
+- **Example Problem:**  
+  If a caller directly iterates over the return value of `WarningsOnUpdate` without checking for `nil`, it may lead to runtime panics (e.g., `nil` dereferencing).
+
+---
+
+### **2. Go Best Practices**
+  In Go, it's a common practice to return empty slices instead of `nil` when the absence of values is expected. This makes the API design more predictable and avoids ambiguity between ""no warnings"" and ""uninitialized slice.""
+
+- **Benefit:**  
+  Callers can iterate or append to the returned value without additional checks:
+  ```go
+  warnings := ingressClassStrategy{}.WarningsOnUpdate(ctx…",kind/feature; sig/testing; needs-triage,feature,,,2024-11-22T14:47:43Z,2024-11-24T03:43:10Z,https://github.com/kubernetes/kubernetes/issues/128937
+129447,ContainerLogManager to rotate logs of all containers in case of disk pressure on host,"### What would you like to be added?
+
+The [ContainerLogManager](<URL> responsible for log rotation and cleanup of log files of containers should also rotate logs of all containers in case of disk pressure on host.
+
+### Why is this needed?
+
+It often happens that the containers generating heavy log data have compressed log file with size exceeding the containerLogMaxSize limit set in kubelet config.
+
+For example, kubelet has
+```
+containerLogMaxSize = 200M
+containerLogMaxFiles = 6
+```
+
+### Spec 1
+
+ Continuously generating 10Mib with 0.1 sec sleep in between
+```
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: generate-huge-logs
+spec:
+  template:
+    spec:
+      containers:
+      - name: log-generator
+        image: busybox
+        command: [""/bin/sh"", ""-c""]
+        args:
+          - |
+            # Generate huge log entries to stdout
+            start_time=$(date +%s)
+            log_size=0
+            target_size=$((4 * 1024 * 1024 * 1024))  # 4 GB target size in bytes
+            while [ $log_size -lt $target_size ]; do
+              # Generate 1 MB of random data and write it to stdout
+              echo ""Generating huge log entry at $(date) - $(dd if…",sig/node; kind/feature; lifecycle/rotten; needs-triage,feature,,,2025-01-01T15:34:03Z,2025-06-01T17:19:08Z,https://github.com/kubernetes/kubernetes/issues/129447
+129975,Potential for Dropped Logs When Multiple Log Rotations Occur Before Log Collector (Fluentd) Detects Rotation,"**Issue Description:**
+When using the current Kubernetes logging architecture, container runtimes (via CRI) write container stdout/stderr to log files that are managed and rotated by the Kubelet based on settings such as containerLogMaxSize and containerLogMaxFiles. Log collectors (e.g., Fluentd) typically “tail” these files to forward logs to external systems. However, because kubelet’s rotation mechanism (including renaming and compressing older log files) operates independently of the log collector’s file-watching process, there is a risk of log loss.
+
+In scenarios where multiple rotations occur in rapid succession—specifically if the kubelet rotates the log file twice before the collector updates its file pointer—the collector may miss logs from an intermediate file. For example, if Fluentd is tailing the current log (node A) and the kubelet rotates it (resulting in node B) and then rotates again (resulting in node C) before Fluentd switches its read pointer, the logs from node B may never be read.
+
+**Steps to Reproduce:**
+
+1. Deploy a workload that writes logs continuously at a high volume so that a container log file reaches the configured size threshold quickly.
+2. Configure…",sig/node; kind/feature; lifecycle/rotten; needs-triage,feature,,,2025-02-04T11:21:45Z,2025-07-24T21:19:54Z,https://github.com/kubernetes/kubernetes/issues/129975
+130808,Ensure Secret Image Pulls for service accounts,"### What would you like to be added?
+
+<URL> is introducing a new feature that secures access to kubelet-pulled images. At the point of originally writing the feature, there were only 2 kinds of credentials one can use to pull images for their workload:
+1. node-provided
+2. as specified in the pod's manifest in `imagePullSecrets`
+
+<URL> added a new possibility to use service account tokens as credentials acting in image pull authentication.
+
+We need to include restricting image pulls that are done with service account tokens, too.
+
+### Why is this needed?
+
+Restricted access to images pulled with a particular secret should be opaque to the user, and should behave the same for all kinds of secrets.
+
+### Additional information
+
+originally requested for explicit tracking in <URL>",sig/node; kind/feature; sig/auth; triage/accepted,feature,,,2025-03-14T08:50:54Z,2025-07-31T08:32:27Z,https://github.com/kubernetes/kubernetes/issues/130808
+131582,Feat: set gRPC metadata for gRPC probe,"### What would you like to be added?
+
+[Like http probe does](<URL> allow gRPC custom header for gRPC probe.
+
+```
+gRPCMetadata:
+- name: <key>
+  value: <value>
+```
+
+### Why is this needed?
+
+In my project, a gRPC server forces some specific headers for a request. 
+It can handle in application code, but if gRPC probe allows custom header, it can be convenient.  
+
+update:
+I'm still using [grpc-health-proble](<URL> but I think this case kubernetes can cover.",sig/node; kind/feature; lifecycle/rotten; needs-triage,feature,,,2025-05-02T05:22:45Z,2025-10-05T20:42:26Z,https://github.com/kubernetes/kubernetes/issues/131582
+132637,"When the API server calls multiple validating webhooks, it should surface all errors to the client, not just the first error returned by a webhook","### What would you like to be added?
+
+When the API server calls multiple validating webhooks, it should surface all errors to the client, not just the first error returned by a webhook.
+
+The validating webhook dispatcher was implemented in [#58381](<URL> It calls multiple webhooks in parallel. When more than one webhook returns an error, the dispatcher only surfaces the first error to the API client. It [logs](<URL> the remaining errors.
+
+The original commit included a [TODO](<URL> to merge the errors, presumably because all errors should be surfaced to the API client.
+
+### Why is this needed?
+
+As a user of a resource that associated with more than one validating webhook, I know that all these webhooks are called in parallel when I try to create the resource. If more than one webhook rejects my create request, I want to know the reasons behind all of the rejections. That is, I the API server to surface the errors returned by all the webhooks.",sig/api-machinery; kind/feature; lifecycle/rotten; needs-triage,feature,,,2025-07-01T00:16:01Z,2026-04-16T00:36:55Z,https://github.com/kubernetes/kubernetes/issues/132637
+133606,[FG: EnvFiles] Proposal for env file syntax extension and improvement,"When implementing the KEP and the corresponding code, we referred to a specification for .env files that is not widely recognized as authoritative. 
+Current syntax: <URL>
+  
+Moreover, the scope of this specification is quite simplistic and does not appear to cover all use cases.
+
+For example, we have the following user scenarios:
+1. Users need to define a PEM-formatted private key as the value of an environment variable. This requires support for multi-line values (since the PEM format requires at least three lines: <URL> and no extraneous characters should be inserted into the multi-line values. This necessitates the ability to insert multi-line values losslessly.
+2. In a multi-container pod, multiple containers need to use the same environment variable defined by an initContainer, but each container needs to substitute the value based on its own variables. This requires the ability to interpolate environment variables.
+
+Therefore, we propose to extend and modify the current envFile format:
+1. Multi-line values containing line breaks can be enclosed in double quotes. Parsing should not terminate until the second corresponding double quote is encountered.
+Example:
+    ```
+      PRI…",sig/node; kind/feature; needs-triage,feature,,,2025-08-19T15:30:27Z,2025-09-18T14:21:11Z,https://github.com/kubernetes/kubernetes/issues/133606
+134750,Inability for Kubelet to clean a large number of containers during GC cycle,"### What happened?
+
+In environments which use a significant amount of short-living pods (batch jobs, CI, etc.), kubelet is unable to clean containers with the GRPC error:
+```
+E1021 14:00:00.850972    2333 log.go:32] ""ListContainers with filter from runtime service failed"" err=""rpc error: code = ResourceExhausted desc = grpc: trying to send message larger than max (16795768 vs. 16777216)"" filter=""&ContainerFilter{Id:,State:nil,PodSandboxId:,LabelSelector:map[string]string{},}""
+```
+
+The problem here is that after the deprecation of the `--maximum-dead-containers` option, there are no ways left to force `kubelet` to clean the containers before the number of containers and the size of the response go up enough to make it impossible because of the message size, which means the node is always failing in this use case.
+
+I am able to reproduce this behavior with ~18.5k containers (based on the value of `kubelet_running_containers{container_state=""exited""}` metric) on the `containerd` runtime. 
+
+### What did you expect to happen?
+
+Container GC should or work out of the box with any number of containers, or it should have a tuning option to set a number of containers on which GC will be forc…",sig/node; kind/feature; lifecycle/rotten; needs-triage,feature,,,2025-10-21T14:41:13Z,2026-03-22T18:28:27Z,https://github.com/kubernetes/kubernetes/issues/134750
+136335,[Scheduler] Add a Pod Condition when PreEnqueue fails,"### What would you like to be added?
+
+When a Pod fails PreEnqueue, kube-scheduler should (optionally / gated) write a Pod status.conditions[] entry indicating:
+
+- the Pod is currently not schedulable / not eligible (as seen by the scheduler at PreEnqueue stage)
+- a short reason (plugin-reported reason or aggregated reason)
+- a message with human-readable details
+- timestamps for last transition / probe
+
+### Why is this needed?
+
+Today, when a Pod is rejected in the scheduler PreEnqueue stage (i.e., the scheduling cycle does not start / Pod is not enqueued), users often get little or no direct, Pod-level feedback explaining why the Pod is not being considered for scheduling. This can lead to “silent” scheduling stalls where the Pod stays Pending without an actionable reason.
+
+It would be helpful if kube-scheduler could surface a standardized Pod condition when PreEnqueue fails, so users and controllers can quickly understand that the Pod is currently not eligible to be queued for scheduling, and why.",kind/feature; needs-sig; needs-triage,feature,,,2026-01-20T09:27:39Z,2026-01-20T10:17:26Z,https://github.com/kubernetes/kubernetes/issues/136335
+28149,"error log ""cannot be updated: the object has been modified; please apply your changes to the latest version and try again"" both in node and deployment","kube version:1.22
+There are a lot of error log in kube-controller-manager.WARNING as below:
+
+> E0628 15:47:49.898898   10978 nodecontroller.go:771] Error updating node 10.93.79.50: nodes ""10.93.79.50"" cannot be updated: the object has been modified; please apply your changes to the latest version and try again
+> E0628 15:47:59.927051   10978 nodecontroller.go:771] Error updating node 10.93.79.50: nodes ""10.93.79.50"" cannot be updated: the object has been modified; please apply your changes to the latest version and try again
+> E0628 15:48:09.972900   10978 nodecontroller.go:771] Error updating node 10.93.79.50: nodes ""10.93.79.50"" cannot be updated: the object has been modified; please apply your changes to the latest version and try again
+> E0628 15:48:20.008572   10978 event.go:193] Server rejected event '&api.Event{TypeMeta:unversioned.TypeMeta{Kind:"""", APIVersion:""""}, ObjectMeta:api.ObjectMeta{Name:""10.93.79.50.145a4d8d2c888188"", GenerateName:"""", Namespace:""default"", SelfLink:"""", UID:"""", ResourceVersion:""1030566"", Generation:0, CreationTimestamp:unversioned.Time{Time:time.Time{sec:0, nsec:0, loc:(_time.Location)(nil)}}, DeletionTimestamp:(_unversioned.Time)(nil), DeletionGraceP…",kind/documentation; sig/api-machinery,docs,,,2016-06-28T08:17:27Z,2016-06-30T17:51:47Z,https://github.com/kubernetes/kubernetes/issues/28149
+30541,Generate API reference docs for federation API,"Similar to: <URL>
+
+Without it there is no way for users to figure out the structure for a Cluster object without having to look at our code.
+
+cc <USER>/sig-cluster-federation",priority/important-soon; kind/documentation; area/apiserver; sig/api-machinery,docs,,,2016-08-12T21:18:47Z,2016-08-31T22:33:43Z,https://github.com/kubernetes/kubernetes/issues/30541
+37828,Delete docs/user-guide,"docs/user-guide has been moved to kubernetes.github.io and should be deleted
+
+I believe there are some tests that need to be updated according to <USER>",priority/backlog; kind/documentation; sig/api-machinery; sig/cli; lifecycle/rotten,docs,,,2016-12-01T15:35:22Z,2018-06-21T23:42:31Z,https://github.com/kubernetes/kubernetes/issues/37828
+46148,APIServer cannot run as a non-root pod,"<!-- Thanks for filing an issue! Before hitting the button, please answer these questions.-->
+
+**Is this a request for help?** (If yes, you should use our troubleshooting guide and community support channels, see <URL> No
+
+**What keywords did you search in Kubernetes issues before filing this one?** (If you have found any duplicates, you should instead reply there.): ""setcap"", ""apiserver root"", ""securityContext""
+
+---
+
+**Is this a BUG REPORT or FEATURE REQUEST?** (choose one): BUG REPORT
+
+<!--
+If this is a BUG REPORT, please:
+  - Fill in as much of the template below as you can.  If you leave out
+    information, we can't help you as well.
+
+If this is a FEATURE REQUEST, please:
+  - Describe *in detail* the feature/behavior/change you'd like to see.
+
+In both cases, be ready for followup questions, and please respond in a timely
+manner.  If we can't reproduce a bug or think a feature already exists, we
+might close your issue.  If we're wrong, PLEASE feel free to reopen it and
+explain why.
+-->
+
+**Kubernetes version** (use `kubectl version`): v1.6.4
+
+**Environment**:
+- **Cloud provider or hardware configuration**: gce, aws
+- **OS** (e.g. from /etc/os-release)…",area/test; kind/documentation; sig/cluster-lifecycle; lifecycle/frozen,docs,,,2017-05-19T23:38:01Z,2020-09-03T18:36:31Z,https://github.com/kubernetes/kubernetes/issues/46148
+58605,OpenID Connect Tokens - Underdocumented,"I'm using OpenID Connect Tokens to authenticate to the Kubernetes platform. I ran into unauthorized errors because the default OpenID Connect Tokens (id_token) didn't have all required fields.
+In the docs (<URL> I couldn't find any details what the Kubernetes authenticator expected so I had to figure it out myself. I think this documentation can be expanded with the fields required in the id_token.
+
+Required fields (as far as I could test):
+* `email` (I use this as username)
+* `email_verified`
+* `groups`
+
+The missing `email_verified` field was causing the error.",priority/backlog; kind/documentation; sig/auth; lifecycle/rotten,docs,,,2018-01-22T08:58:12Z,2018-08-08T11:58:35Z,https://github.com/kubernetes/kubernetes/issues/58605
+71224,"""Fixes"" needs to be urgently removed from the PR template","It's our policy that contributors NOT use the phrasing ""Fixes #99999"" in PR requests, as that causes associated issues to auto-close by github.  In fact, test-infra is planning a feature that will block this text.  However, the Fixes line is present in the default PR template for k/k and possibly other repos.
+
+The urgency here is that contributors using ""Fixes"" is causing problems for the 1.13 Release Team, since issues are being auto-closed that are not, in fact, fixed, and we lose track of them.
+
+Line from PR template:
+
+```
+**Which issue(s) this PR fixes** *(optional, in `fixes #<issue number>(, fixes #<issue_number>, ...)` format, will close the issue(s) when PR gets merged)*:
+Fixes #
+```
+
+/sig contributor-experience
+/priority important-soon
+/milestone 1.13
+
+cc
+<USER> <USER> <USER> <USER>",kind/documentation; sig/contributor-experience; priority/important-longterm,docs,,,2018-11-19T17:14:15Z,2018-12-03T09:07:17Z,https://github.com/kubernetes/kubernetes/issues/71224
+84040,Document how to limit access to /version api endpoint,"<!-- Please only use this template for submitting enhancement requests -->
+
+**What would you like to be added**:
+The ability to turn off / disable the ""/version"" api endpoint on the Kubernetes master node.
+
+**Why is this needed**:
+To hide the version information for security, so that scanners can't find the current version of the Kubernetes cluster and then know what exploits to use against the cluster.",priority/backlog; kind/documentation; sig/api-machinery; sig/auth; help wanted; lifecycle/rotten,docs,,,2019-10-17T10:52:33Z,2020-10-03T06:01:04Z,https://github.com/kubernetes/kubernetes/issues/84040
+90466,Environment Variable Interpolation is Order Dependent,"<!-- Please use this template while reporting a bug and provide as much info as possible. Not doing so may result in your bug not being addressed in a timely manner. Thanks!
+
+If the matter is security related, please disclose it privately via <URL>
+-->
+
+
+**What happened**:
+Variables are not interpolated when the variable assignment is ordered after the variable use.
+
+**What you expected to happen**:
+I would expect variable interpolation to succeed regardless of the order of the variables.
+
+**How to reproduce it (as minimally and precisely as possible)**:
+Define variables for a container spec in the following order:
+
+- name: var2
+   value: $(var1).testString2
+- name: var1
+   value: testString1
+
+Check the values of the variables inside the container and this is the result:
+var1=testString1
+var2='$(var1).testString2'
+
+**Anything else we need to know?**:
+Swapping the variable order resolves the issue.
+
+**Environment**:
+- Kubernetes version (use `kubectl version`):
+Client Version: version.Info{Major:""1"", Minor:""18"", GitVersion:""v1.18.0"", GitCommit:""9e991415386e4cf155a24b1da15becaa390438d8"", GitTreeState:""clean"", BuildDate:""2020-03-25T14:58:59Z"", GoVersion:""g…",kind/documentation; sig/apps,docs,,,2020-04-24T18:54:27Z,2020-06-11T12:30:57Z,https://github.com/kubernetes/kubernetes/issues/90466
+97426,"The Kubectl Reference Guide for the kubectl run command incorrectly specifies that a deployment or job can be created by specifying --restart=OnFailure, or --restart=Never respectively.","The Kubectl Reference Guide for the kubectl run command (<URL> has incorrect information provided for the --restart flag specifically. The page says:
+
+The restart policy for this Pod. Legal values [Always, OnFailure, Never]. If set to 'Always' a deployment is created, if set to 'OnFailure' a job is created, if set to 'Never', a regular pod is created. For the latter two --replicas must be 1. Default 'Always', for CronJobs Never.
+
+...however, running each of the following commands returns kind: Pod :
+
+kubectl run nginx --image=nginx --restart=Never --dry-run=client - o yaml | grep kind
+kubectl run nginx --image=nginx --restart=Always --dry-run=client - o yaml | grep kind
+kubectl run nginx --image=nginx --restart=OnFailure --dry-run=client - o yaml | grep kind",kind/documentation; sig/cli; needs-triage,docs,,,2020-12-21T18:24:13Z,2021-01-14T15:40:58Z,https://github.com/kubernetes/kubernetes/issues/97426
+105900,Reference the V1Secret type in api/core/types.go,"the V1Secret page: V1Secret <URL>
+says:
+
+`type | str | Used to facilitate programmatic handling of secret data.` It's not enough to understand what type is or what are the values expected there.
+It should reference to <URL>
+which explains the different types (Opaque, kubernetes.io/service-account-token, etc..)
+
+Referencing original issue <URL>",kind/documentation; sig/api-machinery; sig/auth; triage/accepted,docs,,,2021-10-26T08:22:29Z,2021-10-29T19:13:11Z,https://github.com/kubernetes/kubernetes/issues/105900
+114042,Text  contains double negative,"description of envar 'valueFrom' has text:
+
+*Cannot* be used if value is *not* empty.
+
+created #114041 to change to 'Only used if value..'",kind/documentation; sig/node; sig/docs; lifecycle/rotten; needs-triage,docs,,,2022-11-21T12:42:16Z,2024-03-23T13:39:56Z,https://github.com/kubernetes/kubernetes/issues/114042
+123103,Generated go clients do not warn about side-effects to arguments,"### What happened?
+
+Bug #82497 is still with us. But the generated go client code does not warn the caller about this booby trap. This problem is NOT obvious to the reader of generated code, and the reader should be warned. See <URL> for an example.
+
+### What did you expect to happen?
+
+A method that logically takes an argument only as input would not side-effect it, at least not without clearly warning me.
+
+### How can we reproduce it (as minimally and precisely as possible)?
+
+See above
+
+### Anything else we need to know?
+
+_No response_
+
+### Kubernetes version
+
+<details>
+
+Current and many previous.
+
+</details>
+
+### Cloud provider
+
+<details>
+N/A
+</details>
+
+### OS version
+
+<details>
+N/A
+</details>
+
+### Install tools
+
+<details>
+N/A
+</details>
+
+### Container runtime (CRI) and version (if applicable)
+
+<details>
+
+</details>
+
+### Related plugins (CNI, CSI, ...) and versions (if applicable)
+
+<details>
+
+</details>",kind/documentation; sig/api-machinery; lifecycle/rotten; needs-triage,docs,,,2024-02-02T21:08:27Z,2025-08-24T06:35:04Z,https://github.com/kubernetes/kubernetes/issues/123103
+133221,docker image vulnerabilities at kubectl binaries,"Hi Team,
+
+We’ve observed that our ACR Docker images are under compliance review and need to be cleaned and rebuilt. Previously, we were using the base image mcr.microsoft.com/cbl-mariner/base/python:3.9, but we’ve now noted that this image will reach End of Life (EOL) on July 31, 2025.
+
+As part of the remediation, I’ve updated the base image to mcr.microsoft.com/azurelinux/base/python:3.12 with latest version of kubectl. However, after rebuilding, vulnerabilities are still being reported for KUBECTL.
+
+Please take a look and suggest on the fix.
+
+<img width=""1329"" height=""767"" alt=""Image"" src=""<URL> />
+
+[vulnerbs-issue.docx](<URL>
+
+Sample docker file
+
+```containerfile
+FROM mcr.microsoft.com/azurelinux/base/python:3.12
+RUN tdnf makecache && tdnf update -y && tdnf install -y tar ca-certificates jq
+RUN tdnf install azure-cli -y
+RUN /usr/bin/curl -LO <URL> -s <URL> \
+    && chmod +x ./kubectl  \
+    &&  mv ./kubectl /usr/local/bin/kubectl
+
+COPY ./arc_agent_cleanup/requirements.txt ./
+RUN --mount=type=secret,id=ado_pat,target=/run/secrets/ado_pat \
+    token=$(cat /run/secrets/ado_pat) && \
+    index_url=""<URL> && \
+    mkdir -p ~/.config/pip && \
+    echo ""[global]"" > ~/.config/pip/pip.c…",kind/support; needs-sig; needs-triage,question,,,2025-07-25T16:42:21Z,2025-07-25T17:26:15Z,https://github.com/kubernetes/kubernetes/issues/133221
+133312,pod name and host name differ in indexed completion mode,"In case[ .spec.completionMode = Indexed](<URL> in our Kubernetes job yaml,
+The host name will look like (in /etc/hostname in a pod container) looks like:
+'xxxxxxxxx-0'
+'xxxxxxxxx-1'
+'xxxxxxxxx-2'
+etc.
+
+However,
+The pod name will be:
+'xxxxxxxxx-0-{randomid}'
+'xxxxxxxxx-1-{randomid}'
+'xxxxxxxxx-2-{randomid}'
+etc.
+
+Why is the pod name not set identical to the host name? 
+In case of  .spec.completionMode=NonIndexed mode pod name and hostname are identical.  
+So this is an unexpected inconsistency.
+The random id can be left out:  xxxxxxxxx-{IndexNr}  is already an unique id.
+
+It is important, because we let our containers write their hostname in our log messages.
+However, we cannot directly derive the pod name from the host name, which is needed to find back the pod logs written to persistent storage later on.
+Of course we can work around this, by adding the pod name to the env variables of the container and log that additionally, but that should not be necessary in my opinion. It is very confusing that pod name and host name differ in indexed mode.",kind/support; sig/apps; lifecycle/rotten; needs-triage,question,,,2025-07-30T14:10:58Z,2026-01-02T14:33:18Z,https://github.com/kubernetes/kubernetes/issues/133312
+133618,Why does NVIDIA_VISIBLE_DEVICES not grant GPU access without resources.limits.nvidia.com/gpu in Kubernetes pod spec?,"Hi,
+
+I'm experiencing inconsistent GPU access in EKS on my GPU-enabled nodes with the NVIDIA device plugin.
+
+Scenario
+My pod includes:
+env:
+
+name: NVIDIA_VISIBLE_DEVICES
+value: ""all""
+resources: {}
+
+The node has NVIDIA H100 GPUs and drivers.
+
+The NVIDIA device plugin is running and healthy.
+
+Sometimes, my application fails to start with:
+nvidia-container-cli: initialization error: nvml error: driver not loaded
+
+However, restarting the pod resolves the issue, and the application starts successfully and sees the GPU.
+
+Questions
+Why does the pod intermittently fail to access the GPU with only NVIDIA_VISIBLE_DEVICES=all set, but work after a restart?
+Is this expected behavior if resources.limits.nvidia.com/gpu is omitted?
+Could this be due to transient Kubernetes/device plugin/container runtime state? What causes such race conditions or device mapping inconsistencies?
+Is it mandatory to specify the GPU resource limit in recent Kubernetes/device plugin versions for reliable access?
+Is there official documentation or a best practice guide for avoiding such intermittent initialization errors?
+Any pointers or explanations would be greatly appreciated!
+
+Thank you.",kind/support; sig/node; needs-triage,question,,,2025-08-20T08:39:28Z,2025-08-22T03:51:43Z,https://github.com/kubernetes/kubernetes/issues/133618
+133869,CoreDNS resolution issue,"Dear Team, 
+
+We are facing an issue with CoreDNS resolution. where our application pods upon checking with CoreDNS is not resolving to external domains. we have also checked with coreFiles but still some how the CoreDNS is not directing the DNS resolver to the host files (/etc/resolv.conf). I kindly request for a solution to this issue. 
+
+Thanks in advance.",kind/support; needs-sig; needs-triage,question,,,2025-09-03T08:50:40Z,2025-10-11T04:02:05Z,https://github.com/kubernetes/kubernetes/issues/133869
+133942,Cluster keeps shutting down after kubeadm init with flannel,"I’m trying to host a small cluster using kubeadm for practice (1 CPLANE & 1 WORKER). To do this I’ve installed everything (kubeadm, kubelet, kubctl) as per kubernetees official docs. After that i ran
+
+kubeadm init –pod-network-cidr=10.244.0.0/16
+(nothing in ip route show was using it)
+
+I check the cluster with kubctl and everything seems fine and running.
+
+After this I enable br_netfilter kernel module (for flannel) and than I apply the latest flannel network map:
+
+kubectl apply -f <URL>
+
+I check again with kubectl get po –all-namespaces and everything looks good… everything is “RUNNING“.
+
+BUT A COUPLE OF MINUTES LATER… it just stops out of nowhere. No more kubectl control no anything. And then it comes back and stops again and keeps doing this…
+
+I dont even know where to start debugging this… any help?**
+
+Cluster information:**
+
+Kubernetes version: v1.34.0
+Cloud being used: Hetzner
+Installation method: apt
+Host OS: Debian Trixie
+CNI and version: containernetworking v1.7.1
+CRI and version: containerd v1.7.27",kind/support; needs-sig; lifecycle/rotten; needs-triage,question,,,2025-09-08T17:56:04Z,2026-03-17T14:12:42Z,https://github.com/kubernetes/kubernetes/issues/133942
+134287,The log file size in the /var/log/pods directory exceeds the configured containerLogMaxSize.,"### What happened?
+
+I configured the kubelet with containerLogMaxSize: 1536Ki and containerLogMaxFiles: 12. 
+But what causes the log file to exceed 1.5MB?
+```shell
+-rw-r----- 1 root root 1337385 Sep 24 17:26 1.log
+-r--r----- 1 root root  143843 Sep 24 16:29 1.log.20250924-081246.gz
+-r--r----- 1 root root  134931 Sep 24 16:48 1.log.20250924-082917.gz
+-r--r----- 1 root root  131547 Sep 24 17:11 1.log.20250924-084847.gz
+-r--r----- 1 root root  741514 Sep 24 17:11 1.log.20250924-091107.gz
+-rw-r----- 1 root root 8088517 Sep 24 17:11 1.log.20250924-091117
+-rw-r----- 1 root root 1534245 Sep 26 10:29 2.log
+-r--r----- 1 root root  178560 Sep 25 07:36 2.log.20250924-204046.gz
+-r--r----- 1 root root  180424 Sep 25 10:36 2.log.20250924-233648.gz
+-r--r----- 1 root root  181241 Sep 25 13:26 2.log.20250925-023650.gz
+-r--r----- 1 root root  183301 Sep 25 16:21 2.log.20250925-052652.gz
+-r--r----- 1 root root  184108 Sep 25 19:21 2.log.20250925-082154.gz
+-r--r----- 1 root root  183782 Sep 25 22:16 2.log.20250925-112156.gz
+-r--r----- 1 root root  183225 Sep 26 00:54 2.log.20250925-141648.gz
+-r--r----- 1 root root  192193 Sep 26 03:00 2.log.20250925-165400.gz
+-r--r----- 1 root root  207920 Sep 26 05:2…",kind/support; sig/node; lifecycle/rotten; needs-triage,question,,,2025-09-26T02:36:06Z,2026-03-01T06:18:43Z,https://github.com/kubernetes/kubernetes/issues/134287
+134437,Upgrade to v1.34 with no worker nodes causes significant etcd growth,"### What happened?
+
+We have some scenarios (mostly test) where we upgrade Kubernetes masters for clusters that don't have any worker nodes at that time. For the v1.33 -> v1.34 upgrade we see a big jump in etcd memory usage during the upgrade from around 100MB -> 500MB. We do not see this in upgrades for previous versions.
+
+Looking at the logs I can see it is in a tight loop updating a single key (`/apis/apiregistration.k8s.io/v1/apiservices/v1beta1.metrics.k8s.io/status`) which would cause significant etcd usage growth as the key history would be growing:
+
+```
+E1002 09:54:34.642601       1 handler_proxy.go:143] error resolving kube-system/metrics-server: no endpoints available for service ""metrics-server""
+I1002 09:54:34.682684       1 httplog.go:134] ""HTTP"" verb=""PUT"" URI=""/apis/apiregistration.k8s.io/v1/apiservices/v1beta1.metrics.k8s.io/status"" latency=""39.957667ms"" userAgent=""kube-apiserver/v1.34.1+IKS (linux/amd64) kubernetes/4fc55b8"" audit-ID=""8d0ba632-1c33-40d7-8d69-e72b1e3b0488"" srcIP=""[::1]:43342"" apf_pl=""exempt"" apf_fs=""exempt"" apf_iseats=1 apf_fseats=0 apf_additionalLatency=""0s"" apf_execution_time=""39.598315ms"" resp=200
+W1002 09:54:34.683258       1 handler_proxy.go:99] n…",kind/support; sig/cluster-lifecycle; needs-triage,question,,,2025-10-06T10:27:54Z,2025-10-16T15:03:52Z,https://github.com/kubernetes/kubernetes/issues/134437
+135321,Manual Rotation of CA Certificates,Is there a straightforward method to update a near-expiring root certificate?,kind/support; needs-sig; lifecycle/rotten; needs-triage,question,,,2025-11-16T23:33:26Z,2026-03-17T07:50:06Z,https://github.com/kubernetes/kubernetes/issues/135321
+135430,Random timeout using Tailscale VPN,"<!-- Please use this template while reporting a bug and provide as much info as possible. Not doing so may result in your bug not being addressed in a timely manner. Thanks!
+
+If the matter is security related, please disclose it privately via <URL>
+-->
+
+**What happened**:
+
+Hello, I'm having random timeout when using kubectl through my local machine e.g. when doing kubectl get pods. Without switching of configuration or network configuration, sometimes the command outputs stuff, sometimes juste timeout like the node isn't existing.
+My guess is it could come from a misconfiguration of kubectl since I'm using now Tailscale VPN. It means, in order to reach the master node, my machine has to go through the Tailscale subnet router I configured on an EC2 instance in the same VPC than my EKS cluster. Which means, from the moment I'm inside the subnet router, I should be able to access the EKS cluster without further configurations.
+I would like to have your input on this one, in order to know if you think it could come from kubectl or rather AWS or Tailscale.
+
+**What you expected to happen**:
+
+Have a rapid and always valid answer from kubectl. Not having random downtimes with my node.
+
+**H…",kind/support; needs-sig; needs-triage,question,,,2025-11-24T13:53:51Z,2026-01-15T18:52:07Z,https://github.com/kubernetes/kubernetes/issues/135430
+135519,`EnvFiles` feature (KEP-3721): Unclear quote handling behavior,"### What happened?
+
+I'm interested in and testing the EnvFiles feature ([KEP-3721](<URL> and found that quote handling behavior is unclear and inconsistent with how ConfigMap handles quotes.
+
+I may be misunderstanding something,
+but I expected consistent quote handling behavior, similar to how ConfigMap works.
+
+**Current behavior with EnvFiles:**
+
+When using FileKeyRef with an env generated in initCoitainer:
+```bash
+SIMPLE=value
+API_TOKEN='abc123'
+DB_HOST=""localhost""
+JSON_DATA='{""key"": ""value""}'
+```
+
+The resulting environment variables include the quotes as literal characters:
+```bash
+SIMPLE=value                 # No quotes
+API_TOKEN='abc123'           # Quotes preserved
+DB_HOST=""localhost""          # Quotes preserved  
+JSON_DATA='{""key"": ""value""}' # Quotes preserved
+```
+
+**Comparison with ConfigMap:**
+
+For reference, ConfigMap strips YAML quotes:
+```yaml
+data:
+  API_TOKEN: ""'abc123'""
+  DB_HOST: ""localhost""
+  JSON_DATA: '{""key"": ""value""}'
+  SIMPLE=value
+```
+
+Results in:
+```bash
+API_TOKEN='abc123'           # YAML outer quotes removed
+DB_HOST=localhost            # YAML quotes removed
+JSON_DATA={""key"": ""value""}   # YAML quotes removed
+SIMPLE=value
+```
+
+**Documentation inconsistenci…",kind/support; sig/node; needs-triage,question,,,2025-11-30T09:07:41Z,2025-12-01T11:13:41Z,https://github.com/kubernetes/kubernetes/issues/135519
+135550,Getting invalid limit.cpu for a container without limit defined in projected volume,"### What happened?
+
+I am using downwardapi to get container's cpu limit as projected volume but the output is wrong.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volume-test
+spec:
+  containers:
+  - name: container-test
+    image: busybox:1.28
+    command: [""sleep"", ""3600""]
+    volumeMounts:
+    - name: all-in-one
+      mountPath: ""/projected-volume""
+      readOnly: true
+  volumes:
+  - name: all-in-one
+    projected:
+      sources:
+      - secret:
+          name: mysecret
+          items:
+            - key: username
+              path: my-group/my-username
+      - downwardAPI:
+          items:
+            - path: ""labels""
+              fieldRef:
+                fieldPath: metadata.labels
+            - path: ""cpu_limit""
+              resourceFieldRef:
+                containerName: container-test
+                resource: limits.cpu
+      - configMap:
+          name: myconfigmap
+          items:
+            - key: config
+              path: my-group/my-config
+
+```
+
+Now after I apply my pod definition and exec to my container 
+
+I am getting less /projected-volume/cpu_limit as `1`
+
+```
+/projected-volume # ls
+cpu_limit  labels     my-group
+/projected-volume # cat cpu_limit 
+1
+```…",kind/support; sig/node; lifecycle/stale; needs-triage,question,,,2025-12-02T14:37:17Z,2026-03-15T06:05:34Z,https://github.com/kubernetes/kubernetes/issues/135550
+136188,Why does the endpoint named kubernetes still exist in 1.34?,"### What happened?
+
+Kubernetes deprecated endpoints starting from version 1.33, but the apiserver still generates an endpoint named kubernetes. Why is this not being removed?
+<URL>
+<URL>
+
+### What did you expect to happen?
+
+The endpoint named kubernetes should not exist.
+
+### How can we reproduce it (as minimally and precisely as possible)?
+
+View endpoints of the 1.34 Kubernetes cluster.
+
+### Anything else we need to know?
+
+_No response_
+
+### Kubernetes version
+
+<details>
+
+```console
+$ kubectl version
+# paste output here
+```
+1.34.1
+</details>
+
+### Cloud provider
+
+<details>
+
+</details>
+
+### OS version
+
+<details>
+
+```console
+# On Linux:
+$ cat /etc/os-release
+# paste output here
+$ uname -a
+# paste output here
+
+# On Windows:
+C:\> wmic os get Caption, Version, BuildNumber, OSArchitecture
+# paste output here
+```
+
+</details>
+
+### Install tools
+
+<details>
+
+</details>
+
+### Container runtime (CRI) and version (if applicable)
+
+<details>
+
+</details>
+
+### Related plugins (CNI, CSI, ...) and versions (if applicable)
+
+<details>
+
+</details>",sig/network; kind/support; triage/accepted,question,,,2026-01-13T03:56:53Z,2026-01-15T17:13:43Z,https://github.com/kubernetes/kubernetes/issues/136188

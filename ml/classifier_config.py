@@ -7,7 +7,7 @@ or LLM/Ollama defaults should import from here instead of hardcoding values.
 
 from __future__ import annotations
 
-from pathlib import Path
+from app.core.paths import PROCESSED_DATA_DIR, REPORTS_DIR
 
 # ── Labels ────────────────────────────────────────────────────────────────────
 
@@ -25,16 +25,16 @@ ID2LABEL: dict[int, str] = {i: lbl for lbl, i in LABEL2ID.items()}
 
 # ── Official dataset paths (LOCKED — do not replace) ─────────────────────────
 
-OFFICIAL_TRAIN_PATH = Path("data/processed/train.csv")
-OFFICIAL_VAL_PATH = Path("data/processed/val.csv")
-OFFICIAL_TEST_PATH = Path("data/processed/test.csv")
+OFFICIAL_TRAIN_PATH = PROCESSED_DATA_DIR / "train.csv"
+OFFICIAL_VAL_PATH = PROCESSED_DATA_DIR / "val.csv"
+OFFICIAL_TEST_PATH = PROCESSED_DATA_DIR / "test.csv"
 
 # ── Official report directories ───────────────────────────────────────────────
 
-OFFICIAL_CLASSICAL_REPORT_DIR = Path("reports/classical")
-OFFICIAL_TRANSFORMER_REPORT_DIR = Path("reports/transformer")
-OFFICIAL_LLM_REPORT_DIR = Path("reports/llm")
-OFFICIAL_FIGURES_DIR = Path("reports/official/figures")
+OFFICIAL_CLASSICAL_REPORT_DIR = REPORTS_DIR / "classical"
+OFFICIAL_TRANSFORMER_REPORT_DIR = REPORTS_DIR / "transformer"
+OFFICIAL_LLM_REPORT_DIR = REPORTS_DIR / "llm"
+OFFICIAL_FIGURES_DIR = REPORTS_DIR / "official" / "figures"
 
 # ── Known official test-set metrics (update only after re-running eval) ───────
 

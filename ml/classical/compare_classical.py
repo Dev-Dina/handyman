@@ -2,7 +2,7 @@
 Compare classical TF-IDF issue classifiers and save the best model.
 
 Usage:
-    uv run python ml/classical/compare_classical.py
+    uv run python -m ml.classical.compare_classical
 """
 
 from __future__ import annotations
@@ -17,25 +17,23 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-ROOT = Path(__file__).resolve().parents[2]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-from ml.classifier_config import (  # noqa: E402
+from app.core.paths import ARTIFACTS_DIR as PROJECT_ARTIFACTS_DIR
+from app.core.paths import REPORTS_DIR as PROJECT_REPORTS_DIR
+from ml.classifier_config import (
     LABELS as _LABELS,
     OFFICIAL_CLASSICAL_REPORT_DIR,
     OFFICIAL_TEST_PATH,
     OFFICIAL_TRAIN_PATH,
     OFFICIAL_VAL_PATH,
 )
-from ml.text_preprocessing import preprocess_rows  # noqa: E402
+from ml.text_preprocessing import preprocess_rows
 
 TRAIN_PATH = OFFICIAL_TRAIN_PATH
 VAL_PATH = OFFICIAL_VAL_PATH
 TEST_PATH = OFFICIAL_TEST_PATH
-ARTIFACTS_DIR = Path("artifacts/classical")
+ARTIFACTS_DIR = PROJECT_ARTIFACTS_DIR / "classical"
 REPORTS_DIR = OFFICIAL_CLASSICAL_REPORT_DIR
-FIGURES_DIR = Path("reports/figures")
+FIGURES_DIR = PROJECT_REPORTS_DIR / "figures"
 
 LABELS = list(_LABELS)
 VECTORIZER_SETTINGS: dict[str, Any] = {

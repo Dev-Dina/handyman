@@ -6,13 +6,13 @@ No API keys required. No Vault. No training.
 
 Usage:
     # Smoke run (10 rows)
-    uv run python ml/llm_baseline.py --limit 10
+    uv run python -m ml.llm_baseline --limit 10
 
     # Full run
-    uv run python ml/llm_baseline.py
+    uv run python -m ml.llm_baseline
 
     # Resume interrupted run
-    uv run python ml/llm_baseline.py --run-name my_run --resume
+    uv run python -m ml.llm_baseline --run-name my_run --resume
 
 Outputs:
     reports/llm/<run_name>/llm_eval.json
@@ -31,11 +31,7 @@ import time
 from datetime import UTC, datetime
 from pathlib import Path
 
-_ROOT = Path(__file__).resolve().parent.parent
-if str(_ROOT) not in sys.path:
-    sys.path.insert(0, str(_ROOT))
-
-from ml.classifier_config import (  # noqa: E402
+from ml.classifier_config import (
     CLASSICAL_TEST_MACRO_F1,
     CODEBERT_TEST_MACRO_F1,
     DEFAULT_LLM_MAX_CHARS,

@@ -3,18 +3,14 @@
 from __future__ import annotations
 
 import csv
-import pathlib
 
 import pytest
 
+from app.core.paths import EVALS_DIR
+
 pytestmark = pytest.mark.eval
 
-_GOLDEN_CSV = (
-    pathlib.Path(__file__).parent.parent.parent
-    / "evals"
-    / "golden"
-    / "classification_golden_curated.csv"
-)
+_GOLDEN_CSV = EVALS_DIR / "golden" / "classification_golden_curated.csv"
 
 _REQUIRED_COLUMNS = {"issue_number", "title", "gold_label", "curator_notes"}
 _VALID_LABELS = {"bug", "feature", "docs", "question"}

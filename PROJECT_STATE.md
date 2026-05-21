@@ -134,6 +134,7 @@ Failed experiments archived: `data/experiments/failed/` + `reports/experiments/f
 - [x] NER endpoint — POST /api/v1/tools/entities LIVE; calls extract_entities_service
 - [x] Summarization endpoint — POST /api/v1/tools/summarize LIVE; Problem/Expected/Evidence/Component prompt via OllamaClient; 503 on unavailable
 - [x] Tools API smoke check — POST /entities verified (entities_by_type + total_count); POST /summarize verified (summary + model=llama3:latest + latency_seconds=18.39)
+- [x] Path hygiene cleanup — app/core/paths.py canonical roots; classifier/RAG configs derive from canonical paths; scripts run as modules without project-root sys.path hacks
 
 ### Official classifier dataset
 
@@ -210,6 +211,7 @@ none
 - [x] RAG-3a: pipelines/rag/create_golden_candidates.py — 43 candidates (docs=8, issue=20, comment=15); validation_passed=true; evals/golden/rag/rag_golden_candidates.csv + summary.json
 - [x] RAG-3 review prep: pipelines/rag/prepare_review.py — rag_golden_candidates_review.csv (yes=25, maybe=11, no=7); answer_preview + suggested_keep + suggested_reason added; rag_golden_review_summary.json
 - [x] RAG-3b: pipelines/rag/finalize_golden.py — rag_golden.jsonl (25 rows, docs=5, issue=10, comment=10, hand_labeled=5, validation_passed=true); rag_golden_summary.json
+- [x] RAG pipeline CLI/static cleanup — sys imports restored where needed; offline pipeline --help exits without running generation/fetch/chunk logic
 - [ ] RAG-4: Embedding model comparison (Hit@5 on golden set)
 - [ ] RAG-5: Hybrid retrieval + reranker + query transformation
 - [ ] RAG-6: Service / API integration
@@ -219,6 +221,12 @@ none
 
 1. Embedding model comparison (Hit@5 on golden set) — RAG-4
 2. Embedding model comparison (Hit@5 on golden set) — RAG-4
+
+### Next 3 tasks
+
+1. Embedding model comparison (Hit@5 on golden set) — RAG-4.
+2. Hybrid retrieval + reranker + query transformation — RAG-5.
+3. Eval harness + redaction/exception hardening — RAG-7.
 
 ## Backlog (post-RAG, not blocking)
 - POST /api/v1/tools/classify — wire CodeBERT inference endpoint via model_server
@@ -233,16 +241,39 @@ uv run pytest
 docker compose up --build
 
 # Dataset pipeline
-uv run python ml/fetch_dataset.py --repo kubernetes/kubernetes --per-class 1000
-uv run python ml/eda_labels.py
-uv run python ml/split_dataset.py --max-per-class 600
-uv run python ml/text_preprocessing.py
-uv run python ml/classical_baseline.py
-uv run python ml/classical/compare_classical.py
+uv run python -m ml.fetch_dataset --repo kubernetes/kubernetes --per-class 1000
+uv run python -m ml.eda_labels
+uv run python -m ml.split_dataset --max-per-class 600
+uv run python -m ml.text_preprocessing
+uv run python -m ml.classical_baseline
+uv run python -m ml.classical.compare_classical
+
+# Path hygiene audit (2026-05-21)
+git status --short
+Get-Content AGENTS.md
+Get-Content PROJECT_STATE.md
+Get-ChildItem -Recurse -File | Select-String -Pattern 'Path\(__file__\)\.resolve\(\)\.parent\.parent','Path\(__file__\)\.resolve\(\)\.parents\[','\bROOT\s*=','\bPROJECT_ROOT\s*=','\bBASE_DIR\s*='
+Get-ChildItem -Recurse -File | Select-String -Pattern 'Path\(__file__\)\.parent\.parent'
+.\.venv\Scripts\python.exe -c "from app.core.paths import PROJECT_ROOT; print(PROJECT_ROOT)"
+.\.venv\Scripts\python.exe -m ml.finetune --help
+.\.venv\Scripts\python.exe -m ml.llm_baseline --help
+.\.venv\Scripts\python.exe -m ml.classical.compare_classical --help
+.\.venv\Scripts\python.exe -m pipelines.rag.chunk --help
+.\.venv\Scripts\python.exe -m pytest tests/unit tests/smoke tests/eval -q
+.\.venv\Scripts\python.exe -m pytest -q
+
+# RAG pipeline CLI/static cleanup (2026-05-21)
+.\.venv\Scripts\python.exe -m ruff check pipelines/rag app ml tests
+.\.venv\Scripts\python.exe -m pipelines.rag.build_corpus --help
+.\.venv\Scripts\python.exe -m pipelines.rag.collect_sources --help
+.\.venv\Scripts\python.exe -m pipelines.rag.chunk --help
+.\.venv\Scripts\python.exe -m pipelines.rag.create_golden_candidates --help
+.\.venv\Scripts\python.exe -m pipelines.rag.prepare_review --help
+.\.venv\Scripts\python.exe -m pipelines.rag.finalize_golden --help
 ```
 
 ```powershell
 # Transformer fine-tuning (GPU env — not uv)
-.\.venv-gpu\Scripts\python.exe ml\finetune.py --smoke
-.\.venv-gpu\Scripts\python.exe ml\finetune.py --model microsoft/codebert-base --run-name codebert_base_e3_len384 --epochs 3 --batch-size 4 --max-len 384
+.\.venv-gpu\Scripts\python.exe -m ml.finetune --smoke
+.\.venv-gpu\Scripts\python.exe -m ml.finetune --model microsoft/codebert-base --run-name codebert_base_e3_len384 --epochs 3 --batch-size 4 --max-len 384
 ```

@@ -9,29 +9,34 @@ Outputs:
     reports/rag/leakage_report.json
 """
 
+import argparse
 import csv
 import json
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent.parent
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-from app.services.rag.config import (  # noqa: E402
+from app.core.paths import EVALS_DIR, RAW_DATA_DIR
+from app.services.rag.config import (
     RAG_CORPUS_MANIFEST_PATH,
     RAG_HELDOUT_CANDIDATES_PATH,
     RAG_LEAKAGE_REPORT_PATH,
     SOURCE_TYPE_ISSUE,
 )
-from ml.classifier_config import (  # noqa: E402
+from ml.classifier_config import (
     OFFICIAL_TEST_PATH,
     OFFICIAL_TRAIN_PATH,
     OFFICIAL_VAL_PATH,
 )
 
-RAW_ISSUES_PATH = Path("data/raw/kubernetes_issues.jsonl")
-CLASSIFICATION_GOLDEN_PATH = Path("evals/golden/classification_golden.jsonl")
+RAW_ISSUES_PATH = RAW_DATA_DIR / "kubernetes_issues.jsonl"
+CLASSIFICATION_GOLDEN_PATH = EVALS_DIR / "golden" / "classification_golden.jsonl"
+
+
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Build held-out RAG issue candidates and leakage report."
+    )
+    return parser.parse_args()
 
 
 def _load_split_ids(csv_path: Path) -> set[str]:
@@ -83,6 +88,8 @@ def _build_candidates(issues: list[dict], excluded: set[str]) -> list[dict]:
 
 
 def main() -> None:
+    _parse_args()
+
     print("Loading classifier split issue numbers...")
     train_ids = _load_split_ids(OFFICIAL_TRAIN_PATH)
     val_ids = _load_split_ids(OFFICIAL_VAL_PATH)

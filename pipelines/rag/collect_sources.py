@@ -31,11 +31,8 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
-ROOT = Path(__file__).resolve().parent.parent.parent
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-
-from app.services.rag.config import (  # noqa: E402
+from app.core.paths import EVALS_DIR
+from app.services.rag.config import (
     RAG_CORPUS_COLLECTION_REPORT_PATH,
     RAG_CORPUS_MANIFEST_PATH,
     RAG_DOC_SOURCES_PATH,
@@ -45,7 +42,7 @@ from app.services.rag.config import (  # noqa: E402
     SOURCE_TYPE_DOCS,
     SOURCE_TYPE_ISSUE,
 )
-from ml.classifier_config import (  # noqa: E402
+from ml.classifier_config import (
     OFFICIAL_TEST_PATH,
     OFFICIAL_TRAIN_PATH,
     OFFICIAL_VAL_PATH,
@@ -54,7 +51,7 @@ from ml.classifier_config import (  # noqa: E402
 GITHUB_API = "https://api.github.com"
 GITHUB_RAW_BASE = "https://raw.githubusercontent.com"
 GITHUB_WEB_BASE = "https://github.com"
-CLASSIFICATION_GOLDEN_PATH = Path("evals/golden/classification_golden.jsonl")
+CLASSIFICATION_GOLDEN_PATH = EVALS_DIR / "golden" / "classification_golden.jsonl"
 MAINTAINER_LIKE_ASSOCIATIONS: frozenset[str] = frozenset(
     {"MEMBER", "OWNER", "COLLABORATOR"}
 )

@@ -118,48 +118,48 @@ uv run python scripts/validate_github_dataset.py --repo kubernetes/kubernetes --
 
 # 2. Fetch per-class dataset (~100 s with token)
 #    Writes data/raw/kubernetes_issues.jsonl
-uv run python ml/fetch_dataset.py --repo kubernetes/kubernetes --per-class 1000
+uv run python -m ml.fetch_dataset --repo kubernetes/kubernetes --per-class 1000
 
 #    Optional: supplement question class if EDA shows imbalance (run after step 3)
-uv run python ml/fetch_dataset.py --repo kubernetes/kubernetes --per-class 1000 --supplement-label "kind/support" --supplement-count 1000
+uv run python -m ml.fetch_dataset --repo kubernetes/kubernetes --per-class 1000 --supplement-label "kind/support" --supplement-count 1000
 
 # 3. Run label EDA — review before splitting
 #    Writes reports/kubernetes_label_eda.json + kubernetes_*.csv reports
-uv run python ml/eda_labels.py
+uv run python -m ml.eda_labels
 
 # 4. Build train/val/test splits
 #    Writes data/processed/train|val|test.csv + labeled_issues.csv
 #    Also writes reports/kubernetes_multilabel_conflicts.csv and reports/split_report.json
-uv run python ml/split_dataset.py
+uv run python -m ml.split_dataset
 
 # 5. Train classical TF-IDF + LogisticRegression baseline
 #    Writes artifacts/classical/ and reports/classical_*
-uv run python ml/classical_baseline.py
+uv run python -m ml.classical_baseline
 
 # 6. Compare classical TF-IDF models
 #    Writes reports/classical/, reports/figures/08-09_*.png, and artifacts/classical/best_model.*
-uv run python ml/classical/compare_classical.py
+uv run python -m ml.classical.compare_classical
 
 # 7. Smoke-test fine-tuning (prajjwal1/bert-tiny, 2 steps, CPU)
 #    Writes artifacts/transformer/smoke/
-.\.venv-gpu\Scripts\python.exe ml\finetune.py --smoke
+.\.venv-gpu\Scripts\python.exe -m ml.finetune --smoke
 
 # 8. Full fine-tuning with run name (e.g. codebert)
 #    Writes artifacts/transformer/<run_name>/ + reports/transformer/<run_name>/
-.\.venv-gpu\Scripts\python.exe ml\finetune.py --model microsoft/codebert-base --run-name codebert_base_e3_len384 --epochs 3 --batch-size 4 --max-len 384
+.\.venv-gpu\Scripts\python.exe -m ml.finetune --model microsoft/codebert-base --run-name codebert_base_e3_len384 --epochs 3 --batch-size 4 --max-len 384
 
 # 9. LLM zero-shot baseline (Ollama, no GPU)
 #    Writes reports/llm/<run_name>/
-uv run python ml/llm_baseline.py --run-name llama3_full
+uv run python -m ml.llm_baseline --run-name llama3_full
 
 # 10. Generate classifier presentation figures (10-14)
 #     Writes reports/official/figures/10-14_*.png
-uv run python ml/make_classifier_figures.py
+uv run python -m ml.make_classifier_figures
 
 # 11. Generate three-way comparison figures and artifacts (after LLM baseline)
 #     Writes reports/classifier_three_way_comparison.json/csv
 #     Writes reports/official/figures/15-18_*.png
-uv run python ml/make_three_way_classifier_comparison.py
+uv run python -m ml.make_three_way_classifier_comparison
 ```
 
 ML extras required for classical baseline (no Torch):
@@ -191,10 +191,10 @@ python -c "import torch; print(torch.__version__); print(torch.cuda.is_available
 
 ```powershell
 # Smoke test
-.\.venv-gpu\Scripts\python.exe ml\finetune.py --smoke
+.\.venv-gpu\Scripts\python.exe -m ml.finetune --smoke
 
 # Full run with explicit run name (example: codebert-base, 3 epochs)
-.\.venv-gpu\Scripts\python.exe ml\finetune.py --model microsoft/codebert-base --run-name codebert_base_e3_len384 --epochs 3 --batch-size 4 --max-len 384
+.\.venv-gpu\Scripts\python.exe -m ml.finetune --model microsoft/codebert-base --run-name codebert_base_e3_len384 --epochs 3 --batch-size 4 --max-len 384
 ```
 
 Vault token path for GitHub:
@@ -217,13 +217,13 @@ ollama serve
 ollama pull llama3:latest
 
 # Smoke run (10 rows)
-uv run python ml/llm_baseline.py --limit 10
+uv run python -m ml.llm_baseline --limit 10
 
 # Full run on official test split (360 rows)
-uv run python ml/llm_baseline.py --run-name llama3_full
+uv run python -m ml.llm_baseline --run-name llama3_full
 
 # Resume interrupted run
-uv run python ml/llm_baseline.py --run-name llama3_full --resume
+uv run python -m ml.llm_baseline --run-name llama3_full --resume
 ```
 
 Outputs per run: `reports/llm/<run_name>/llm_eval.json`, `llm_predictions.csv`, `llm_raw_responses.jsonl`  
@@ -376,6 +376,8 @@ domain/errors.py          ToolInputError, OllamaUnavailableError
 Config values (base URL, timeout, model) are module-level constants in `app/infra/ollama_client.py`.
 
 ## RAG pipeline
+
+All RAG pipeline modules support `--help` and exit without running the pipeline.
 
 ```powershell
 # RAG-1a: Build held-out issue candidates and leakage guard

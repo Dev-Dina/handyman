@@ -13,16 +13,12 @@ Validation gates (all must pass):
   - Every ground_truth_chunk_id exists in chunks_section_aware.jsonl
 """
 
+import argparse
 import csv
 import json
 import sys
 from datetime import datetime, timezone
-from pathlib import Path
-
-ROOT = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(ROOT))
-
-from app.services.rag.config import (  # noqa: E402
+from app.services.rag.config import (
     RAG_CHUNKS_SECTION_PATH,
     RAG_GOLDEN_DIR,
     RAG_GOLDEN_PATH,
@@ -44,6 +40,13 @@ _REQUIRED_FIELDS = [
 ]
 
 
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Finalize the curated RAG golden set review CSV."
+    )
+    return parser.parse_args()
+
+
 def _load_valid_chunk_ids() -> frozenset[str]:
     ids: set[str] = set()
     with open(RAG_CHUNKS_SECTION_PATH, encoding="utf-8") as f:
@@ -59,6 +62,8 @@ def _split_field(value: str) -> list[str]:
 
 
 def main() -> None:
+    _parse_args()
+
     with open(RAG_GOLDEN_REVIEW_CSV_PATH, encoding="utf-8-sig", newline="") as f:
         rows = list(csv.DictReader(f))
 

@@ -2,9 +2,9 @@
 Fine-tune a sequence classification model on GitHub issue labels.
 
 Usage:
-    python ml/finetune.py --smoke                                   # 2-step smoke test, CPU
-    python ml/finetune.py                                           # full training, CUDA if available
-    python ml/finetune.py --model google/electra-small-discriminator --run-name electra-small
+    python -m ml.finetune --smoke                                   # 2-step smoke test, CPU
+    python -m ml.finetune                                           # full training, CUDA if available
+    python -m ml.finetune --model google/electra-small-discriminator --run-name electra-small
 
 No pandas, no datasets, no Trainer. Uses csv stdlib + torch + transformers.
 
@@ -21,18 +21,14 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
-import importlib.util
 import json
 import re
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
-_ROOT = Path(__file__).resolve().parent.parent
-if str(_ROOT) not in sys.path:
-    sys.path.insert(0, str(_ROOT))
-
-from ml.classifier_config import (  # noqa: E402
+from app.core.paths import ARTIFACTS_DIR
+from ml.classifier_config import (
     ID2LABEL,
     LABEL2ID,
     LABELS as _LABELS,
@@ -41,12 +37,13 @@ from ml.classifier_config import (  # noqa: E402
     OFFICIAL_VAL_PATH,
     OFFICIAL_TRANSFORMER_REPORT_DIR,
 )
+from ml.text_preprocessing import preprocess_rows
 
 TRAIN_PATH = OFFICIAL_TRAIN_PATH
 VAL_PATH = OFFICIAL_VAL_PATH
 TEST_PATH = OFFICIAL_TEST_PATH
 
-ARTIFACTS_BASE = Path("artifacts/transformer")
+ARTIFACTS_BASE = ARTIFACTS_DIR / "transformer"
 REPORTS_BASE = OFFICIAL_TRANSFORMER_REPORT_DIR
 
 LABELS = list(_LABELS)
@@ -69,15 +66,6 @@ def _read_csv(path: Path) -> list[dict]:
 
 def _sha256_prefix(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()[:16]
-
-
-def _load_preprocessor():  # type: ignore[return]
-    spec = importlib.util.spec_from_file_location(
-        "text_preprocessing", Path(__file__).parent / "text_preprocessing.py"
-    )
-    mod = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
-    spec.loader.exec_module(mod)  # type: ignore[union-attr]
-    return mod.preprocess_rows
 
 
 def _pure_metrics(preds: list[int], refs: list[int]) -> dict:
@@ -257,7 +245,6 @@ def main() -> int:
 
     # ── data loading ──────────────────────────────────────────────────────────
 
-    preprocess_rows = _load_preprocessor()
     train_rows = preprocess_rows(_read_csv(TRAIN_PATH), args.drop_mostly_non_ascii)
     val_rows = preprocess_rows(_read_csv(VAL_PATH), args.drop_mostly_non_ascii)
     test_rows = preprocess_rows(_read_csv(TEST_PATH), args.drop_mostly_non_ascii)

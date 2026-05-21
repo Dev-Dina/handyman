@@ -15,7 +15,7 @@ Writes:
     reports/official/figures/14_classifier_decision_summary.png
 
 Usage:
-    uv run python ml/make_classifier_figures.py
+    uv run python -m ml.make_classifier_figures
 """
 
 from __future__ import annotations
@@ -25,11 +25,7 @@ import json
 import sys
 from pathlib import Path
 
-_ROOT = Path(__file__).resolve().parent.parent
-if str(_ROOT) not in sys.path:
-    sys.path.insert(0, str(_ROOT))
-
-from ml.classifier_config import (  # noqa: E402
+from ml.classifier_config import (
     CLASSICAL_TEST_MACRO_F1,
     CODEBERT_TEST_MACRO_F1,
     LABELS,

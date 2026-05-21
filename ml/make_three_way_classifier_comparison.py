@@ -19,9 +19,7 @@ from __future__ import annotations
 
 import csv
 import json
-import sys
 from datetime import datetime, timezone
-from pathlib import Path
 
 import matplotlib
 
@@ -29,19 +27,17 @@ matplotlib.use("Agg")
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 
-_ROOT = Path(__file__).parent.parent
-sys.path.insert(0, str(_ROOT))
+from app.core.paths import PROJECT_ROOT, REPORTS_DIR
+from ml.classifier_config import OFFICIAL_FIGURES_DIR
 
-from ml.classifier_config import OFFICIAL_FIGURES_DIR  # noqa: E402
-
-_CLASSICAL_EVAL = _ROOT / "reports/classical/best_classical_eval.json"
+_CLASSICAL_EVAL = REPORTS_DIR / "classical" / "best_classical_eval.json"
 _CODEBERT_EVAL = (
-    _ROOT / "reports/transformer/codebert_base_e3_len384/transformer_eval.json"
+    REPORTS_DIR / "transformer" / "codebert_base_e3_len384" / "transformer_eval.json"
 )
-_LLM_EVAL = _ROOT / "reports/llm/llama3_full/llm_eval.json"
-_OUT_JSON = _ROOT / "reports/classifier_three_way_comparison.json"
-_OUT_CSV = _ROOT / "reports/classifier_three_way_comparison.csv"
-_FIGURES_DIR = _ROOT / OFFICIAL_FIGURES_DIR
+_LLM_EVAL = REPORTS_DIR / "llm" / "llama3_full" / "llm_eval.json"
+_OUT_JSON = REPORTS_DIR / "classifier_three_way_comparison.json"
+_OUT_CSV = REPORTS_DIR / "classifier_three_way_comparison.csv"
+_FIGURES_DIR = OFFICIAL_FIGURES_DIR
 
 _GOLD = "#E8A838"
 _BLUE = "#4C72B0"
@@ -120,7 +116,7 @@ def _write_json(data: dict) -> None:
         "models": data,
     }
     _OUT_JSON.write_text(json.dumps(out, indent=2))
-    print(f"wrote {_OUT_JSON.relative_to(_ROOT)}")
+    print(f"wrote {_OUT_JSON.relative_to(PROJECT_ROOT)}")
 
 
 def _write_csv(data: dict) -> None:
@@ -166,7 +162,7 @@ def _write_csv(data: dict) -> None:
         writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         writer.writeheader()
         writer.writerows(rows)
-    print(f"wrote {_OUT_CSV.relative_to(_ROOT)}")
+    print(f"wrote {_OUT_CSV.relative_to(PROJECT_ROOT)}")
 
 
 def _annotate_bars(ax: plt.Axes, bars, fmt: str = "{:.4f}") -> None:
@@ -204,7 +200,7 @@ def fig15(data: dict) -> None:
     path = _FIGURES_DIR / "15_three_way_macro_f1.png"
     fig.savefig(path, dpi=150)
     plt.close(fig)
-    print(f"wrote {path.relative_to(_ROOT)}")
+    print(f"wrote {path.relative_to(PROJECT_ROOT)}")
 
 
 def fig16(data: dict) -> None:
@@ -227,7 +223,7 @@ def fig16(data: dict) -> None:
     path = _FIGURES_DIR / "16_three_way_accuracy.png"
     fig.savefig(path, dpi=150)
     plt.close(fig)
-    print(f"wrote {path.relative_to(_ROOT)}")
+    print(f"wrote {path.relative_to(PROJECT_ROOT)}")
 
 
 def fig17(data: dict) -> None:
@@ -259,7 +255,7 @@ def fig17(data: dict) -> None:
     path = _FIGURES_DIR / "17_three_way_question_f1.png"
     fig.savefig(path, dpi=150)
     plt.close(fig)
-    print(f"wrote {path.relative_to(_ROOT)}")
+    print(f"wrote {path.relative_to(PROJECT_ROOT)}")
 
 
 def fig18(data: dict) -> None:
@@ -305,7 +301,7 @@ def fig18(data: dict) -> None:
     path = _FIGURES_DIR / "18_three_way_latency.png"
     fig.savefig(path, dpi=150)
     plt.close(fig)
-    print(f"wrote {path.relative_to(_ROOT)}")
+    print(f"wrote {path.relative_to(PROJECT_ROOT)}")
 
 
 def main() -> None:

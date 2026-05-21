@@ -17,21 +17,17 @@ from __future__ import annotations
 import csv
 import json
 import re
-import sys
-from pathlib import Path
 
-_ROOT = Path(__file__).parent.parent
-sys.path.insert(0, str(_ROOT))
-
-from ml.classifier_config import (  # noqa: E402
+from app.core.paths import EVALS_DIR, PROJECT_ROOT, RAW_DATA_DIR
+from ml.classifier_config import (
     LABELS,
     OFFICIAL_TEST_PATH,
     OFFICIAL_TRAIN_PATH,
     OFFICIAL_VAL_PATH,
 )
 
-_RAW_JSONL = _ROOT / "data/raw/kubernetes_issues.jsonl"
-_OUT_CSV = _ROOT / "evals/golden/classification_golden_candidates.csv"
+_RAW_JSONL = RAW_DATA_DIR / "kubernetes_issues.jsonl"
+_OUT_CSV = EVALS_DIR / "golden" / "classification_golden_candidates.csv"
 
 CANDIDATES_PER_CLASS = 12
 _BODY_PREVIEW_CHARS = 1200
@@ -74,9 +70,9 @@ def _resolve_label(raw_labels: list[str]) -> tuple[str | None, bool]:
 def _load_excluded_ids() -> set[int]:
     excluded: set[int] = set()
     for path in (
-        _ROOT / OFFICIAL_TRAIN_PATH,
-        _ROOT / OFFICIAL_VAL_PATH,
-        _ROOT / OFFICIAL_TEST_PATH,
+        OFFICIAL_TRAIN_PATH,
+        OFFICIAL_VAL_PATH,
+        OFFICIAL_TEST_PATH,
     ):
         with path.open(encoding="utf-8", newline="") as f:
             for row in csv.DictReader(f):
@@ -188,7 +184,7 @@ def main() -> None:
         writer.writeheader()
         writer.writerows(rows)
 
-    print(f"wrote {_OUT_CSV.relative_to(_ROOT)}")
+    print(f"wrote {_OUT_CSV.relative_to(PROJECT_ROOT)}")
     print("next step: open the CSV and fill gold_label + curator_notes for 25 issues")
 
 

@@ -57,6 +57,9 @@ All shared labels, official paths, known metrics, and LLM defaults are centraliz
 
 Key exports: `LABELS`, `LABEL_DEFINITIONS`, `OFFICIAL_TRAIN/VAL/TEST_PATH`, `OFFICIAL_*_REPORT_DIR`, `OFFICIAL_FIGURES_DIR`, `CLASSICAL_TEST_MACRO_F1`, `CODEBERT_TEST_MACRO_F1`, `DEFAULT_OLLAMA_*`.
 
+Path hygiene note (2026-05-21): project-level roots are centralized in `app/core/paths.py`;
+classifier-specific constants remain canonical in `ml/classifier_config.py` and derive official data/report paths from those roots. Classifier scripts run with `python -m ml.<module>` and no project-root `sys.path` insertion.
+
 ---
 
 ## 6. Preprocessing Policy
@@ -235,13 +238,13 @@ Artifacts: `reports/llm/llama3_full/`
 
 ```powershell
 # Smoke run (10 rows)
-uv run python ml/llm_baseline.py --limit 10
+uv run python -m ml.llm_baseline --limit 10
 
 # Full run on official test split (360 rows)
-uv run python ml/llm_baseline.py --run-name llama3_full
+uv run python -m ml.llm_baseline --run-name llama3_full
 
 # Resume interrupted run
-uv run python ml/llm_baseline.py --run-name llama3_full --resume
+uv run python -m ml.llm_baseline --run-name llama3_full --resume
 ```
 
 ---

@@ -1,17 +1,14 @@
 """RAG-2: Chunking experiments — baseline fixed-size and section-aware."""
 
+import argparse
 import csv
 import json
 import re
-import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterator
 
-ROOT = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(ROOT))
-
-from app.services.rag.config import (  # noqa: E402
+from app.services.rag.config import (
     BASELINE_FIXED_CHUNK_CHARS,
     CHUNK_OVERLAP_CHARS,
     MIN_CHUNK_CHARS,
@@ -43,6 +40,13 @@ _TINY_CHUNK_POLICY = (
     f"({', '.join(sorted(TINY_CHUNK_HIGH_SIGNAL_TOKENS))}). "
     "Matched case-insensitively as substrings."
 )
+
+
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Run RAG chunking experiments and write chunk artifacts."
+    )
+    return parser.parse_args()
 
 
 # ---------------------------------------------------------------------------
@@ -479,6 +483,8 @@ def _collect_examples(chunks: list[dict], n_per_type: int) -> list[dict]:
 
 
 def main() -> None:
+    _parse_args()
+
     print("RAG-2: Loading corpus sources...")
     docs = _load_jsonl(RAG_DOC_SOURCES_PATH)
     issues = _load_jsonl(RAG_ISSUES_WITH_COMMENTS_PATH)

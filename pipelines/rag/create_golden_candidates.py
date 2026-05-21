@@ -1,15 +1,12 @@
 """RAG-3a: Generate RAG golden set candidates from section-aware chunks."""
 
+import argparse
 import csv
 import json
 import re
-import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(ROOT))
-
-from app.services.rag.config import (  # noqa: E402
+from app.services.rag.config import (
     RAG_CHUNKS_SECTION_PATH,
     RAG_GOLDEN_CANDIDATES_PATH,
     RAG_GOLDEN_CANDIDATES_SUMMARY_PATH,
@@ -41,6 +38,13 @@ _METADATA_SECTION_KEYWORDS = frozenset(
         "related plugins",
     }
 )
+
+
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Generate RAG golden set candidates from section-aware chunks."
+    )
+    return parser.parse_args()
 
 
 # ---------------------------------------------------------------------------
@@ -293,6 +297,8 @@ def _validate(candidates: list[dict], valid_ids: set[str]) -> tuple[bool, list[s
 
 
 def main() -> None:
+    _parse_args()
+
     print("RAG-3a: Loading section-aware chunks...")
     chunks = _load_jsonl(RAG_CHUNKS_SECTION_PATH)
     valid_ids = {c["chunk_id"] for c in chunks}

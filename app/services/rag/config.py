@@ -1,19 +1,16 @@
 """Centralized constants for the Advanced RAG service and offline experiments."""
 
-from pathlib import Path
+from app.core.paths import RAG_DATA_DIR, RAG_GOLDEN_DIR, RAG_REPORTS_DIR
 
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
-RAG_DATA_DIR = Path("data/rag")
 RAG_RAW_DOCS_DIR = RAG_DATA_DIR / "raw_docs"
 RAG_PROCESSED_DIR = RAG_DATA_DIR / "processed"
 RAG_CHUNKS_DIR = RAG_DATA_DIR / "chunks"
 
-RAG_REPORTS_DIR = Path("reports/rag")
 RAG_FIGURES_DIR = RAG_REPORTS_DIR / "figures"
 
-RAG_GOLDEN_DIR = Path("evals/golden/rag")
 RAG_GOLDEN_CANDIDATES_PATH = RAG_GOLDEN_DIR / "rag_golden_candidates.csv"
 RAG_GOLDEN_CANDIDATES_SUMMARY_PATH = (
     RAG_GOLDEN_DIR / "rag_golden_candidates_summary.json"

@@ -10,17 +10,12 @@ Reads rag_golden_candidates.csv and adds:
 Does NOT call LLMs, create embeddings, run retrieval, or fetch data.
 """
 
+import argparse
 import csv
 import json
 import re
-import sys
 from datetime import datetime, timezone
-from pathlib import Path
-
-ROOT = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(ROOT))
-
-from app.services.rag.config import (  # noqa: E402
+from app.services.rag.config import (
     RAG_GOLDEN_CANDIDATES_PATH,
     RAG_GOLDEN_DIR,
     RAG_GOLDEN_REVIEW_CSV_PATH,
@@ -28,6 +23,13 @@ from app.services.rag.config import (  # noqa: E402
 )
 
 _ANSWER_PREVIEW_MAX = 300
+
+
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Prepare review-friendly RAG golden candidate CSV."
+    )
+    return parser.parse_args()
 
 # ---------------------------------------------------------------------------
 # Per-candidate review analysis (deterministic, no external services)
@@ -206,6 +208,8 @@ def _make_answer_preview(ideal_answer: str) -> str:
 
 
 def main() -> None:
+    _parse_args()
+
     with open(RAG_GOLDEN_CANDIDATES_PATH, encoding="utf-8", newline="") as f:
         original = list(csv.DictReader(f))
 

@@ -390,6 +390,36 @@ Config values (base URL, timeout, model) are module-level constants in `app/infr
 #         reports/rag/corpus_collection_report.json, data/rag/corpus_manifest.json (updated)
 # Results: 50 issues, 383 comments, 9 docs (kubernetes/kubernetes + kubernetes/website)
 .\.venv\Scripts\python.exe -m pipelines.rag.collect_sources --max-issues 50 --max-comments-per-issue 20 --max-docs 12
+
+# RAG-2/2b: Chunking experiments + quality filter
+# Reads: data/rag/raw_docs/doc_sources.jsonl, data/rag/processed/issues_with_comments.jsonl
+# Writes: data/rag/chunks/chunks_baseline_fixed.jsonl (2596 after filter)
+#         data/rag/chunks/chunks_section_aware.jsonl  (2189 after filter)
+#         reports/rag/chunking_report.json
+#         reports/rag/chunking_examples.csv
+# Quality filter: MIN_CHUNK_CHARS=40, high-signal token exception
+# Chosen for next phase: section_aware
+.\.venv\Scripts\python.exe -m pipelines.rag.chunk
+
+# RAG-3a: Generate RAG golden set candidates
+# Reads: data/rag/chunks/chunks_section_aware.jsonl
+# Writes: evals/golden/rag/rag_golden_candidates.csv (43 candidates)
+#         evals/golden/rag/rag_golden_candidates_summary.json
+# validation_passed=true, all 43 chunk refs valid
+.\.venv\Scripts\python.exe -m pipelines.rag.create_golden_candidates
+
+# RAG-3 review prep: Generate review-friendly candidate file
+# Reads: evals/golden/rag/rag_golden_candidates.csv
+# Writes: evals/golden/rag/rag_golden_candidates_review.csv (adds answer_preview, suggested_keep, suggested_reason)
+#         evals/golden/rag/rag_golden_review_summary.json (yes=25, maybe=11, no=7)
+.\.venv\Scripts\python.exe -m pipelines.rag.prepare_review
+
+# RAG-3b: Finalize golden set from curated review CSV
+# Reads: evals/golden/rag/rag_golden_candidates_review.csv (selected_for_final=yes rows)
+# Writes: evals/golden/rag/rag_golden.jsonl (25 rows, docs=5, issue=10, comment=10)
+#         evals/golden/rag/rag_golden_summary.json (validation_passed=true)
+# Validation gates: count=25, hand_labeled>=5, source mix, chunk ref validity, no dupes
+.\.venv\Scripts\python.exe -m pipelines.rag.finalize_golden
 ```
 
 ## Useful checks

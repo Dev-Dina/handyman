@@ -192,8 +192,8 @@ none
 | RAG-1a | Corpus manifest + leakage guard | **COMPLETE (2026-05-21)** |
 | RAG-1b | Source collection: docs + issue comments | **COMPLETE (2026-05-21)** |
 | RAG-1c | Expanded docs: kubernetes/website curated paths | **COMPLETE (2026-05-21)** |
-| RAG-2 | Chunking experiments | TODO |
-| RAG-3 | RAG golden set (25 examples) | TODO |
+| RAG-2 | Chunking experiments | **COMPLETE (2026-05-21)** |
+| RAG-3 | RAG golden set (25 examples) | **COMPLETE (2026-05-21)** — rag_golden.jsonl (25 rows, docs=5, issue=10, comment=10) |
 | RAG-4 | Embedding model comparison | TODO |
 | RAG-5 | Retrieval experiments (hybrid, reranking, query transformation) | TODO |
 | RAG-6 | Service / API integration | TODO |
@@ -205,8 +205,11 @@ none
 - [x] RAG-1a: pipelines/rag/build_corpus.py — 1498 held-out candidates; leakage_passed=true; corpus_manifest.json
 - [x] RAG-1b: pipelines/rag/collect_sources.py — issue comments + bounded docs; corpus_collection_report.json; manifest updated
 - [x] RAG-1c: expanded DOC_SOURCES to kubernetes/website; 9 docs from 2 repos; --max-docs/--include-website-docs args; failed_doc_paths in report
-- [ ] RAG-2: Fixed-size + section-aware chunkers
-- [ ] RAG-3: RAG golden set (25 examples, JSONL)
+- [x] RAG-2: pipelines/rag/chunk.py — baseline_fixed + section_aware chunkers; chunking_report.json + chunking_examples.csv; chosen=section_aware
+- [x] RAG-2b: quality filter (MIN_CHUNK_CHARS=40, high-signal token exception); baseline 2781->2596, section_aware 2623->2189; new report fields: dropped_tiny_chunks, min_char_length_after_filter, min_chunk_chars, tiny_chunk_policy
+- [x] RAG-3a: pipelines/rag/create_golden_candidates.py — 43 candidates (docs=8, issue=20, comment=15); validation_passed=true; evals/golden/rag/rag_golden_candidates.csv + summary.json
+- [x] RAG-3 review prep: pipelines/rag/prepare_review.py — rag_golden_candidates_review.csv (yes=25, maybe=11, no=7); answer_preview + suggested_keep + suggested_reason added; rag_golden_review_summary.json
+- [x] RAG-3b: pipelines/rag/finalize_golden.py — rag_golden.jsonl (25 rows, docs=5, issue=10, comment=10, hand_labeled=5, validation_passed=true); rag_golden_summary.json
 - [ ] RAG-4: Embedding model comparison (Hit@5 on golden set)
 - [ ] RAG-5: Hybrid retrieval + reranker + query transformation
 - [ ] RAG-6: Service / API integration
@@ -214,9 +217,8 @@ none
 
 ### Next RAG tasks
 
-1. Implement baseline fixed-size chunker and section-aware chunker in `pipelines/rag/chunk.py`
-2. Compare chunking strategies on heldout issues and docs; write `reports/rag/chunking_comparison.json`
-3. Build RAG golden set candidates (`evals/golden/rag/rag_golden_candidates.csv`) — RAG-3
+1. Embedding model comparison (Hit@5 on golden set) — RAG-4
+2. Embedding model comparison (Hit@5 on golden set) — RAG-4
 
 ## Backlog (post-RAG, not blocking)
 - POST /api/v1/tools/classify — wire CodeBERT inference endpoint via model_server

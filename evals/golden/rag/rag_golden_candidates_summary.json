@@ -1,0 +1,14 @@
+{
+  "total_candidates": 43,
+  "candidate_counts_by_source_type": {
+    "docs": 8,
+    "issue": 20,
+    "comment": 15
+  },
+  "maintainer_like_candidate_count": 15,
+  "unique_ground_truth_chunks": 43,
+  "invalid_ground_truth_chunk_refs": [],
+  "validation_passed": true,
+  "output_csv": "evals\\golden\\rag\\rag_golden_candidates.csv",
+  "source_chunks_path": "data\\rag\\chunks\\chunks_section_aware.jsonl"
+}

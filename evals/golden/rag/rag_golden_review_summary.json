@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-05-21T07:50:14Z",
+  "input_candidates": 43,
+  "suggested_keep_yes": 25,
+  "suggested_keep_maybe": 11,
+  "suggested_keep_no": 7,
+  "review_csv": "evals\\golden\\rag\\rag_golden_candidates_review.csv",
+  "original_candidates_csv": "evals\\golden\\rag\\rag_golden_candidates.csv",
+  "new_columns": [
+    "answer_preview",
+    "suggested_keep",
+    "suggested_reason",
+    "selected_for_final",
+    "reviewer_notes"
+  ],
+  "workflow": "Curator reviews suggested_keep column. Set selected_for_final=yes for 25 rows, hand_labeled_for_judge_check=true for at least 5, then run pipelines/rag/finalize_golden.py."
+}

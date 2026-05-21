@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+import pytest
+
 from app.services.tools.entity_extractor import extract_entities
+
+pytestmark = pytest.mark.unit
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -222,7 +226,6 @@ def test_paths_full_issue():
 def test_paths_no_urls_leaked():
     text = "See https://kubernetes.io/docs/setup/ and /etc/hosts."
     result = extract_entities(text)
-    # URLs should not appear as paths
     for p in result["paths"]:
         assert not p.startswith("http")
 

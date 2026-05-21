@@ -13,7 +13,7 @@ has thousands of examples, giving a balanced supervised dataset.
 
 ## Label mapping
 
-**Status:** Draft. Will be confirmed after EDA review.
+**Status:** CONFIRMED — LOCKED. EDA completed; dataset and splits finalized.
 
 Final classes: bug / feature / docs / question
 

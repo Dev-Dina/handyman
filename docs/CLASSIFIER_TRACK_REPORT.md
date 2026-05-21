@@ -263,29 +263,31 @@ Script: `ml/make_three_way_classifier_comparison.py`
 
 ## 16. Classification Golden Set
 
-**Status: candidates generated, curation pending.**
+**Status: COMPLETE**
 
 A 25-issue hand-curated golden set for spot-checking and presentation demos.
 Separate from the official test split (`data/processed/test.csv`).
 
 | File | Status |
 |---|---|
-| `evals/golden/classification_golden_candidates.csv` | 48 candidates (12/class) — needs curation |
-| `evals/golden/classification_golden.jsonl` | not yet created — final 25 after curation |
-| `evals/golden/README.md` | curation instructions |
+| `evals/golden/classification_golden_candidates.csv` | archived — 48-candidate source pool |
+| `evals/golden/classification_golden_curated.csv` | COMPLETE — 25 rows, all gold_label + curator_notes filled |
+| `evals/golden/classification_golden.jsonl` | **OFFICIAL** — 25 validated records, one JSON object per line |
+| `evals/golden/classification_golden_summary.json` | generated — row_count, class_counts, validation_passed |
 
-Script: `ml/create_classification_golden_candidates.py`
+Finalized by: `ml/finalize_classification_golden.py`
 
-Candidate pool: sourced from `data/raw/kubernetes_issues.jsonl`, excluding all 2400 issue_numbers in the official splits.
+Class distribution (golden set):
 
-| Class | Candidates available | Selected for review |
-|---|---|---|
-| bug | 797 | 12 |
-| feature | 388 | 12 |
-| docs | 306 | 12 |
-| question | 19 | 12 |
+| Class | Count |
+|---|---|
+| bug | 7 |
+| feature | 6 |
+| docs | 6 |
+| question | 6 |
+| **Total** | **25** |
 
-**Next step:** open `evals/golden/classification_golden_candidates.csv`, fill `gold_label` for 25 issues, save as `classification_golden.jsonl`.
+Validation checks: 25 rows, unique issue_numbers, gold_label ∈ {bug, feature, docs, question}, non-empty curator_notes, exact class counts.
 
 ---
 
@@ -320,4 +322,4 @@ app/domain/errors.py              ToolInputError, OllamaUnavailableError (new)
 - [x] Tools API architecture — schemas, routes, infra scaffold in place
 - [x] Summarization endpoint — LIVE; Problem/Expected/Evidence/Component; 503 on Ollama unavailable — smoke tested (~18s latency)
 - [x] Tools API smoke check — both endpoints manually verified end-to-end
-- [ ] Classification golden set — candidates generated; manually curate 25 into `classification_golden.jsonl`
+- [x] Classification golden set — COMPLETE; `evals/golden/classification_golden.jsonl` (25 rows, validated)

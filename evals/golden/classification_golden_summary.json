@@ -1,0 +1,12 @@
+{
+  "row_count": 25,
+  "class_counts": {
+    "bug": 7,
+    "feature": 6,
+    "docs": 6,
+    "question": 6
+  },
+  "source_csv": "evals\\golden\\classification_golden_curated.csv",
+  "output_jsonl": "evals\\golden\\classification_golden.jsonl",
+  "validation_passed": true
+}

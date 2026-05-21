@@ -15,6 +15,29 @@ Startup order (automatic via depends_on):
 4. api, model_server start
 5. chatbot starts after api is healthy
 
+## Testing
+
+```powershell
+# Full suite (61 tests — safe: no Docker, no Ollama, no network)
+.\.venv\Scripts\python.exe -m pytest -q
+
+# Dry run (collect only)
+.\.venv\Scripts\python.exe -m pytest --collect-only
+
+# By category
+.\.venv\Scripts\python.exe -m pytest tests/unit        # 35 pure-function tests
+.\.venv\Scripts\python.exe -m pytest tests/smoke       # 8 import/route sanity checks
+.\.venv\Scripts\python.exe -m pytest tests/integration # 10 FastAPI endpoint tests (Ollama mocked)
+.\.venv\Scripts\python.exe -m pytest tests/eval        # 8 golden CSV schema/quality gates
+.\.venv\Scripts\python.exe -m pytest tests/build       # 9 compose/config structural checks
+
+# By marker
+.\.venv\Scripts\python.exe -m pytest -m unit
+.\.venv\Scripts\python.exe -m pytest -m "not build"
+```
+
+See `tests/README.md` for category definitions and rules.
+
 ## Day-to-day
 
 ```bash

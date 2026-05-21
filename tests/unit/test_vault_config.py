@@ -6,6 +6,8 @@ import requests
 from app.domain.errors import SecretNotFoundError, VaultUnavailableError
 from app.infra.vault_client import VaultClient
 
+pytestmark = pytest.mark.unit
+
 
 def _make_client(is_authenticated=True, kv_data: dict | None = None):
     mock_hvac = MagicMock()

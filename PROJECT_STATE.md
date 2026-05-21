@@ -7,7 +7,7 @@ Week 7 Maintainer's Copilot
 Thursday night working demo, Friday 10-minute presentation.
 
 ## Current phase
-Phase 1 - DL/NLP track
+Phase 1 - DL/NLP track — **COMPLETE (closed 2026-05-21)**
 
 ## Chosen repo
 kubernetes/kubernetes
@@ -34,7 +34,7 @@ Failed experiments archived: `data/experiments/failed/` + `reports/experiments/f
 
 | What | Path |
 |---|---|
-| Official figures (presentation) | `reports/official/figures/` (01-14) |
+| Official figures (presentation) | `reports/official/figures/` (01-18) |
 | EDA + classical reports | `reports/classical/`, `reports/kubernetes_*.json/csv` |
 | Transformer run reports | `reports/transformer/` (per-run subdirs) |
 | Transformer runs summary | `reports/transformer/transformer_runs_summary.csv` |
@@ -127,8 +127,9 @@ Failed experiments archived: `data/experiments/failed/` + `reports/experiments/f
 - [x] LLM baseline run — llama3_full COMPLETE; macro_f1=0.5554, accuracy=0.5850; reports/llm/llama3_full/
 - [x] Three-way comparison — reports/classifier_three_way_comparison.json/csv + figures 15-18
 - [x] Final deployment decision — CodeBERT primary, LogisticRegression fallback
-- [x] Classification golden set candidates — evals/golden/classification_golden_candidates.csv (48 rows, 12/class; pending manual curation)
+- [x] Classification golden set candidates — evals/golden/classification_golden_candidates.csv (48 rows, 12/class)
 - [x] Classification golden set curated — evals/golden/classification_golden_curated.csv (25 rows, gold_label + curator_notes filled)
+- [x] Classification golden set FINAL — evals/golden/classification_golden.jsonl (25 rows, validated; bug=7, feature=6, docs=6, question=6)
 - [x] Tools API architecture — schemas, routes, infra scaffold (app/api/schemas/, app/api/routes/, app/infra/ollama_client.py)
 - [x] NER endpoint — POST /api/v1/tools/entities LIVE; calls extract_entities_service
 - [x] Summarization endpoint — POST /api/v1/tools/summarize LIVE; Problem/Expected/Evidence/Component prompt via OllamaClient; 503 on unavailable
@@ -166,13 +167,32 @@ data/experiments/failed/strict_text/         strict preprocessing — rejected, 
 - Secrets from Vault, not .env except Vault token/ports
 - Redaction before logs/traces/memory
 
+## Test organization
+
+| Category | Path | Count | Status |
+|---|---|---|---|
+| unit | tests/unit/ | 35 | 35/35 PASS |
+| smoke | tests/smoke/ | 8 | 8/8 PASS |
+| integration | tests/integration/ | 10 | 10/10 PASS |
+| eval | tests/eval/ | 8 | 8/8 PASS |
+| build | tests/build/ | 9 | 9/9 PASS |
+| **Total** | | **61** | **61/61 PASS** |
+
+Markers registered in pyproject.toml: `unit`, `smoke`, `integration`, `eval`, `build`.
+See `tests/README.md` for category definitions and run commands.
+
 ## Current blockers
 none
 
-## Next 3 tasks
-1. Convert evals/golden/classification_golden_curated.csv into evals/golden/classification_golden.jsonl (25 rows, JSONL format)
-2. Wire classifier inference endpoint (POST /api/v1/tools/classify) using CodeBERT artifact
-3. Integrate tools endpoints into chatbot as callable tool calls
+## Next phase
+Advanced RAG
+
+## Backlog (post-RAG, not blocking)
+- POST /api/v1/tools/classify — wire CodeBERT inference endpoint via model_server
+- Integrate classify/entities/summarize into chatbot as callable tool calls
+- Eval test for classification_golden.jsonl JSONL schema (field presence, label validity)
+- CI gates for eval tests
+- model_server/container hardening
 
 ## Commands
 ```bash

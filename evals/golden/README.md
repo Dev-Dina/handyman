@@ -2,8 +2,11 @@
 
 ## Status
 
-**PENDING CURATION** — `classification_golden_candidates.csv` is a candidate pool.
-`gold_label` must be manually verified before this file becomes the official golden set.
+**COMPLETE** — `classification_golden.jsonl` is the official 25-issue golden set.
+Curation complete: all `gold_label` fields verified, `curator_notes` filled for all rows.
+
+Finalized by: `ml/finalize_classification_golden.py`
+Summary: `evals/golden/classification_golden_summary.json`
 
 ## Purpose
 
@@ -17,8 +20,10 @@ Used for human-in-the-loop spot-check and presentation demos.
 
 | File | Status | Description |
 |---|---|---|
-| `classification_golden_candidates.csv` | **needs curation** | 48 candidates (12/class), suggested labels, blank gold fields |
-| `classification_golden.jsonl` | not yet created | final 25 curated examples with confirmed gold_label |
+| `classification_golden_candidates.csv` | archived — source pool | 48 candidates (12/class), suggested labels |
+| `classification_golden_curated.csv` | COMPLETE | 25 rows, gold_label + curator_notes filled |
+| `classification_golden.jsonl` | **OFFICIAL** | 25 curated examples, validated, one JSON object per line |
+| `classification_golden_summary.json` | generated | row_count, class_counts, validation_passed |
 
 ## Curation workflow
 

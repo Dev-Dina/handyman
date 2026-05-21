@@ -38,6 +38,13 @@ dev = [
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+markers = [
+    "unit: pure function/class tests — no network, no Docker, no external services",
+    "smoke: minimal sanity checks — app imports, route registration, artifact schema",
+    "integration: FastAPI endpoint behavior via TestClient with mocked infra",
+    "eval: golden-set schema and quality gates",
+    "build: Docker/Compose config structural checks — no Docker execution",
+]
 
 [tool.setuptools.packages.find]
 where = ["."]

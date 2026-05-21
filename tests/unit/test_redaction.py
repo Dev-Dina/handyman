@@ -2,6 +2,7 @@ import pytest
 
 from app.infra.redaction import redact
 
+pytestmark = pytest.mark.unit
 
 _CASES = [
     (

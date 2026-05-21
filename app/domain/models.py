@@ -11,13 +11,28 @@ class UserDomain(BaseModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4)
     email: str
     role: str = "user"
+    is_active: bool = True
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+
+
+class WidgetConfigDomain(BaseModel):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4)
+    public_widget_id: uuid.UUID = Field(default_factory=uuid.uuid4)
+    owner_user_id: uuid.UUID
+    allowed_origins: list[str] = Field(default_factory=list)
+    theme: dict[str, Any] = Field(default_factory=dict)
+    greeting: str | None = None
+    enabled_tools: list[str] = Field(default_factory=list)
+    is_active: bool = True
     created_at: datetime | None = None
     updated_at: datetime | None = None
 
 
 class ConversationDomain(BaseModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4)
-    user_id: uuid.UUID
+    user_id: uuid.UUID | None = None
+    widget_id: uuid.UUID | None = None
     title: str | None = None
     created_at: datetime | None = None
     updated_at: datetime | None = None
@@ -41,20 +56,12 @@ class MemoryDomain(BaseModel):
 
 class AuditLogDomain(BaseModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4)
-    user_id: uuid.UUID | None = None
+    actor_user_id: uuid.UUID | None = None
     action: str
-    resource_type: str
-    resource_id: str | None = None
-    extra: dict[str, Any] | None = None
+    target_type: str
+    target_id: str | None = None
+    log_metadata: dict[str, Any] | None = None
     created_at: datetime | None = None
-
-
-class WidgetConfigDomain(BaseModel):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4)
-    name: str
-    config: dict[str, Any]
-    created_at: datetime | None = None
-    updated_at: datetime | None = None
 
 
 class DocumentDomain(BaseModel):

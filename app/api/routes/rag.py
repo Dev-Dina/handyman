@@ -15,7 +15,7 @@ from app.domain.errors import RagCorpusNotReadyError
 from app.infra.logging import get_logger, request_id_var
 from app.infra.tracing import get_tracer
 from app.services.rag.config import HYBRID_ALPHA
-from app.services.rag.retrieval import retrieve
+from app.services.rag.retrieval import build_extractive_answer, retrieve
 
 router = APIRouter(prefix="/api/v1/rag", tags=["rag"])
 
@@ -89,6 +89,6 @@ async def rag_query(req: RagQueryRequest) -> RagQueryResponse:
             )
             for c in chunks
         ],
-        answer=None,
+        answer=build_extractive_answer(chunks),
         latency_seconds=round(latency, 3),
     )

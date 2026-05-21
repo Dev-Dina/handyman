@@ -148,8 +148,10 @@ def test_thin_chunk_filter_demotes_headings():
     assert not _is_thin_chunk(body["text"])
 
     result = _apply_thin_filter([heading, body])
-    assert result[0]["chunk_id"] == "b1", "body chunk should come before heading chunk"
-    assert result[1]["chunk_id"] == "h1"
+    assert len(result) == 1, (
+        "thin chunk should be excluded when substantive chunk exists"
+    )
+    assert result[0]["chunk_id"] == "b1", "body chunk should be the only result"
 
 
 def test_thin_chunk_filter_preserves_all_chunks():

@@ -20,3 +20,7 @@ class ModelServerUnavailableError(RuntimeError):
 
 class RagCorpusNotReadyError(RuntimeError):
     """Raised when the RAG chunk corpus file cannot be loaded."""
+
+
+class GroqUnavailableError(RuntimeError):
+    """Raised when the Groq API cannot be reached, returns an error, or is not configured."""

@@ -182,6 +182,17 @@ def test_rag_query_maintainer_only_filter_passed_through(client):
     assert kwargs.get("maintainer_only") is True
 
 
+def test_rag_query_answer_populated_when_chunks_exist(client):
+    with patch(
+        "app.api.routes.rag.retrieve",
+        new=AsyncMock(return_value=([_MOCK_CHUNK], "hybrid")),
+    ):
+        resp = client.post("/api/v1/rag/query", json={"question": "pod scheduling"})
+    data = resp.json()
+    assert data["answer"] is not None
+    assert "Pod scheduling" in data["answer"]
+
+
 def test_rag_query_transform_passed_through(client):
     with patch(
         "app.api.routes.rag.retrieve",

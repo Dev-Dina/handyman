@@ -50,6 +50,6 @@ none
 
 ## 9. Next steps
 
-1. Design memory schemas and audit table.
-2. Select Redis TTL defaults.
-3. Implement short-term memory service with tests.
+1. MEMORY-1: Implement short-term memory service with Redis TTL.
+2. Select Redis TTL defaults (session vs. user-scoped).
+3. MEMORY-2: Long-term memory in Postgres with pgvector + audit log linkage.

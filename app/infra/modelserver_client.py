@@ -46,3 +46,26 @@ class ModelServerClient:
             ) from exc
         except (httpx.HTTPStatusError, KeyError) as exc:
             raise ModelServerUnavailableError(f"Model server error: {exc}") from exc
+
+    async def classify(self, title: str, body: str) -> dict:
+        """Request issue classification from the model server.
+
+        Returns {"label": str, "confidence": float}.
+        Raises ModelServerUnavailableError on connection failure or bad response.
+        """
+        payload = {"title": title, "body": body}
+        try:
+            async with httpx.AsyncClient(timeout=self._timeout) as client:
+                resp = await client.post(f"{self._base_url}/classify", json=payload)
+                resp.raise_for_status()
+                return resp.json()
+        except httpx.ConnectError as exc:
+            raise ModelServerUnavailableError(
+                f"Model server not reachable at {self._base_url}"
+            ) from exc
+        except httpx.TimeoutException as exc:
+            raise ModelServerUnavailableError(
+                f"Model server timed out after {self._timeout}s"
+            ) from exc
+        except (httpx.HTTPStatusError, KeyError) as exc:
+            raise ModelServerUnavailableError(f"Model server error: {exc}") from exc

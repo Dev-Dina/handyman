@@ -11,12 +11,12 @@ from app.repositories.base import BaseRepository
 class AuditLogRepository(BaseRepository[AuditLog]):
     model = AuditLog
 
-    async def list_by_user(
-        self, user_id: uuid.UUID, limit: int = 100
+    async def list_by_actor(
+        self, actor_user_id: uuid.UUID, limit: int = 100
     ) -> list[AuditLog]:
         result = await self._session.execute(
             select(AuditLog)
-            .where(AuditLog.user_id == user_id)
+            .where(AuditLog.actor_user_id == actor_user_id)
             .order_by(AuditLog.created_at.desc())
             .limit(limit)
         )

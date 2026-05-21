@@ -10,9 +10,9 @@ The planned architecture is one FastAPI-backed tool-calling LLM shared by the St
 
 | Requirement | Status |
 |---|---|
-| Single tool-calling LLM, not multi-agent workflow | Planned |
-| Tools wrap classifier, NER, summarizer, and RAG | Planned |
-| Explicit `write_memory` tool, no auto-writes | Planned |
+| Single tool-calling LLM, not multi-agent workflow | **DONE (CHAT-2)** |
+| Tools wrap classifier, NER, summarizer, and RAG | **DONE (CHAT-2)** |
+| Explicit `write_memory` tool, no auto-writes | **DONE (CHAT-2 — placeholder)** |
 | Short-term memory in Redis with explicit TTL | Planned |
 | Long-term memory in Postgres with pgvector | Planned |
 | Audit log row for every long-term memory write | Planned |
@@ -68,14 +68,24 @@ The React widget is a standalone embeddable bundle loaded through `/widget.js`. 
 
 The widget should support host-page embedding without requiring the host app to know internal API details.
 
-## 8. Auth plan
+## 8. Auth plan (CHAT-1 complete)
 
-Auth is not implemented in CHAT-0. The next design task should decide:
-- admin/internal auth model
-- widget tenant/site identity
-- API token/session handling
-- widget config access rules
-- later origin allowlisting and CSP frame-ancestors policy
+CHAT-1 implemented the database foundation for auth:
+
+| Decision | Choice |
+|---|---|
+| Role model | Single `role` column (`user` / `admin`) on `users` table |
+| Active flag | `is_active` bool on `users` — inactive users blocked at service layer |
+| Auth errors | `UserNotFoundError`, `InvalidCredentialsError`, `UserAlreadyExistsError`, `InactiveUserError` in `app/domain/auth.py` |
+| Widget identity | `public_widget_id` UUID on `widget_configs` — public tenant identifier for loader script |
+| Widget access | `owner_user_id` FK — each widget owned by one user |
+| Origin allowlisting | `allowed_origins` JSONB list — enforced by `WidgetOriginDeniedError` at service layer |
+| Conversation scope | `user_id` nullable + `widget_id` nullable — session can belong to user, widget, or both |
+
+Pending for later phases:
+- API token / JWT issuance (CHAT-2)
+- CSP `frame-ancestors` enforcement (WIDGET-1)
+- Redis session TTL (MEMORY-1)
 
 ## 9. Memory plan
 
@@ -102,8 +112,24 @@ Future CI should include:
 
 none
 
+## 9b. CHAT-2 implementation (complete)
+
+CHAT-2 delivered the tool-calling chatbot API. Key decisions:
+
+| Decision | Choice |
+|---|---|
+| Primary LLM | Groq `llama-3.3-70b-versatile` — OpenAI-compatible API via httpx |
+| Fallback model constant | `openai/gpt-oss-20b` (configurable, not activated by default) |
+| Tool loop | Up to `MAX_TOOL_ROUNDS=2` Groq calls per turn; tool errors return structured payloads, never crash the request |
+| Groq key location | Vault `secret/llm` / `groq_api_key` — loaded at runtime via `_load_groq_api_key()` |
+| Tool wiring | `rag_query` → `retrieve()`; `extract_entities` → `extract_entities_service()`; `summarize` → `summarize_service()` (graceful on OllamaUnavailableError); `classify_issue` → `ModelServerClient.classify()` (graceful on ModelServerUnavailableError); `write_memory` → placeholder |
+| System prompt | `prompts/chat_system.md` — loaded and cached by `app/services/chat/prompts.py` |
+| Tracing | Spans: `chat.request`, `llm.groq.chat`, `tool.{name}` — all inputs/outputs truncated + redacted |
+| Architecture | `app/infra/groq_client.py` adapter → `app/services/chat/orchestrator.py` → `app/api/routes/chat.py` (HTTP only) |
+| Test strategy | No real Groq calls; inject `_client` mock or patch `run_chat`; 30 new tests |
+
 ## 13. Next steps
 
-1. Design auth + widget config database schema.
-2. Wire classifier/RAG tools behind API endpoints.
-3. Implement short-term memory service with Redis TTL.
+1. MEMORY-1: Short-term Redis memory with explicit TTL.
+2. WIDGET-1: Widget config API + `/widget.js` loader.
+3. Generation eval (faithfulness/answer_relevancy via LLM judge).

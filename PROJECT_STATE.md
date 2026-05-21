@@ -172,12 +172,12 @@ data/experiments/failed/strict_text/         strict preprocessing — rejected, 
 
 | Category | Path | Count | Status |
 |---|---|---|---|
-| unit | tests/unit/ | 47 | 47/47 PASS |
+| unit | tests/unit/ | 97 | 97/97 PASS |
 | smoke | tests/smoke/ | 11 | 11/11 PASS |
-| integration | tests/integration/ | 24 | 24/24 PASS |
-| eval | tests/eval/ | 19 | 19/19 PASS |
+| integration | tests/integration/ | 45 | 45/45 PASS |
+| eval | tests/eval/ | 18 | 18/18 PASS |
 | build | tests/build/ | 1 | 1/1 PASS |
-| **Total** | | **108** | **108/108 PASS** |
+| **Total** | | **172** | **172/172 PASS** |
 
 Markers registered in pyproject.toml: `unit`, `smoke`, `integration`, `eval`, `build`.
 See `tests/README.md` for category definitions and run commands.
@@ -216,7 +216,7 @@ none
 - [x] RAG-5: BGE hybrid sweep + E5 hybrid sweep (RAG-5b); E5 hybrid alpha=0.7 BEST: hit@5=0.68, mrr@10=0.329, latency=5.4s; reranker evaluated and rejected for E5 (−12pp hit@5); technical_terms +8pp TF-IDF; metadata filter scaffold
 - [x] RAG-5 reports: hybrid_alpha_comparison.json, rerank_comparison.json, query_transform_comparison.json, retrieval_runs_summary.csv (14 runs)
 - [x] RAG-6: POST /api/v1/rag/query — E5 hybrid alpha=0.7 via modelserver; TF-IDF fallback; metadata filters; 8 integration tests + 3 smoke tests; 73/73 pass
-- [x] RAG-7: eval harness (pipelines/rag/eval_api.py; hit@5=0.40, mrr@10=0.196 TF-IDF CI baseline); eval_thresholds.yaml; canonical response schema (results, retriever_used, query_transform_used, answer); shared query_transform module; thin-chunk filter; tracing spans (rag.query, rag.retrieve, rag.metadata_filter, rag.modelserver_embedding, rag.tfidf_fallback); generic 500 handler; 96/96 pass
+- [x] RAG-7: eval harness (pipelines/rag/eval_api.py; hit@5=0.40, mrr@10=0.196 TF-IDF CI baseline); eval_thresholds.yaml; canonical response schema (results, retriever_used, query_transform_used, answer); shared query_transform module; thin-chunk filter (now excludes thin chunks when substantive exist); extractive answer (build_extractive_answer, top 3 non-thin chunks, 1200 chars max, no LLM); tracing spans; generic 500 handler; 172/172 pass
 
 ### Next RAG tasks
 
@@ -224,17 +224,17 @@ none
 
 ### Next 3 tasks
 
-1. CHAT-1: Auth + widget config schema design.
-2. CHAT-2: Tool-calling chatbot API — wire RAG and classifier as tool calls; integrate Groq llama-3.3-70b-versatile.
-3. Generation eval (faithfulness/answer_relevancy via LLM judge) — deferred to post-CHAT-2 once generation is wired.
+1. MEMORY-1: Short-term Redis memory with explicit TTL.
+2. WIDGET-1: Widget config API + `/widget.js` loader plan.
+3. Generation eval (faithfulness/answer_relevancy via LLM judge) — POST /api/v1/chat is now live, eval can be wired.
 
 ## Chatbot + Memory + Widget
 
 | Phase | Scope | Status |
 |---|---|---|
 | CHAT-0 | Tracking foundation | **COMPLETE (2026-05-21)** |
-| CHAT-1 | Auth + widget config schema design | TODO |
-| CHAT-2 | Tool-calling chatbot API and tool wrappers | TODO |
+| CHAT-1 | Auth + widget config schema design | **COMPLETE (2026-05-21)** |
+| CHAT-2 | Tool-calling chatbot API and tool wrappers | **COMPLETE (2026-05-21)** |
 | MEMORY-1 | Short-term Redis memory with explicit TTL | TODO |
 | MEMORY-2 | Long-term Postgres/pgvector memory + audit log | TODO |
 | WIDGET-1 | Widget config API + `/widget.js` loader plan | TODO |
@@ -243,8 +243,9 @@ none
 ### Chatbot implementation status
 
 - [x] CHAT-0: tracking docs created — `docs/CHATBOT_TRACK_REPORT.md`, `docs/CHATBOT_CODE_REVIEW_NOTES.md`, `docs/MEMORY_TRACK_REPORT.md`, `docs/WIDGET_TRACK_REPORT.md`
-- [ ] Auth + widget config database schema
-- [ ] Classifier/RAG tools behind API endpoints
+- [x] CHAT-1: ORM models (User+is_active, WidgetConfig structured, AuditLog renamed, Conversation+widget_id); domain models; `app/domain/auth.py`; `app/domain/widgets.py`; repositories (WidgetConfigRepository, AuditLogRepository); `alembic/versions/002_chat1_schema.py`; 17 unit tests
+- [x] CHAT-2: POST /api/v1/chat — Groq llama-3.3-70b-versatile; tools: rag_query/extract_entities/summarize/classify_issue/write_memory (placeholder); `app/infra/groq_client.py`; `app/services/chat/` (orchestrator, tool_registry, prompts); `app/api/routes/chat.py`; `prompts/chat_system.md`; 30 new tests (21 unit + 12 integration); 155/155 pass
+- [ ] Classifier/RAG tools behind standalone API endpoints (backlog)
 - [ ] Short-term memory service with Redis TTL
 - [ ] Long-term memory in Postgres with pgvector and audit log
 - [ ] Streamlit internal/admin app

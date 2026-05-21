@@ -112,10 +112,42 @@ def _is_thin_chunk(text: str) -> bool:
 
 
 def _apply_thin_filter(chunks: list[dict]) -> list[dict]:
-    """Reorder so thin chunks come after substantive ones; never drops chunks."""
+    """Exclude thin (heading-only) chunks when substantive ones exist.
+
+    Returns only substantive chunks so result order and scores are consistent.
+    Falls back to all chunks unchanged when every chunk is thin.
+    """
     substantive = [c for c in chunks if not _is_thin_chunk(c.get("text", ""))]
-    thin = [c for c in chunks if _is_thin_chunk(c.get("text", ""))]
-    return substantive + thin
+    return substantive if substantive else chunks
+
+
+_ANSWER_MAX_CHARS: int = 1200
+_ANSWER_MAX_CHUNKS: int = 3
+
+
+def build_extractive_answer(chunks: list[dict]) -> str | None:
+    """Build a simple extractive answer by concatenating top non-thin chunk texts.
+
+    Returns None if no useful (non-thin) chunks are available.
+    Total output is capped at _ANSWER_MAX_CHARS; no LLM call.
+    """
+    useful = [c for c in chunks if not _is_thin_chunk(c.get("text", ""))][
+        :_ANSWER_MAX_CHUNKS
+    ]
+    if not useful:
+        return None
+    parts: list[str] = []
+    total = 0
+    for chunk in useful:
+        text = chunk.get("text", "").strip()
+        if not text or total >= _ANSWER_MAX_CHARS:
+            break
+        remaining = _ANSWER_MAX_CHARS - total
+        if len(text) > remaining:
+            text = text[:remaining].rstrip()
+        parts.append(text)
+        total += len(text)
+    return "\n\n".join(parts) if parts else None
 
 
 async def retrieve(

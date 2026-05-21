@@ -18,18 +18,18 @@ Startup order (automatic via depends_on):
 ## Testing
 
 ```powershell
-# Full suite (61 tests — safe: no Docker, no Ollama, no network)
+# Full suite (155 tests — safe: no Docker, no Ollama, no network)
 .\.venv\Scripts\python.exe -m pytest -q
 
 # Dry run (collect only)
 .\.venv\Scripts\python.exe -m pytest --collect-only
 
 # By category
-.\.venv\Scripts\python.exe -m pytest tests/unit        # 35 pure-function tests
-.\.venv\Scripts\python.exe -m pytest tests/smoke       # 8 import/route sanity checks
-.\.venv\Scripts\python.exe -m pytest tests/integration # 10 FastAPI endpoint tests (Ollama mocked)
-.\.venv\Scripts\python.exe -m pytest tests/eval        # 8 golden CSV schema/quality gates
-.\.venv\Scripts\python.exe -m pytest tests/build       # 9 compose/config structural checks
+.\.venv\Scripts\python.exe -m pytest tests/unit        # 85 pure-function tests
+.\.venv\Scripts\python.exe -m pytest tests/smoke       # 11 import/route sanity checks
+.\.venv\Scripts\python.exe -m pytest tests/integration # 37 FastAPI endpoint tests (mocked)
+.\.venv\Scripts\python.exe -m pytest tests/eval        # 19 golden/schema/threshold gates
+.\.venv\Scripts\python.exe -m pytest tests/build       # 1 compose/config structural check
 
 # By marker
 .\.venv\Scripts\python.exe -m pytest -m unit
@@ -377,7 +377,7 @@ Config values (base URL, timeout, model) are module-level constants in `app/infr
 
 ## Chatbot / Memory / Widget phase
 
-CHAT-0 is tracking-only. No chatbot, auth, memory, Streamlit, widget, loader, or host demo commands exist yet.
+CHAT-0 is tracking-only. CHAT-1 added the database schema foundation.
 
 Planning docs:
 - `docs/CHATBOT_TRACK_REPORT.md`
@@ -385,10 +385,86 @@ Planning docs:
 - `docs/MEMORY_TRACK_REPORT.md`
 - `docs/WIDGET_TRACK_REPORT.md`
 
+### CHAT-1 — Schema checks (no DB needed)
+
+```powershell
+# Verify ORM models, domain models, repositories, and migration all import cleanly
+.\.venv\Scripts\python.exe -m pytest tests/unit/test_chat1_schema.py -q
+
+# Lint
+.\.venv\Scripts\python.exe -m ruff check app ml pipelines tests
+
+# Full suite
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+### CHAT-1 — Apply migration (Docker DB required)
+
+```bash
+# Run CHAT-1 schema migration against local DB
+docker compose run --rm migrate
+# or directly:
+DATABASE_URL=postgresql+asyncpg://handyman:password@localhost:5432/handyman \
+  uv run alembic upgrade head
+```
+
 Next implementation tasks:
-- Design auth + widget config database schema
-- Wire classifier/RAG tools behind API endpoints
-- Implement short-term memory service with Redis TTL
+- MEMORY-1: Implement short-term memory service with Redis TTL
+- WIDGET-1: Widget config API + /widget.js loader plan
+
+### CHAT-2 — Tool-calling chatbot API (LIVE)
+
+Requires Groq API key in Vault at `secret/llm / groq_api_key`.
+
+```powershell
+# Lint
+.\.venv\Scripts\python.exe -m ruff check app ml pipelines tests
+
+# Unit tests (no network)
+.\.venv\Scripts\python.exe -m pytest tests/unit/test_chat_tools.py -q
+
+# Integration tests (mocked Groq)
+.\.venv\Scripts\python.exe -m pytest tests/integration/test_chat_api.py -q
+
+# Full suite (155 tests)
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+Store Groq API key in Vault:
+
+```powershell
+# 1. Capture key in shell variable
+$env:GROQ_KEY = Read-Host "Paste Groq API key"
+
+# 2. Write into Vault (secret/llm path)
+docker compose exec -e VAULT_ADDR=http://127.0.0.1:8200 -e VAULT_TOKEN=dev-root-token vault `
+  vault kv put secret/llm groq_api_key="$env:GROQ_KEY"
+
+# 3. Clear variable
+Remove-Item Env:\GROQ_KEY
+```
+
+Smoke-test the endpoint (requires Vault with groq_api_key + API running):
+
+```bash
+curl -s -X POST http://localhost:8000/api/v1/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "What causes CrashLoopBackOff in Kubernetes?"}' \
+  | python -m json.tool
+```
+
+Architecture:
+
+```
+prompts/chat_system.md              system prompt (loaded + cached at first request)
+app/infra/groq_client.py            async httpx adapter — GroqUnavailableError on failure
+app/services/chat/prompts.py        system prompt loader
+app/services/chat/tool_registry.py  tool definitions (OpenAI format) + dispatch()
+app/services/chat/orchestrator.py   tool-calling loop — up to MAX_TOOL_ROUNDS=2
+app/api/routes/chat.py              HTTP only — maps GroqUnavailableError → 503
+app/api/schemas/chat.py             ChatRequest / ChatResponse / ToolCallRecord
+app/domain/errors.py                GroqUnavailableError
+```
 
 ## RAG pipeline
 

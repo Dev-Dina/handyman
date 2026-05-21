@@ -375,6 +375,21 @@ domain/errors.py          ToolInputError, OllamaUnavailableError
 
 Config values (base URL, timeout, model) are module-level constants in `app/infra/ollama_client.py`.
 
+## Chatbot / Memory / Widget phase
+
+CHAT-0 is tracking-only. No chatbot, auth, memory, Streamlit, widget, loader, or host demo commands exist yet.
+
+Planning docs:
+- `docs/CHATBOT_TRACK_REPORT.md`
+- `docs/CHATBOT_CODE_REVIEW_NOTES.md`
+- `docs/MEMORY_TRACK_REPORT.md`
+- `docs/WIDGET_TRACK_REPORT.md`
+
+Next implementation tasks:
+- Design auth + widget config database schema
+- Wire classifier/RAG tools behind API endpoints
+- Implement short-term memory service with Redis TTL
+
 ## RAG pipeline
 
 All RAG pipeline modules support `--help` and exit without running the pipeline.

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-21T08:21:00Z",
+  "generated_at": "2026-05-21T09:07:06Z",
   "row_count": 25,
   "source_type_counts": {
     "docs": 5,
@@ -9,7 +9,7 @@
   "hand_labeled_for_judge_check_count": 5,
   "unique_ground_truth_chunk_count": 25,
   "invalid_ground_truth_chunk_refs": [],
-  "source_review_csv": "evals\\golden\\rag\\rag_golden_candidates_review.csv",
-  "output_jsonl": "evals\\golden\\rag\\rag_golden.jsonl",
+  "source_review_csv": "C:\\Users\\LEGION\\Desktop\\AIE\\Assignments\\Week7\\Code\\handyman\\evals\\golden\\rag\\rag_golden_candidates_review.csv",
+  "output_jsonl": "C:\\Users\\LEGION\\Desktop\\AIE\\Assignments\\Week7\\Code\\handyman\\evals\\golden\\rag\\rag_golden.jsonl",
   "validation_passed": true
 }

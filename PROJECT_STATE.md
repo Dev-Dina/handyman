@@ -224,9 +224,31 @@ none
 
 ### Next 3 tasks
 
-1. Embedding model comparison (Hit@5 on golden set) — RAG-4.
-2. Hybrid retrieval + reranker + query transformation — RAG-5.
-3. Eval harness + redaction/exception hardening — RAG-7.
+1. Design auth + widget config database schema.
+2. Wire classifier/RAG tools behind API endpoints.
+3. Implement short-term memory service with Redis TTL.
+
+## Chatbot + Memory + Widget
+
+| Phase | Scope | Status |
+|---|---|---|
+| CHAT-0 | Tracking foundation | **COMPLETE (2026-05-21)** |
+| CHAT-1 | Auth + widget config schema design | TODO |
+| CHAT-2 | Tool-calling chatbot API and tool wrappers | TODO |
+| MEMORY-1 | Short-term Redis memory with explicit TTL | TODO |
+| MEMORY-2 | Long-term Postgres/pgvector memory + audit log | TODO |
+| WIDGET-1 | Widget config API + `/widget.js` loader plan | TODO |
+| WIDGET-2 | React widget bundle + host demo app | TODO |
+
+### Chatbot implementation status
+
+- [x] CHAT-0: tracking docs created — `docs/CHATBOT_TRACK_REPORT.md`, `docs/CHATBOT_CODE_REVIEW_NOTES.md`, `docs/MEMORY_TRACK_REPORT.md`, `docs/WIDGET_TRACK_REPORT.md`
+- [ ] Auth + widget config database schema
+- [ ] Classifier/RAG tools behind API endpoints
+- [ ] Short-term memory service with Redis TTL
+- [ ] Long-term memory in Postgres with pgvector and audit log
+- [ ] Streamlit internal/admin app
+- [ ] React widget bundle, `/widget.js`, and host demo app
 
 ## Backlog (post-RAG, not blocking)
 - POST /api/v1/tools/classify — wire CodeBERT inference endpoint via model_server
@@ -270,6 +292,10 @@ Get-ChildItem -Recurse -File | Select-String -Pattern 'Path\(__file__\)\.parent\
 .\.venv\Scripts\python.exe -m pipelines.rag.create_golden_candidates --help
 .\.venv\Scripts\python.exe -m pipelines.rag.prepare_review --help
 .\.venv\Scripts\python.exe -m pipelines.rag.finalize_golden --help
+
+# CHAT-0 tracking foundation (2026-05-21)
+.\.venv\Scripts\python.exe -m ruff check docs app ml pipelines tests
+.\.venv\Scripts\python.exe -m pytest tests/unit tests/smoke tests/eval -q
 ```
 
 ```powershell

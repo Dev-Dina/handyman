@@ -31,6 +31,7 @@ def _parse_args() -> argparse.Namespace:
     )
     return parser.parse_args()
 
+
 # ---------------------------------------------------------------------------
 # Per-candidate review analysis (deterministic, no external services)
 # ---------------------------------------------------------------------------

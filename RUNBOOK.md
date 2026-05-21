@@ -1,5 +1,17 @@
 # Runbook
 
+## Canonical project contract
+
+Three documents govern what must be built and in what order:
+
+| Document | Purpose |
+|---|---|
+| `docs/PROJECT_BRIEF_CANONICAL.md` | Authority — non-negotiable architecture, locked decisions, required remaining work |
+| `docs/PROJECT_BRIEF_VALIDATION.md` | Compliance table — brief requirement vs. evidence vs. status |
+| `PROJECT_STATE.md` | Living state — current implementation status, blockers, next tasks |
+
+Future implementation must follow `docs/PROJECT_BRIEF_CANONICAL.md`.
+
 ## First setup
 
 ```bash
@@ -18,17 +30,17 @@ Startup order (automatic via depends_on):
 ## Testing
 
 ```powershell
-# Full suite (155 tests — safe: no Docker, no Ollama, no network)
+# Full suite (176 tests — safe: no Docker, no Ollama, no network)
 .\.venv\Scripts\python.exe -m pytest -q
 
 # Dry run (collect only)
 .\.venv\Scripts\python.exe -m pytest --collect-only
 
 # By category
-.\.venv\Scripts\python.exe -m pytest tests/unit        # 85 pure-function tests
+.\.venv\Scripts\python.exe -m pytest tests/unit        # 97 pure-function tests
 .\.venv\Scripts\python.exe -m pytest tests/smoke       # 11 import/route sanity checks
-.\.venv\Scripts\python.exe -m pytest tests/integration # 37 FastAPI endpoint tests (mocked)
-.\.venv\Scripts\python.exe -m pytest tests/eval        # 19 golden/schema/threshold gates
+.\.venv\Scripts\python.exe -m pytest tests/integration # 45 FastAPI endpoint tests (mocked)
+.\.venv\Scripts\python.exe -m pytest tests/eval        # 18 golden/schema/threshold gates
 .\.venv\Scripts\python.exe -m pytest tests/build       # 1 compose/config structural check
 
 # By marker
@@ -426,7 +438,20 @@ Requires Groq API key in Vault at `secret/llm / groq_api_key`.
 # Integration tests (mocked Groq)
 .\.venv\Scripts\python.exe -m pytest tests/integration/test_chat_api.py -q
 
-# Full suite (155 tests)
+# Full suite (176 tests)
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+### MODEL-SERVER-1 — LogisticRegression classify route (LIVE)
+
+`POST /classify` runs the operational fallback classifier from `artifacts/classical/best_model.joblib`.
+It requires no Torch and returns 503 if the artifact is missing. `/healthz` remains available either way.
+
+```powershell
+# Lint
+.\.venv\Scripts\python.exe -m ruff check app model_server ml pipelines tests
+
+# Full suite
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 

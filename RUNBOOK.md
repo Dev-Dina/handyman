@@ -375,6 +375,23 @@ domain/errors.py          ToolInputError, OllamaUnavailableError
 
 Config values (base URL, timeout, model) are module-level constants in `app/infra/ollama_client.py`.
 
+## RAG pipeline
+
+```powershell
+# RAG-1a: Build held-out issue candidates and leakage guard
+# Reads: data/raw/kubernetes_issues.jsonl, data/processed/*.csv, evals/golden/classification_golden.jsonl
+# Writes: data/rag/processed/heldout_issue_candidates.jsonl, data/rag/corpus_manifest.json, reports/rag/leakage_report.json
+.\.venv\Scripts\python.exe -m pipelines.rag.build_corpus
+
+# RAG-1b/1c: Collect corpus sources (issue comments + bounded curated docs from 2 repos)
+# Requires: Vault running with secret/github token, internet access
+# Reads: data/rag/processed/heldout_issue_candidates.jsonl, data/processed/*.csv
+# Writes: data/rag/processed/issues_with_comments.jsonl, data/rag/raw_docs/doc_sources.jsonl
+#         reports/rag/corpus_collection_report.json, data/rag/corpus_manifest.json (updated)
+# Results: 50 issues, 383 comments, 9 docs (kubernetes/kubernetes + kubernetes/website)
+.\.venv\Scripts\python.exe -m pipelines.rag.collect_sources --max-issues 50 --max-comments-per-issue 20 --max-docs 12
+```
+
 ## Useful checks
 
 ```bash

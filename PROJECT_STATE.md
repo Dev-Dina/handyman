@@ -184,8 +184,39 @@ See `tests/README.md` for category definitions and run commands.
 ## Current blockers
 none
 
-## Next phase
-Advanced RAG
+## Advanced RAG
+
+| Phase | Scope | Status |
+|---|---|---|
+| RAG-0 | Tracking, config, folder structure | **COMPLETE (2026-05-21)** |
+| RAG-1a | Corpus manifest + leakage guard | **COMPLETE (2026-05-21)** |
+| RAG-1b | Source collection: docs + issue comments | **COMPLETE (2026-05-21)** |
+| RAG-1c | Expanded docs: kubernetes/website curated paths | **COMPLETE (2026-05-21)** |
+| RAG-2 | Chunking experiments | TODO |
+| RAG-3 | RAG golden set (25 examples) | TODO |
+| RAG-4 | Embedding model comparison | TODO |
+| RAG-5 | Retrieval experiments (hybrid, reranking, query transformation) | TODO |
+| RAG-6 | Service / API integration | TODO |
+| RAG-7 | Eval + exception/redaction hardening | TODO |
+
+### RAG implementation status
+
+- [x] RAG-0: app/services/rag/config.py (canonical), app/services/rag/__init__.py, docs/RAG_TRACK_REPORT.md, docs/RAG_CODE_REVIEW_NOTES.md, data/rag/ dirs, reports/rag/ dirs, evals/golden/rag/
+- [x] RAG-1a: pipelines/rag/build_corpus.py — 1498 held-out candidates; leakage_passed=true; corpus_manifest.json
+- [x] RAG-1b: pipelines/rag/collect_sources.py — issue comments + bounded docs; corpus_collection_report.json; manifest updated
+- [x] RAG-1c: expanded DOC_SOURCES to kubernetes/website; 9 docs from 2 repos; --max-docs/--include-website-docs args; failed_doc_paths in report
+- [ ] RAG-2: Fixed-size + section-aware chunkers
+- [ ] RAG-3: RAG golden set (25 examples, JSONL)
+- [ ] RAG-4: Embedding model comparison (Hit@5 on golden set)
+- [ ] RAG-5: Hybrid retrieval + reranker + query transformation
+- [ ] RAG-6: Service / API integration
+- [ ] RAG-7: Eval harness + redaction/exception hardening
+
+### Next RAG tasks
+
+1. Implement baseline fixed-size chunker and section-aware chunker in `pipelines/rag/chunk.py`
+2. Compare chunking strategies on heldout issues and docs; write `reports/rag/chunking_comparison.json`
+3. Build RAG golden set candidates (`evals/golden/rag/rag_golden_candidates.csv`) — RAG-3
 
 ## Backlog (post-RAG, not blocking)
 - POST /api/v1/tools/classify — wire CodeBERT inference endpoint via model_server

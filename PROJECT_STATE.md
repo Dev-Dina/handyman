@@ -173,11 +173,11 @@ data/experiments/failed/strict_text/         strict preprocessing — rejected, 
 | Category | Path | Count | Status |
 |---|---|---|---|
 | unit | tests/unit/ | 35 | 35/35 PASS |
-| smoke | tests/smoke/ | 8 | 8/8 PASS |
-| integration | tests/integration/ | 10 | 10/10 PASS |
+| smoke | tests/smoke/ | 11 | 11/11 PASS |
+| integration | tests/integration/ | 18 | 18/18 PASS |
 | eval | tests/eval/ | 8 | 8/8 PASS |
-| build | tests/build/ | 9 | 9/9 PASS |
-| **Total** | | **61** | **61/61 PASS** |
+| build | tests/build/ | 1 | 1/1 PASS |
+| **Total** | | **73** | **73/73 PASS** |
 
 Markers registered in pyproject.toml: `unit`, `smoke`, `integration`, `eval`, `build`.
 See `tests/README.md` for category definitions and run commands.
@@ -195,9 +195,9 @@ none
 | RAG-1c | Expanded docs: kubernetes/website curated paths | **COMPLETE (2026-05-21)** |
 | RAG-2 | Chunking experiments | **COMPLETE (2026-05-21)** |
 | RAG-3 | RAG golden set (25 examples) | **COMPLETE (2026-05-21)** — rag_golden.jsonl (25 rows, docs=5, issue=10, comment=10) |
-| RAG-4 | Embedding model comparison | TODO |
-| RAG-5 | Retrieval experiments (hybrid, reranking, query transformation) | TODO |
-| RAG-6 | Service / API integration | TODO |
+| RAG-4 | Embedding model comparison | **COMPLETE (2026-05-21)** — e5-small-v2: mrr@10=0.3307, hit@5=0.60 (wins all 3 candidates) |
+| RAG-5 | Retrieval experiments (hybrid, reranking, query transformation) | **COMPLETE (2026-05-21)** — E5 hybrid alpha=0.7: hit@5=0.68, mrr@10=0.329 (best overall; reranker rejected) |
+| RAG-6 | Service / API integration | **COMPLETE (2026-05-21)** — POST /api/v1/rag/query live; E5 hybrid via modelserver; TF-IDF fallback |
 | RAG-7 | Eval + exception/redaction hardening | TODO |
 
 ### RAG implementation status
@@ -212,21 +212,22 @@ none
 - [x] RAG-3 review prep: pipelines/rag/prepare_review.py — rag_golden_candidates_review.csv (yes=25, maybe=11, no=7); answer_preview + suggested_keep + suggested_reason added; rag_golden_review_summary.json
 - [x] RAG-3b: pipelines/rag/finalize_golden.py — rag_golden.jsonl (25 rows, docs=5, issue=10, comment=10, hand_labeled=5, validation_passed=true); rag_golden_summary.json
 - [x] RAG pipeline CLI/static cleanup — sys imports restored where needed; offline pipeline --help exits without running generation/fetch/chunk logic
-- [ ] RAG-4: Embedding model comparison (Hit@5 on golden set)
-- [ ] RAG-5: Hybrid retrieval + reranker + query transformation
-- [ ] RAG-6: Service / API integration
+- [x] RAG-4: pipelines/rag/eval_retrieval.py — TF-IDF + dense eval; all 3 candidates evaluated; e5-small-v2 WINS mrr@10=0.3307, hit@5=0.60; embedding_model_comparison.json
+- [x] RAG-5: BGE hybrid sweep + E5 hybrid sweep (RAG-5b); E5 hybrid alpha=0.7 BEST: hit@5=0.68, mrr@10=0.329, latency=5.4s; reranker evaluated and rejected for E5 (−12pp hit@5); technical_terms +8pp TF-IDF; metadata filter scaffold
+- [x] RAG-5 reports: hybrid_alpha_comparison.json, rerank_comparison.json, query_transform_comparison.json, retrieval_runs_summary.csv (14 runs)
+- [x] RAG-6: POST /api/v1/rag/query — E5 hybrid alpha=0.7 via modelserver; TF-IDF fallback; metadata filters; 8 integration tests + 3 smoke tests; 73/73 pass
 - [ ] RAG-7: Eval harness + redaction/exception hardening
 
 ### Next RAG tasks
 
-1. Embedding model comparison (Hit@5 on golden set) — RAG-4
-2. Embedding model comparison (Hit@5 on golden set) — RAG-4
+1. RAG-7: Eval harness + redaction/exception hardening (generation evals, faithfulness/relevancy via LLM judge)
+2. Wire RAG retrieval into chatbot as callable tool (CHAT-2)
 
 ### Next 3 tasks
 
-1. Design auth + widget config database schema.
-2. Wire classifier/RAG tools behind API endpoints.
-3. Implement short-term memory service with Redis TTL.
+1. RAG-7: Eval harness + redaction/exception hardening (generation evals, faithfulness/relevancy).
+2. CHAT-1: Auth + widget config schema design.
+3. CHAT-2: Tool-calling chatbot API — wire RAG and classifier as tool calls; integrate Groq llama-3.3-70b-versatile.
 
 ## Chatbot + Memory + Widget
 
@@ -302,4 +303,11 @@ Get-ChildItem -Recurse -File | Select-String -Pattern 'Path\(__file__\)\.parent\
 # Transformer fine-tuning (GPU env — not uv)
 .\.venv-gpu\Scripts\python.exe -m ml.finetune --smoke
 .\.venv-gpu\Scripts\python.exe -m ml.finetune --model microsoft/codebert-base --run-name codebert_base_e3_len384 --epochs 3 --batch-size 4 --max-len 384
+
+# RAG-4/5 retrieval evals (GPU env for dense, cpu env for tfidf)
+.\.venv\Scripts\python.exe -m pipelines.rag.eval_retrieval --retriever tfidf
+.\.venv-gpu\Scripts\python.exe -m pipelines.rag.eval_retrieval --retriever dense --model BAAI/bge-small-en-v1.5
+.\.venv-gpu\Scripts\python.exe -m pipelines.rag.eval_retrieval --retriever hybrid --model BAAI/bge-small-en-v1.5 --alpha 0.7
+.\.venv-gpu\Scripts\python.exe -m pipelines.rag.eval_retrieval --retriever rerank --model BAAI/bge-small-en-v1.5 --alpha 0.7 --rerank-model cross-encoder/ms-marco-MiniLM-L-6-v2
+.\.venv\Scripts\python.exe -m pipelines.rag.make_embedding_comparison
 ```

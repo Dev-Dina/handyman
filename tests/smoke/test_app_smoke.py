@@ -48,3 +48,18 @@ def test_redaction_importable():
 
 def test_ollama_client_importable():
     from app.infra.ollama_client import OllamaClient  # noqa: F401
+
+
+def test_rag_query_route_registered():
+    from app.main import app
+
+    paths = {route.path for route in app.routes}
+    assert "/api/v1/rag/query" in paths
+
+
+def test_rag_retrieval_importable():
+    from app.services.rag.retrieval import retrieve  # noqa: F401
+
+
+def test_modelserver_client_importable():
+    from app.infra.modelserver_client import ModelServerClient  # noqa: F401

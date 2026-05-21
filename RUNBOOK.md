@@ -437,7 +437,58 @@ All RAG pipeline modules support `--help` and exit without running the pipeline.
 #         evals/golden/rag/rag_golden_summary.json (validation_passed=true)
 # Validation gates: count=25, hand_labeled>=5, source mix, chunk ref validity, no dupes
 .\.venv\Scripts\python.exe -m pipelines.rag.finalize_golden
+
+# RAG-4: TF-IDF lexical baseline eval (use .venv)
+# Writes: reports/rag/retrieval/tfidf_section_aware.json/.csv
+#         reports/rag/retrieval/retrieval_runs_summary.csv
+.\.venv\Scripts\python.exe -m pipelines.rag.eval_retrieval --retriever tfidf
+
+# TF-IDF with technical_terms query expansion
+.\.venv\Scripts\python.exe -m pipelines.rag.eval_retrieval --retriever tfidf --query-transform technical_terms
+
+# RAG-4: Dense embedding eval (use .venv-gpu — downloads model first run)
+# Best model: intfloat/e5-small-v2 (mrr@10=0.3307, hit@5=0.60)
+# NOTE: e5 requires query:/passage: prefixes — handled automatically by eval_retrieval.py
+.\.venv-gpu\Scripts\python.exe -m pipelines.rag.eval_retrieval --retriever dense --model intfloat/e5-small-v2
+# Other candidates:
+.\.venv-gpu\Scripts\python.exe -m pipelines.rag.eval_retrieval --retriever dense --model BAAI/bge-small-en-v1.5
+
+# RAG-5: Hybrid alpha sweep — E5 (FINAL PIPELINE: alpha=0.7, hit@5=0.68, mrr@10=0.329)
+.\.venv-gpu\Scripts\python.exe -m pipelines.rag.eval_retrieval --retriever hybrid --model intfloat/e5-small-v2 --alpha 0.3
+.\.venv-gpu\Scripts\python.exe -m pipelines.rag.eval_retrieval --retriever hybrid --model intfloat/e5-small-v2 --alpha 0.5
+.\.venv-gpu\Scripts\python.exe -m pipelines.rag.eval_retrieval --retriever hybrid --model intfloat/e5-small-v2 --alpha 0.7
+# RAG-5b: Reranker eval over E5 hybrid — evaluated; NOT recommended (hurts E5: hit@5 0.68→0.56)
+.\.venv-gpu\Scripts\python.exe -m pipelines.rag.eval_retrieval --retriever rerank --model intfloat/e5-small-v2 --alpha 0.7 --rerank-model cross-encoder/ms-marco-MiniLM-L-6-v2
+# Ablation: BGE-small hybrid sweep
+.\.venv-gpu\Scripts\python.exe -m pipelines.rag.eval_retrieval --retriever hybrid --model BAAI/bge-small-en-v1.5 --alpha 0.7
+
+# RAG-5: Metadata filter example (restrict to docs only)
+.\.venv\Scripts\python.exe -m pipelines.rag.eval_retrieval --retriever tfidf --filter-source-type docs
+
+# Generate comparison tables from retrieval_runs_summary.csv (use .venv)
+# Writes: embedding_model_comparison.json/.csv, hybrid_alpha_comparison.json/.csv,
+#         rerank_comparison.json/.csv, query_transform_comparison.json
+.\.venv\Scripts\python.exe -m pipelines.rag.make_embedding_comparison
 ```
+
+## RAG-6: Runtime retrieval endpoint
+
+```powershell
+# POST /api/v1/rag/query — with Docker stack running
+curl -s -X POST http://localhost:8000/api/v1/rag/query `
+  -H "Content-Type: application/json" `
+  -d '{"question": "How does pod scheduling work in Kubernetes?", "top_k": 5}'
+
+# Filter to docs only
+curl -s -X POST http://localhost:8000/api/v1/rag/query `
+  -H "Content-Type: application/json" `
+  -d '{"question": "kubectl drain usage", "top_k": 3, "source_type": "docs"}'
+```
+
+Architecture notes:
+- api container: no torch/transformers; sklearn + numpy only
+- modelserver container: Torch + transformers; serves /embed for E5 query embeddings
+- retrieval_mode=hybrid: modelserver available; retrieval_mode=tfidf_fallback: modelserver down
 
 ## Useful checks
 

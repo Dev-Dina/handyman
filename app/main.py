@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.api.middleware import RequestContextMiddleware
+from app.api.routes.rag import router as rag_router
 from app.api.routes.tools import router as tools_router
 from app.domain.errors import VaultUnavailableError
 from app.infra.logging import configure_logging, get_logger
@@ -30,6 +31,7 @@ async def lifespan(application: FastAPI):
 app = FastAPI(title="Maintainer's Copilot API", lifespan=lifespan)
 app.add_middleware(RequestContextMiddleware)
 app.include_router(tools_router)
+app.include_router(rag_router)
 
 
 @app.get("/healthz")

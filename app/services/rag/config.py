@@ -34,6 +34,7 @@ RAG_CHUNKING_EXAMPLES_PATH = RAG_REPORTS_DIR / "chunking_examples.csv"
 RAG_RETRIEVAL_REPORTS_DIR = RAG_REPORTS_DIR / "retrieval"
 RAG_EMBEDDINGS_CACHE_DIR = RAG_REPORTS_DIR / "embeddings_cache"
 RAG_RETRIEVAL_SUMMARY_PATH = RAG_RETRIEVAL_REPORTS_DIR / "retrieval_runs_summary.csv"
+RAG_API_EVAL_REPORT_PATH = RAG_REPORTS_DIR / "api_eval_report.json"
 RAG_EMBEDDING_COMPARISON_PATH = (
     RAG_RETRIEVAL_REPORTS_DIR / "embedding_model_comparison.json"
 )
@@ -107,6 +108,9 @@ TINY_CHUNK_HIGH_SIGNAL_TOKENS: frozenset[str] = frozenset(
 # ---------------------------------------------------------------------------
 DEFAULT_TOP_K = 5
 DEFAULT_RERANK_TOP_K = 3
+THIN_CHUNK_MIN_BODY_CHARS: int = (
+    80  # heading-only or very short chunks below this are ranked last
+)
 HYBRID_ALPHA_CANDIDATES = (0.3, 0.5, 0.7)  # alpha = weight of dense vs sparse
 
 # ---------------------------------------------------------------------------
@@ -145,6 +149,7 @@ __all__ = [
     "RAG_RETRIEVAL_REPORTS_DIR",
     "RAG_EMBEDDINGS_CACHE_DIR",
     "RAG_RETRIEVAL_SUMMARY_PATH",
+    "RAG_API_EVAL_REPORT_PATH",
     "RAG_EMBEDDING_COMPARISON_PATH",
     "RAG_HYBRID_COMPARISON_PATH",
     "RAG_CHUNK_EMBEDDINGS_PATH",
@@ -166,6 +171,7 @@ __all__ = [
     "TINY_CHUNK_HIGH_SIGNAL_TOKENS",
     "DEFAULT_TOP_K",
     "DEFAULT_RERANK_TOP_K",
+    "THIN_CHUNK_MIN_BODY_CHARS",
     "HYBRID_ALPHA_CANDIDATES",
     "METRIC_HIT_AT_5",
     "METRIC_MRR_AT_10",

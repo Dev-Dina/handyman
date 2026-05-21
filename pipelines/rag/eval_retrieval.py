@@ -32,6 +32,7 @@ from app.services.rag.config import (
     RAG_GOLDEN_PATH,
     RAG_RETRIEVAL_REPORTS_DIR,
 )
+from app.services.rag.query_transform import apply as _apply_query_transform
 
 if TYPE_CHECKING:
     import numpy as np
@@ -58,69 +59,6 @@ _PASSAGE_PREFIXES: dict[str, str] = {
     "intfloat/e5-base-v2": "passage: ",
     "intfloat/e5-large-v2": "passage: ",
 }
-
-# Kubernetes vocabulary used for technical_terms query expansion
-_K8S_TERMS: frozenset[str] = frozenset(
-    {
-        "pod",
-        "pods",
-        "node",
-        "nodes",
-        "namespace",
-        "namespaces",
-        "service",
-        "services",
-        "deployment",
-        "deployments",
-        "container",
-        "containers",
-        "kubectl",
-        "kubelet",
-        "kubeadm",
-        "apiserver",
-        "etcd",
-        "scheduler",
-        "controller",
-        "ingress",
-        "configmap",
-        "secret",
-        "pvc",
-        "pv",
-        "replicaset",
-        "statefulset",
-        "daemonset",
-        "cronjob",
-        "job",
-        "serviceaccount",
-        "rbac",
-        "clusterrole",
-        "rolebinding",
-        "crd",
-        "endpoint",
-        "endpointslice",
-        "resourcequota",
-        "networkpolicy",
-        "hpa",
-        "vpa",
-        "storageclass",
-        "webhook",
-        "admission",
-        "mutating",
-        "validating",
-        "finalizer",
-        "taint",
-        "toleration",
-        "affinity",
-        "priorityclass",
-        "resourceclaim",
-        "dra",
-        "csi",
-        "cni",
-        "cri",
-    }
-)
-_CAMEL_RE = re.compile(r"\b[a-z]+[A-Z][a-zA-Z0-9]*\b")
-_UPPER_DIGIT_RE = re.compile(r"\b[A-Z][A-Z0-9]{2,}\b")
 
 
 # ---------------------------------------------------------------------------
@@ -210,22 +148,7 @@ def _build_run_name(
 
 
 def _transform_query(question: str, mode: str) -> str:
-    if mode == "technical_terms":
-        return _expand_technical(question)
-    return question
-
-
-def _expand_technical(q: str) -> str:
-    """Append extracted Kubernetes/code-shaped tokens to boost retrieval signal."""
-    tokens: set[str] = set()
-    for word in re.findall(r"\b\w[\w/.\-]*\b", q):
-        if word.lower() in _K8S_TERMS:
-            tokens.add(word.lower())
-    tokens.update(_CAMEL_RE.findall(q))
-    tokens.update(_UPPER_DIGIT_RE.findall(q))
-    if not tokens:
-        return q
-    return q + " " + " ".join(sorted(tokens))
+    return _apply_query_transform(question, mode)
 
 
 # ---------------------------------------------------------------------------

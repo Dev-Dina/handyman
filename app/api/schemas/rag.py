@@ -16,6 +16,16 @@ class RagQueryRequest(BaseModel):
     maintainer_only: bool = Field(
         False, description="If true, restrict to maintainer-authored chunks"
     )
+    retriever: str = Field(
+        "auto",
+        description="Retrieval mode: 'tfidf' (CI-safe, no modelserver), "
+        "'hybrid' (E5 + TF-IDF, requires modelserver), "
+        "'auto' (hybrid with TF-IDF fallback)",
+    )
+    query_transform: str = Field(
+        "none",
+        description="Query transform to apply before retrieval: 'none' or 'technical_terms'",
+    )
 
 
 class RagChunkResult(BaseModel):
@@ -27,7 +37,9 @@ class RagChunkResult(BaseModel):
 
 class RagQueryResponse(BaseModel):
     question: str
-    chunks: list[RagChunkResult]
-    retrieval_mode: str
+    retriever_used: str
+    query_transform_used: str
     top_k: int
+    results: list[RagChunkResult]
+    answer: str | None
     latency_seconds: float

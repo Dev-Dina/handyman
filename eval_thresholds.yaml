@@ -1,0 +1,17 @@
+# Quality gates for CI and regression checks.
+#
+# Classification: CodeBERT test macro_f1=0.7061; LR/TF-IDF fallback=0.6938.
+# RAG: TF-IDF baseline hit@5=0.36, mrr@10=0.194; E5 hybrid target hit@5=0.68, mrr@10=0.329.
+#
+# CI default uses TF-IDF-only retrieval (alpha=0.0, no modelserver required).
+# Thresholds are set conservatively below measured TF-IDF baselines to guard regressions
+# without failing CI when modelserver is absent.
+
+classification:
+  macro_f1_min: 0.65  # floor: CodeBERT=0.706, TF-IDF fallback=0.694
+
+rag:
+  # CI-safe: TF-IDF only (alpha=0.0). Measured TF-IDF: hit@5=0.36, mrr@10=0.194.
+  # Production target (E5 hybrid alpha=0.7): hit@5=0.68, mrr@10=0.329.
+  hit_at_5_min: 0.25
+  mrr_at_10_min: 0.15

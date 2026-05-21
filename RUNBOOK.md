@@ -479,16 +479,41 @@ curl -s -X POST http://localhost:8000/api/v1/rag/query `
   -H "Content-Type: application/json" `
   -d '{"question": "How does pod scheduling work in Kubernetes?", "top_k": 5}'
 
+# TF-IDF only (CI-safe, no modelserver)
+curl -s -X POST http://localhost:8000/api/v1/rag/query `
+  -H "Content-Type: application/json" `
+  -d '{"question": "What does Kubernetes say about Services?", "top_k": 3, "retriever": "tfidf", "query_transform": "technical_terms"}'
+
 # Filter to docs only
 curl -s -X POST http://localhost:8000/api/v1/rag/query `
   -H "Content-Type: application/json" `
   -d '{"question": "kubectl drain usage", "top_k": 3, "source_type": "docs"}'
 ```
 
+Response shape: `question`, `retriever_used`, `query_transform_used`, `top_k`, `results[]`, `answer` (null until generation wired), `latency_seconds`
+
 Architecture notes:
 - api container: no torch/transformers; sklearn + numpy only
 - modelserver container: Torch + transformers; serves /embed for E5 query embeddings
-- retrieval_mode=hybrid: modelserver available; retrieval_mode=tfidf_fallback: modelserver down
+- retriever_used=hybrid: modelserver available; retriever_used=tfidf_fallback: modelserver down
+- retriever=tfidf: force TF-IDF, skip modelserver entirely (CI-safe)
+
+## RAG-7: CI eval harness
+
+```powershell
+# CI-safe TF-IDF eval (no modelserver, no torch)
+.\.venv\Scripts\python.exe -m pipelines.rag.eval_api
+
+# With technical_terms query expansion
+.\.venv\Scripts\python.exe -m pipelines.rag.eval_api --query-transform technical_terms
+
+# E5 hybrid eval (requires modelserver running)
+.\.venv\Scripts\python.exe -m pipelines.rag.eval_api --alpha 0.7
+```
+
+TF-IDF CI baseline: hit@5=0.40, mrr@10=0.196 (n=25)
+Production target (E5 hybrid): hit@5=0.68, mrr@10=0.329
+Thresholds in `eval_thresholds.yaml`: rag.hit_at_5_min=0.25, rag.mrr_at_10_min=0.15
 
 ## Useful checks
 

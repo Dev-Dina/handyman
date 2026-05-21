@@ -39,9 +39,22 @@ def test_rag_query_ok(client):
         )
     assert resp.status_code == 200
     data = resp.json()
-    assert "chunks" in data
-    assert data["retrieval_mode"] == "hybrid"
+    assert "results" in data
+    assert data["retriever_used"] == "hybrid"
     assert "latency_seconds" in data
+
+
+def test_rag_query_tfidf_mode(client):
+    with patch(
+        "app.api.routes.rag.retrieve",
+        new=AsyncMock(return_value=([_MOCK_CHUNK], "tfidf")),
+    ):
+        resp = client.post(
+            "/api/v1/rag/query",
+            json={"question": "kubectl get pods", "retriever": "tfidf"},
+        )
+    assert resp.status_code == 200
+    assert resp.json()["retriever_used"] == "tfidf"
 
 
 def test_rag_query_tfidf_fallback(client):
@@ -51,7 +64,7 @@ def test_rag_query_tfidf_fallback(client):
     ):
         resp = client.post("/api/v1/rag/query", json={"question": "kubectl get pods"})
     assert resp.status_code == 200
-    assert resp.json()["retrieval_mode"] == "tfidf_fallback"
+    assert resp.json()["retriever_used"] == "tfidf_fallback"
 
 
 def test_rag_query_corpus_not_ready_returns_503(client):
@@ -93,11 +106,13 @@ def test_rag_query_response_shape(client):
         resp = client.post("/api/v1/rag/query", json={"question": "pod crash loop"})
     data = resp.json()
     assert "question" in data
-    assert "chunks" in data
-    assert "retrieval_mode" in data
+    assert "results" in data
+    assert "retriever_used" in data
+    assert "query_transform_used" in data
     assert "top_k" in data
+    assert "answer" in data
     assert "latency_seconds" in data
-    chunk = data["chunks"][0]
+    chunk = data["results"][0]
     assert "chunk_id" in chunk
     assert "text" in chunk
     assert "source_type" in chunk
@@ -117,3 +132,69 @@ def test_rag_query_question_returned_in_response(client):
     ):
         resp = client.post("/api/v1/rag/query", json={"question": question})
     assert resp.json()["question"] == question
+
+
+def test_rag_query_answer_field_present(client):
+    with patch(
+        "app.api.routes.rag.retrieve",
+        new=AsyncMock(return_value=([_MOCK_CHUNK], "hybrid")),
+    ):
+        resp = client.post("/api/v1/rag/query", json={"question": "pod restarts"})
+    data = resp.json()
+    assert "answer" in data  # answer field is present (may be null pre-generation)
+
+
+def test_rag_query_unexpected_error_returns_500(client):
+    with patch(
+        "app.api.routes.rag.retrieve",
+        new=AsyncMock(side_effect=RuntimeError("unexpected internal failure")),
+    ):
+        resp = client.post("/api/v1/rag/query", json={"question": "any question"})
+    assert resp.status_code == 500
+    assert "detail" in resp.json()
+
+
+def test_rag_query_source_type_filter_passed_through(client):
+    with patch(
+        "app.api.routes.rag.retrieve",
+        new=AsyncMock(return_value=([_MOCK_CHUNK], "tfidf_fallback")),
+    ) as mock_retrieve:
+        resp = client.post(
+            "/api/v1/rag/query",
+            json={"question": "pod issue", "source_type": "docs"},
+        )
+    assert resp.status_code == 200
+    _, kwargs = mock_retrieve.call_args
+    assert kwargs.get("source_type") == "docs"
+
+
+def test_rag_query_maintainer_only_filter_passed_through(client):
+    with patch(
+        "app.api.routes.rag.retrieve",
+        new=AsyncMock(return_value=([_MOCK_CHUNK], "tfidf_fallback")),
+    ) as mock_retrieve:
+        resp = client.post(
+            "/api/v1/rag/query",
+            json={"question": "maintainer response", "maintainer_only": True},
+        )
+    assert resp.status_code == 200
+    _, kwargs = mock_retrieve.call_args
+    assert kwargs.get("maintainer_only") is True
+
+
+def test_rag_query_transform_passed_through(client):
+    with patch(
+        "app.api.routes.rag.retrieve",
+        new=AsyncMock(return_value=([_MOCK_CHUNK], "tfidf")),
+    ) as mock_retrieve:
+        resp = client.post(
+            "/api/v1/rag/query",
+            json={
+                "question": "namespace services",
+                "query_transform": "technical_terms",
+            },
+        )
+    assert resp.status_code == 200
+    assert resp.json()["query_transform_used"] == "technical_terms"
+    _, kwargs = mock_retrieve.call_args
+    assert kwargs.get("query_transform") == "technical_terms"

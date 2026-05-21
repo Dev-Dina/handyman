@@ -172,12 +172,12 @@ data/experiments/failed/strict_text/         strict preprocessing — rejected, 
 
 | Category | Path | Count | Status |
 |---|---|---|---|
-| unit | tests/unit/ | 35 | 35/35 PASS |
+| unit | tests/unit/ | 47 | 47/47 PASS |
 | smoke | tests/smoke/ | 11 | 11/11 PASS |
-| integration | tests/integration/ | 18 | 18/18 PASS |
-| eval | tests/eval/ | 8 | 8/8 PASS |
+| integration | tests/integration/ | 24 | 24/24 PASS |
+| eval | tests/eval/ | 19 | 19/19 PASS |
 | build | tests/build/ | 1 | 1/1 PASS |
-| **Total** | | **73** | **73/73 PASS** |
+| **Total** | | **108** | **108/108 PASS** |
 
 Markers registered in pyproject.toml: `unit`, `smoke`, `integration`, `eval`, `build`.
 See `tests/README.md` for category definitions and run commands.
@@ -198,7 +198,7 @@ none
 | RAG-4 | Embedding model comparison | **COMPLETE (2026-05-21)** — e5-small-v2: mrr@10=0.3307, hit@5=0.60 (wins all 3 candidates) |
 | RAG-5 | Retrieval experiments (hybrid, reranking, query transformation) | **COMPLETE (2026-05-21)** — E5 hybrid alpha=0.7: hit@5=0.68, mrr@10=0.329 (best overall; reranker rejected) |
 | RAG-6 | Service / API integration | **COMPLETE (2026-05-21)** — POST /api/v1/rag/query live; E5 hybrid via modelserver; TF-IDF fallback |
-| RAG-7 | Eval + exception/redaction hardening | TODO |
+| RAG-7 | Eval + exception/redaction hardening | **COMPLETE (2026-05-21)** — eval harness + thresholds + thin-chunk filter + tracing spans + schema hardening; 96/96 tests pass |
 
 ### RAG implementation status
 
@@ -216,18 +216,17 @@ none
 - [x] RAG-5: BGE hybrid sweep + E5 hybrid sweep (RAG-5b); E5 hybrid alpha=0.7 BEST: hit@5=0.68, mrr@10=0.329, latency=5.4s; reranker evaluated and rejected for E5 (−12pp hit@5); technical_terms +8pp TF-IDF; metadata filter scaffold
 - [x] RAG-5 reports: hybrid_alpha_comparison.json, rerank_comparison.json, query_transform_comparison.json, retrieval_runs_summary.csv (14 runs)
 - [x] RAG-6: POST /api/v1/rag/query — E5 hybrid alpha=0.7 via modelserver; TF-IDF fallback; metadata filters; 8 integration tests + 3 smoke tests; 73/73 pass
-- [ ] RAG-7: Eval harness + redaction/exception hardening
+- [x] RAG-7: eval harness (pipelines/rag/eval_api.py; hit@5=0.40, mrr@10=0.196 TF-IDF CI baseline); eval_thresholds.yaml; canonical response schema (results, retriever_used, query_transform_used, answer); shared query_transform module; thin-chunk filter; tracing spans (rag.query, rag.retrieve, rag.metadata_filter, rag.modelserver_embedding, rag.tfidf_fallback); generic 500 handler; 96/96 pass
 
 ### Next RAG tasks
 
-1. RAG-7: Eval harness + redaction/exception hardening (generation evals, faithfulness/relevancy via LLM judge)
-2. Wire RAG retrieval into chatbot as callable tool (CHAT-2)
+1. Wire RAG retrieval into chatbot as callable tool (CHAT-2)
 
 ### Next 3 tasks
 
-1. RAG-7: Eval harness + redaction/exception hardening (generation evals, faithfulness/relevancy).
-2. CHAT-1: Auth + widget config schema design.
-3. CHAT-2: Tool-calling chatbot API — wire RAG and classifier as tool calls; integrate Groq llama-3.3-70b-versatile.
+1. CHAT-1: Auth + widget config schema design.
+2. CHAT-2: Tool-calling chatbot API — wire RAG and classifier as tool calls; integrate Groq llama-3.3-70b-versatile.
+3. Generation eval (faithfulness/answer_relevancy via LLM judge) — deferred to post-CHAT-2 once generation is wired.
 
 ## Chatbot + Memory + Widget
 

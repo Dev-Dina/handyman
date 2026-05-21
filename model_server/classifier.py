@@ -6,13 +6,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from app.core.paths import ARTIFACTS_DIR
-
+from .config import (
+    CLASSIFIER_ALLOWED_LABELS,
+    CLASSIFIER_ARTIFACT_PATH,
+    CLASSIFIER_MODEL_NAME,
+)
 from .schemas import ClassifyResponse
 
-CLASSIFIER_MODEL_NAME = "LogisticRegression TF-IDF"
-CLASSIFIER_ARTIFACT_PATH = ARTIFACTS_DIR / "classical" / "best_model.joblib"
-_LABELS: frozenset[str] = frozenset({"bug", "feature", "docs", "question"})
 _classifier: "IssueClassifier | None" = None
 
 
@@ -59,7 +59,7 @@ class IssueClassifier:
             raise ClassifierUnavailableError("classifier prediction failed") from exc
 
         label = str(prediction)
-        if label not in _LABELS:
+        if label not in CLASSIFIER_ALLOWED_LABELS:
             raise ClassifierUnavailableError(
                 f"classifier returned invalid label: {label}"
             )

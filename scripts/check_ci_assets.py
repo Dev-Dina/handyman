@@ -1,9 +1,9 @@
 """Check CI-required assets are present before running eval jobs.
 
 Run as the first step in the ci-assets job. If any required file is missing,
-this script exits 1 with a clear per-file message so the downstream eval jobs
-are skipped rather than failing with an obscure FileNotFoundError deep inside
-the eval pipeline.
+this script exits 1 with a clear per-file message. Downstream eval jobs use
+`if: always()` + an explicit result check so they fail (not skip) when this
+job fails — preventing a silent partial-green CI.
 
 Note: artifacts/ and data/ are gitignored. These files must exist from a prior
 pipeline run or be restored from MinIO before CI eval jobs can succeed.

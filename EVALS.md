@@ -25,8 +25,9 @@ like a Python crash.
 `artifacts/classical/best_model.joblib` and `data/rag/chunks/chunks_section_aware.jsonl`
 are gitignored. On a fresh clone these files are absent. Without the asset gate, both eval
 jobs fail with an obscure `FileNotFoundError` deep inside the pipeline — indistinguishable
-from a code bug. With `ci-assets` as a dependency, GitHub shows the asset check failed and
-automatically skips the downstream eval jobs.
+from a code bug. With `ci-assets` as a dependency and `if: always()` on the eval jobs, GitHub
+shows the asset check failed and the eval jobs fail explicitly (not silently
+skip), giving a clear all-red signal instead of a partial-green CI.
 
 The asset check script is `scripts/check_ci_assets.py`. It prints a per-file OK/MISS
 status and exits 1 if anything is missing.

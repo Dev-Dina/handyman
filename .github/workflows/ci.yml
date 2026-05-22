@@ -126,8 +126,15 @@ jobs:
   classifier-golden-eval:
     name: Classification golden eval
     needs: [ci-assets]
+    if: always()
     runs-on: ubuntu-latest
     steps:
+      - name: Require ci-assets success
+        if: needs.ci-assets.result != 'success'
+        run: |
+          echo "ERROR: ci-assets failed — required assets are missing."
+          echo "See the ci-assets job for per-file MISS details."
+          exit 1
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
       - uses: actions/setup-python@v5
@@ -149,8 +156,15 @@ jobs:
   rag-golden-eval:
     name: RAG golden eval
     needs: [ci-assets]
+    if: always()
     runs-on: ubuntu-latest
     steps:
+      - name: Require ci-assets success
+        if: needs.ci-assets.result != 'success'
+        run: |
+          echo "ERROR: ci-assets failed — required assets are missing."
+          echo "See the ci-assets job for per-file MISS details."
+          exit 1
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
       - uses: actions/setup-python@v5

@@ -19,6 +19,7 @@ dependencies = [
     "structlog>=24.1.0",
     "matplotlib>=3.10.9",
     "pgvector>=0.3.0",
+    "minio>=7.2.0",
 ]
 
 [project.optional-dependencies]

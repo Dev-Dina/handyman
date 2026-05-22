@@ -174,12 +174,12 @@ data/experiments/failed/strict_text/         strict preprocessing — rejected, 
 
 | Category | Path | Count | Status |
 |---|---|---|---|
-| unit | tests/unit/ | 159 | 159/159 PASS |
+| unit | tests/unit/ | 191 | 191/191 PASS |
 | smoke | tests/smoke/ | 11 | 11/11 PASS |
 | integration | tests/integration/ | 57 | 57/57 PASS |
 | eval | tests/eval/ | 18 | 18/18 PASS |
 | build | tests/build/ | 2 | 2/2 PASS |
-| **Total** | | **246** | **246/246 PASS** |
+| **Total** | | **278** | **278/278 PASS** |
 
 Markers registered in pyproject.toml: `unit`, `smoke`, `integration`, `eval`, `build`.
 See `tests/README.md` for category definitions and run commands.
@@ -224,8 +224,8 @@ none
 
 ### Next 3 tasks
 
-1. `uv lock && uv sync --extra dev --extra ml --extra chatbot` — installs `pgvector>=0.3.0` and `opentelemetry-exporter-otlp-proto-http`; required before Docker build or demo.
-2. STREAMLIT-1: Authenticated Streamlit chat app (AUTH-1 + MEMORY-1 + MEMORY-2 + TRACING-1 + DB-PGVECTOR-1 unblock this).
+1. `uv lock && uv sync --extra dev --extra ml --extra chatbot` — installs `pgvector>=0.3.0`, `minio>=7.2.0`, and `opentelemetry-exporter-otlp-proto-http`; required before Docker build or demo.
+2. STREAMLIT-1: Authenticated Streamlit chat app (AUTH-1 + MEMORY-1 + MEMORY-2 + TRACING-1 + DB-PGVECTOR-1 + MINIO-1 unblock this).
 3. WIDGET-1: Widget config API + origin enforcement + CSP + `/widget.js` loader plan.
 
 ## Chatbot + Memory + Widget
@@ -238,6 +238,7 @@ none
 | MEMORY-1 | Short-term Redis memory with explicit TTL | **COMPLETE (2026-05-22)** |
 | MEMORY-2 | Long-term Postgres/pgvector memory + audit log | **COMPLETE (2026-05-22)** |
 | DB-PGVECTOR-1 | pgvector extension + vector(384) embedding migration + IVFFlat index | **COMPLETE (2026-05-22)** |
+| MINIO-1 | MinIO blob adapter + artifact/eval/retrieval snapshot upload pipeline | **COMPLETE (2026-05-22)** |
 | WIDGET-1 | Widget config API + `/widget.js` loader plan | TODO |
 | WIDGET-2 | React widget bundle + host demo app | TODO |
 
@@ -253,6 +254,7 @@ none
 - [x] TRACING-1b: Test noise fix — removed `ConsoleSpanExporter` fallback (was spawning `BatchSpanProcessor` background thread that flushed to closed stdout after pytest); OTLP package absent → NoOpTracer kept silently; `provider.shutdown()` added to OTEL wrapper test; 218/218 pass clean
 - [x] MEMORY-2: Long-term Postgres episodic memory + audit log — `app/services/memory/long_term.py` (`store_long_term_memory`, `list_long_term_memories`, `store_long_term_memory_with_db`); `app/repositories/memories.py` + `list_by_conversation`; `alembic/versions/003_memory2_long_term.py` (user_id nullable + conversation_id + memory_type + log_metadata); `write_memory` tool routes by `scope` param; 14 new unit tests
 - [x] DB-PGVECTOR-1: pgvector embedding — `alembic/versions/004_pgvector_embedding.py` (CREATE EXTENSION vector + ALTER embedding to vector(384) + IVFFlat index); `MEMORY_EMBEDDING_DIM=384` constant; `pgvector>=0.3.0` in pyproject.toml; `pgvector/pgvector:pg16` DB image (was already set); conditional ORM import (`PGVECTOR_AVAILABLE` flag); 15 new tests (14 unit + 1 build); 246/246 pass
+- [x] MINIO-1: Blob storage adapter + artifact upload pipeline — `app/infra/minio_client.py` (MinioClient: ensure_bucket/upload_file/upload_json/stat_object; lazy minio import; secrets from Vault); `app/domain/blob.py` (MinioUnavailableError); `app/services/blob/config.py` (bucket/prefix/content-type constants); `app/services/blob/storage.py` (upload_json/upload_file/upload_retrieval_snapshot with redaction + tracing); `pipelines/blob/upload_artifacts.py` (CLI; skip missing; --dry-run; --include-model-artifacts; writes reports/blob/upload_summary.json); `minio>=7.2.0` in pyproject.toml; 32 new unit tests; 278/278 pass
 - [ ] STREAMLIT-1: Authenticated Streamlit chat app (after AUTH-1)
 - [ ] WIDGET-1: Widget config API + origin enforcement + CSP + `/widget.js` loader
 - [ ] WIDGET-2: React widget bundle + host demo app
@@ -324,6 +326,11 @@ docker compose config
 .\.venv\Scripts\python.exe -m pytest -q
 
 # DB-PGVECTOR-1 pgvector embedding schema (2026-05-22)
+.\.venv\Scripts\python.exe -m ruff check app model_server ml pipelines tests
+.\.venv\Scripts\python.exe -m pytest -q
+docker compose config
+
+# MINIO-1 blob adapter + artifact upload pipeline (2026-05-22)
 .\.venv\Scripts\python.exe -m ruff check app model_server ml pipelines tests
 .\.venv\Scripts\python.exe -m pytest -q
 docker compose config

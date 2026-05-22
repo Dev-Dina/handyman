@@ -10,8 +10,11 @@ from __future__ import annotations
 import json
 
 from app.domain.errors import ModelServerUnavailableError, OllamaUnavailableError
+from app.domain.memory import RedisUnavailableError
+from app.infra.redis_client import get_redis_client
 from app.infra.redaction import redact
 from app.infra.tracing import get_tracer
+from app.services.memory.short_term import store_memory
 from app.services.rag.retrieval import retrieve
 from app.services.tools import extract_entities_service, summarize_service
 
@@ -139,6 +142,8 @@ async def dispatch_tool(
     name: str,
     arguments: dict,
     enabled_tools: list[str],
+    *,
+    conversation_id: str = "",
 ) -> str:
     """Execute a tool by name and return a JSON string result.
 
@@ -227,7 +232,24 @@ async def dispatch_tool(
                 return json.dumps({"error": str(exc), "tool": "classify_issue"})
 
     if name == "write_memory":
-        with tracer.start_span("tool.write_memory"):
-            return json.dumps({"status": "memory_not_configured_yet"})
+        with tracer.start_span("tool.write_memory") as span:
+            content = str(arguments.get("content", ""))
+            span.set_attribute("content_len", str(len(content)))
+            span.set_attribute("conversation_id", conversation_id)
+            try:
+                result = await store_memory(
+                    redis_client=get_redis_client(),
+                    conversation_id=conversation_id,
+                    content=content,
+                )
+                return json.dumps(result)
+            except RedisUnavailableError as exc:
+                span.record_exception(exc)
+                return json.dumps(
+                    {"status": "memory_unavailable", "reason": "Redis not reachable"}
+                )
+            except Exception as exc:
+                span.record_exception(exc)
+                return json.dumps({"error": str(exc), "tool": "write_memory"})
 
     return json.dumps({"error": "unknown_tool", "tool": name})

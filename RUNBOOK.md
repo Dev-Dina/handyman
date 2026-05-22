@@ -30,14 +30,14 @@ Startup order (automatic via depends_on):
 ## Testing
 
 ```powershell
-# Full suite (205 tests — safe: no Docker, no Ollama, no network)
+# Full suite (214 tests — safe: no Docker, no Ollama, no network)
 .\.venv\Scripts\python.exe -m pytest -q
 
 # Dry run (collect only)
 .\.venv\Scripts\python.exe -m pytest --collect-only
 
 # By category
-.\.venv\Scripts\python.exe -m pytest tests/unit        # 118 pure-function tests
+.\.venv\Scripts\python.exe -m pytest tests/unit        # 127 pure-function tests
 .\.venv\Scripts\python.exe -m pytest tests/smoke       # 11 import/route sanity checks
 .\.venv\Scripts\python.exe -m pytest tests/integration # 57 FastAPI endpoint tests (mocked)
 .\.venv\Scripts\python.exe -m pytest tests/eval        # 18 golden/schema/threshold gates
@@ -543,6 +543,43 @@ app/services/auth.py          register_user / login_user / get_current_user_by_i
 app/api/routes/auth.py        HTTP boundary; require_authenticated_user dependency (importable)
 app/api/schemas/auth.py       RegisterRequest / LoginRequest / UserPublic / LoginResponse
 app/domain/auth.py            ROLE_USER/ROLE_ADMIN constants; auth error classes
+```
+
+## MEMORY-1: Redis short-term memory (LIVE)
+
+Short-term memory stores redacted conversation context in Redis, keyed by `conversation_id`, TTL=24h.
+
+```powershell
+# Unit tests (no real Redis required)
+.\.venv\Scripts\python.exe -m pytest tests/unit/test_short_term_memory.py -v
+
+# Full suite
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+Key: `memory:short_term:{conversation_id}` (Redis List)
+TTL: 86400 seconds (24h), reset on every write
+Max items: 50 (enforced via LTRIM)
+Redaction: applied before every RPUSH
+
+The `write_memory` chatbot tool now stores to Redis. If Redis is unreachable, the tool returns `{"status": "memory_unavailable"}` — the chat request does not fail.
+
+```bash
+# Smoke-test write_memory via chat (requires Redis + Groq key + API running)
+curl -s -X POST http://localhost:8000/api/v1/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Remember that we prefer RBAC for access control in this cluster", "conversation_id": "demo-1"}' \
+  | python -m json.tool
+```
+
+Architecture:
+
+```
+app/infra/redis_client.py             async Redis adapter; raises RedisUnavailableError
+app/services/memory/config.py         MEMORY_TTL_SECONDS=86400, MEMORY_MAX_ITEMS=50, MEMORY_KEY_PREFIX
+app/services/memory/short_term.py     store_memory() / read_memory() — redact before write
+app/domain/memory.py                  RedisUnavailableError; role constants
+app/services/chat/tool_registry.py    write_memory → store_memory(get_redis_client(), conv_id, content)
 ```
 
 ## RAG pipeline

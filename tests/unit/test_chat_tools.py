@@ -84,19 +84,54 @@ def test_groq_unavailable_error_importable():
 
 
 # ---------------------------------------------------------------------------
-# write_memory placeholder
+# write_memory — real Redis path and failure path
 # ---------------------------------------------------------------------------
 
 
 @pytest.mark.asyncio
-async def test_write_memory_returns_not_configured():
+async def test_write_memory_tool_stores_memory():
     from app.services.chat.tool_registry import dispatch_tool
 
-    result = await dispatch_tool(
-        "write_memory", {"content": "some fact"}, ["write_memory"]
-    )
+    expected = {
+        "status": "stored",
+        "conversation_id": "conv-123",
+        "memory_type": "short_term",
+        "ttl_seconds": 86400,
+    }
+    with patch(
+        "app.services.chat.tool_registry.store_memory",
+        new=AsyncMock(return_value=expected),
+    ):
+        result = await dispatch_tool(
+            "write_memory",
+            {"content": "pods use namespace isolation"},
+            ["write_memory"],
+            conversation_id="conv-123",
+        )
+
     data = json.loads(result)
-    assert data["status"] == "memory_not_configured_yet"
+    assert data["status"] == "stored"
+    assert data["memory_type"] == "short_term"
+    assert data["conversation_id"] == "conv-123"
+
+
+@pytest.mark.asyncio
+async def test_write_memory_tool_graceful_on_redis_failure():
+    from app.domain.memory import RedisUnavailableError
+    from app.services.chat.tool_registry import dispatch_tool
+
+    with patch(
+        "app.services.chat.tool_registry.store_memory",
+        new=AsyncMock(side_effect=RedisUnavailableError("connection refused")),
+    ):
+        result = await dispatch_tool(
+            "write_memory",
+            {"content": "some fact"},
+            ["write_memory"],
+        )
+
+    data = json.loads(result)
+    assert data["status"] == "memory_unavailable"
 
 
 # ---------------------------------------------------------------------------

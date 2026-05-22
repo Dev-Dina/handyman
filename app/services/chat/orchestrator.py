@@ -155,7 +155,9 @@ async def run_chat(
                 )
 
                 try:
-                    result = await dispatch_tool(tool_name, args, tools_to_use)
+                    result = await dispatch_tool(
+                        tool_name, args, tools_to_use, conversation_id=conv_id
+                    )
                     tool_call_records.append(
                         {
                             "tool_name": tool_name,

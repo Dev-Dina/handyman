@@ -30,7 +30,7 @@ Startup order (automatic via depends_on):
 ## Testing
 
 ```powershell
-# Full suite (278 tests — safe: no Docker, no Ollama, no network)
+# Full suite (safe: no Docker, no Ollama, no network)
 .\.venv\Scripts\python.exe -m pytest -q
 
 # Dry run (collect only)
@@ -39,8 +39,8 @@ Startup order (automatic via depends_on):
 # By category
 .\.venv\Scripts\python.exe -m pytest tests/unit        # 191 pure-function tests
 .\.venv\Scripts\python.exe -m pytest tests/smoke       # 11 import/route sanity checks
-.\.venv\Scripts\python.exe -m pytest tests/integration # 57 FastAPI endpoint tests (mocked)
-.\.venv\Scripts\python.exe -m pytest tests/eval        # 18 golden/schema/threshold gates
+.\.venv\Scripts\python.exe -m pytest tests/integration # 65 FastAPI endpoint tests (mocked)
+.\.venv\Scripts\python.exe -m pytest tests/eval        # 24 golden/schema/threshold gates
 .\.venv\Scripts\python.exe -m pytest tests/build       # 2 compose/config structural checks
 
 # By marker
@@ -49,6 +49,48 @@ Startup order (automatic via depends_on):
 ```
 
 See `tests/README.md` for category definitions and rules.
+
+## CI / eval gates
+
+GitHub CI uses `uv sync --extra dev --extra ml --extra chatbot` and never uses
+`--all-extras`, Docker runtime, `.venv-gpu`, Groq, Ollama, or live MinIO.
+
+```powershell
+# Local equivalent of CI lint
+.\.venv\Scripts\python.exe -m ruff check app model_server ml pipelines tests chatbot
+
+# CI-safe classification eval (LR TF-IDF fallback only)
+.\.venv\Scripts\python.exe -m pipelines.classifier.eval_golden
+
+# CI-safe RAG eval (TF-IDF only)
+.\.venv\Scripts\python.exe -m pipelines.rag.eval_api
+
+# Full test suite
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+Outputs:
+- `reports/classification_eval_report.json`
+- `reports/rag/api_eval_report.json`
+
+## Reports audit and review notebooks
+
+```powershell
+# Regenerate the reports inventory.
+.\.venv\Scripts\python.exe scripts/audit_reports.py
+
+# Review the reports map.
+.\.venv\Scripts\python.exe -m marimo run notebooks/00_reports_map.py
+
+# Review classifier experiment decisions.
+.\.venv\Scripts\python.exe -m marimo run notebooks/01_classifier_experiments_review.py
+
+# Review RAG retrieval decisions.
+.\.venv\Scripts\python.exe -m marimo run notebooks/02_rag_retrieval_review.py
+```
+
+The notebooks read existing reports only. They do not retrain, fetch data, call
+external services, or mutate source artifacts.
 
 ## Day-to-day
 
@@ -70,6 +112,48 @@ docker compose down
 
 # Stop and wipe volumes
 docker compose down -v
+```
+
+## Streamlit internal app (STREAMLIT-1)
+
+The Streamlit app is the authenticated internal interface for demos and operational review.
+
+### Start the app
+
+```powershell
+# 1. Start the full backend stack (API + DB + Redis + Vault + Jaeger)
+docker compose up -d
+
+# 2. Start the Streamlit app (separate process, not in Docker by default)
+.\.venv\Scripts\python.exe -m streamlit run chatbot/main.py
+
+# Or with a custom API URL
+$env:API_BASE_URL = "http://localhost:8000"
+.\.venv\Scripts\python.exe -m streamlit run chatbot/main.py
+```
+
+App runs at: http://localhost:8501
+
+### Manual smoke test
+
+```
+1. Register a user:
+   curl -X POST http://localhost:8000/api/v1/auth/register \
+     -H "Content-Type: application/json" \
+     -d '{"email":"demo@example.com","password":"password123"}'
+
+2. Open http://localhost:8501 — sign in with the registered email/password.
+
+3. Type a chat message (e.g. "What is a Kubernetes pod?"). Verify:
+   - Answer appears below the input.
+   - Conversation ID is shown at the top.
+   - Tool calls expander appears if tools were used.
+
+4. Click "Memory Inspector" in the sidebar.
+   - Short-term and long-term memory panels appear.
+   - If no write_memory tool has been called, panels show "no items" message.
+
+5. Click "Widget Admin" — non-admin sees access-denied message.
 ```
 
 ## Vault (local dev)

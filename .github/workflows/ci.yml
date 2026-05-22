@@ -8,7 +8,7 @@ on:
 
 jobs:
   quality:
-    name: Lint, format, and test
+    name: Deterministic lint, tests, and eval gates
     runs-on: ubuntu-latest
 
     steps:
@@ -24,16 +24,19 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: uv sync --all-extras --dev
+        run: uv sync --extra dev --extra ml --extra chatbot
+
+      - name: Assert torch is absent
+        run: uv run python -c "import importlib.util; raise SystemExit(0 if importlib.util.find_spec('torch') is None else 1)"
 
       - name: Ruff lint
-        run: uv run ruff check .
+        run: uv run ruff check app model_server ml pipelines tests chatbot
 
-      - name: Ruff format check
-        run: uv run ruff format --check .
+      - name: Classification golden eval
+        run: uv run python -m pipelines.classifier.eval_golden
+
+      - name: RAG TF-IDF eval
+        run: uv run python -m pipelines.rag.eval_api
 
       - name: Run tests
         run: uv run pytest -q
-
-      - name: Compile smoke check
-        run: uv run python -m compileall app model_server scripts

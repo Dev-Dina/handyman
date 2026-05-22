@@ -1,46 +1,91 @@
 # Evaluation
 
-## Classification eval
+## CI-safe evals
 
-Labels used: kubernetes/kubernetes mapped classes — bug / feature / docs / question
-(same 4 classes as label mapping in DECISIONS.md).
+Normal CI is deterministic and does not require secrets, Docker runtime, GPU, Groq,
+Ollama, live MinIO, or modelserver.
 
-Golden set:
-- 25 hand-curated Kubernetes issues
-- separate from train/val/test where possible
+CI runs:
 
-Metrics:
-- accuracy
-- macro-F1
-- per-class F1
-- confusion matrix
+```bash
+uv run ruff check app model_server ml pipelines tests chatbot
+uv run python -m pipelines.classifier.eval_golden
+uv run python -m pipelines.rag.eval_api
+uv run pytest -q
+```
 
-Models:
-- classical ML baseline
-- fine-tuned transformer
-- LLM baseline
+CI also asserts that `torch` is not installed in the main environment.
+
+## Classification golden eval
+
+Script:
+- `pipelines/classifier/eval_golden.py`
+
+Inputs:
+- `evals/golden/classification_golden.jsonl`
+- `data/raw/kubernetes_issues.jsonl`
+- `artifacts/classical/best_model.joblib`
+- `eval_thresholds.yaml`
 
 Output:
-- reports/classification_eval_report.json
+- `reports/classification_eval_report.json`
 
-**Note:** Metrics will be populated after real splits and training are complete.
-Do not invent or placeholder metric numbers.
+CI default model:
+- `LogisticRegression TF-IDF`
+
+Current CI-safe result:
+- row_count: 25
+- accuracy: 0.7200
+- macro_f1: 0.6691
+- threshold: `classification.macro_f1_min = 0.65`
+- threshold_passed: true
+
+CodeBERT and Ollama/Groq classifier baselines are not run in normal CI because they
+require GPU/modelserver or live external/local LLM services. Their locked numbers remain
+documented in `PROJECT_STATE.md`, `DECISIONS.md`, and classifier reports.
 
 ## RAG eval
 
-Golden set:
-- 25 question / ideal answer / ground-truth chunks triples
-- 5 manually judged examples
+Script:
+- `pipelines/rag/eval_api.py`
 
-Metrics:
-- hit@5
-- MRR@10
-- answer relevancy
-- faithfulness
+Inputs:
+- `evals/golden/rag/rag_golden.jsonl`
+- `data/rag/chunks/chunks_section_aware.jsonl`
+- `eval_thresholds.yaml`
 
 Output:
-- reports/rag_eval_report.json
+- `reports/rag/api_eval_report.json`
 
-## CI gates
-Thresholds live in eval_thresholds.yaml.
-Thresholds must not be zero or disabled.
+CI default retrieval:
+- TF-IDF only (`alpha=0.0`)
+- no E5/modelserver required
+
+Current CI-safe result:
+- row_count: 25
+- hit_at_5: 0.4000
+- mrr_at_10: 0.1960
+- thresholds: `rag.hit_at_5_min = 0.25`, `rag.mrr_at_10_min = 0.15`
+- threshold_passed: true
+
+Manual/non-CI retrieval experiments include E5 dense/hybrid and reranker sweeps. Those
+are documented in `docs/RAG_TRACK_REPORT.md` and `reports/rag/retrieval/`.
+
+## Why LLMs and neural models are not in normal CI
+
+Normal CI avoids:
+- Groq: requires secret and network.
+- Ollama: requires local service and pulled model.
+- CodeBERT/fine-tuning: requires Torch/GPU path and large model dependencies.
+- E5 dense retrieval: requires modelserver or neural model runtime.
+
+This keeps CI reproducible on a fresh GitHub runner.
+
+## Thresholds
+
+Thresholds live in `eval_thresholds.yaml` and must remain non-zero.
+
+Current CI gates:
+- `classification.macro_f1_min = 0.65`
+- `rag.hit_at_5_min = 0.25`
+- `rag.mrr_at_10_min = 0.15`

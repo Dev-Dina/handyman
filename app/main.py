@@ -6,7 +6,9 @@ from fastapi import FastAPI
 from app.api.middleware import RequestContextMiddleware
 from app.api.routes.auth import router as auth_router
 from app.api.routes.chat import router as chat_router
+from app.api.routes.memory import router as memory_router
 from app.api.routes.rag import router as rag_router
+from app.api.routes.widgets import router as widgets_router
 from app.api.routes.tools import router as tools_router
 from app.domain.errors import VaultUnavailableError
 from app.infra.logging import configure_logging, get_logger
@@ -38,6 +40,8 @@ app.include_router(auth_router)
 app.include_router(tools_router)
 app.include_router(rag_router)
 app.include_router(chat_router)
+app.include_router(memory_router)
+app.include_router(widgets_router)
 
 
 @app.get("/healthz")

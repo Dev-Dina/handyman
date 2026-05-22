@@ -46,6 +46,11 @@ Failed experiments archived: `data/experiments/failed/` + `reports/experiments/f
 | Classical model artifact | `artifacts/classical/best_model.joblib` |
 | Transformer model artifacts | `artifacts/transformer/<run_name>/` |
 | Living classifier report | `docs/CLASSIFIER_TRACK_REPORT.md` |
+| Reports README | `reports/README.md` |
+| Reports inventory | `reports/report_inventory.csv`, `reports/report_inventory.json` |
+| Reports map notebook | `notebooks/00_reports_map.py` |
+| Classifier experiments review notebook | `notebooks/01_classifier_experiments_review.py` |
+| RAG retrieval review notebook | `notebooks/02_rag_retrieval_review.py` |
 | Full path manifest | `reports/artifact_manifest.json` |
 | Canonical implementation brief | `docs/PROJECT_BRIEF_CANONICAL.md` |
 | Brief compliance validation | `docs/PROJECT_BRIEF_VALIDATION.md` |
@@ -174,12 +179,12 @@ data/experiments/failed/strict_text/         strict preprocessing — rejected, 
 
 | Category | Path | Count | Status |
 |---|---|---|---|
-| unit | tests/unit/ | 191 | 191/191 PASS |
+| unit | tests/unit/ | 201 | 201/201 PASS |
 | smoke | tests/smoke/ | 11 | 11/11 PASS |
-| integration | tests/integration/ | 57 | 57/57 PASS |
-| eval | tests/eval/ | 18 | 18/18 PASS |
+| integration | tests/integration/ | 77 | 77/77 PASS |
+| eval | tests/eval/ | 24 | 24/24 PASS |
 | build | tests/build/ | 2 | 2/2 PASS |
-| **Total** | | **278** | **278/278 PASS** |
+| **Total** | | **314** | **314/314 PASS** |
 
 Markers registered in pyproject.toml: `unit`, `smoke`, `integration`, `eval`, `build`.
 See `tests/README.md` for category definitions and run commands.
@@ -224,9 +229,9 @@ none
 
 ### Next 3 tasks
 
-1. `uv lock && uv sync --extra dev --extra ml --extra chatbot` — installs `pgvector>=0.3.0`, `minio>=7.2.0`, and `opentelemetry-exporter-otlp-proto-http`; required before Docker build or demo.
-2. STREAMLIT-1: Authenticated Streamlit chat app (AUTH-1 + MEMORY-1 + MEMORY-2 + TRACING-1 + DB-PGVECTOR-1 + MINIO-1 unblock this).
-3. WIDGET-1: Widget config API + origin enforcement + CSP + `/widget.js` loader plan.
+1. `uv lock && uv sync --extra dev --extra ml --extra chatbot` — installs `streamlit`, `pgvector`, `minio`, `opentelemetry-exporter-otlp-proto-http`; required before demo.
+2. WIDGET-1: Widget config API + origin enforcement + CSP (`GET /api/v1/widgets/{public_widget_id}`, admin CRUD routes, CORS middleware, `frame-ancestors`).
+3. EVALS-1: Classification eval harness + generation judge eval + CI gates.
 
 ## Chatbot + Memory + Widget
 
@@ -239,7 +244,8 @@ none
 | MEMORY-2 | Long-term Postgres/pgvector memory + audit log | **COMPLETE (2026-05-22)** |
 | DB-PGVECTOR-1 | pgvector extension + vector(384) embedding migration + IVFFlat index | **COMPLETE (2026-05-22)** |
 | MINIO-1 | MinIO blob adapter + artifact/eval/retrieval snapshot upload pipeline | **COMPLETE (2026-05-22)** |
-| WIDGET-1 | Widget config API + `/widget.js` loader plan | TODO |
+| STREAMLIT-1 | Authenticated Streamlit chat app + memory API endpoints | **COMPLETE (2026-05-22)** |
+| WIDGET-1 | Widget config API + origin/CSP enforcement | **COMPLETE (2026-05-22)** |
 | WIDGET-2 | React widget bundle + host demo app | TODO |
 
 ### Chatbot implementation status
@@ -255,7 +261,9 @@ none
 - [x] MEMORY-2: Long-term Postgres episodic memory + audit log — `app/services/memory/long_term.py` (`store_long_term_memory`, `list_long_term_memories`, `store_long_term_memory_with_db`); `app/repositories/memories.py` + `list_by_conversation`; `alembic/versions/003_memory2_long_term.py` (user_id nullable + conversation_id + memory_type + log_metadata); `write_memory` tool routes by `scope` param; 14 new unit tests
 - [x] DB-PGVECTOR-1: pgvector embedding — `alembic/versions/004_pgvector_embedding.py` (CREATE EXTENSION vector + ALTER embedding to vector(384) + IVFFlat index); `MEMORY_EMBEDDING_DIM=384` constant; `pgvector>=0.3.0` in pyproject.toml; `pgvector/pgvector:pg16` DB image (was already set); conditional ORM import (`PGVECTOR_AVAILABLE` flag); 15 new tests (14 unit + 1 build); 246/246 pass
 - [x] MINIO-1: Blob storage adapter + artifact upload pipeline — `app/infra/minio_client.py` (MinioClient: ensure_bucket/upload_file/upload_json/stat_object; lazy minio import; secrets from Vault); `app/domain/blob.py` (MinioUnavailableError); `app/services/blob/config.py` (bucket/prefix/content-type constants); `app/services/blob/storage.py` (upload_json/upload_file/upload_retrieval_snapshot with redaction + tracing); `pipelines/blob/upload_artifacts.py` (CLI; skip missing; --dry-run; --include-model-artifacts; writes reports/blob/upload_summary.json); `minio>=7.2.0` in pyproject.toml; 32 new unit tests; 278/278 pass
-- [ ] STREAMLIT-1: Authenticated Streamlit chat app (after AUTH-1)
+- [x] CI-1: deterministic CI + eval gates — `.github/workflows/ci.yml` uses `uv sync --extra dev --extra ml --extra chatbot` (never `--all-extras`); asserts no Torch; runs ruff, LR classification golden eval, TF-IDF RAG eval, and pytest; `pipelines/classifier/eval_golden.py`; `reports/classification_eval_report.json` macro_f1=0.6691, accuracy=0.7200; `reports/rag/api_eval_report.json` hit@5=0.4000, mrr@10=0.1960; 284/284 pass
+- [x] REPORTS-AND-NOTEBOOKS-1: reports audit/review layer — `scripts/audit_reports.py`; `reports/README.md`; `reports/report_inventory.csv/json`; marimo notebooks `notebooks/00_reports_map.py`, `01_classifier_experiments_review.py`, `02_rag_retrieval_review.py`; documentation/indexing only, no artifacts deleted, moved, renamed, retrained, or fetched
+- [x] STREAMLIT-1: Authenticated Streamlit chat app — `chatbot/main.py` (login, chat, memory inspector, widget admin placeholder); `chatbot/config.py` + `chatbot/api_client.py` (httpx sync); `app/api/routes/memory.py` (GET /short-term + /long-term, auth-gated, graceful Redis fallback); `app/api/schemas/memory.py`; 8 integration tests; 292/292 pass
 - [ ] WIDGET-1: Widget config API + origin enforcement + CSP + `/widget.js` loader
 - [ ] WIDGET-2: React widget bundle + host demo app
 - [ ] Generation eval: faithfulness/answer_relevancy via LLM judge (after CHAT functional)
@@ -334,6 +342,22 @@ docker compose config
 .\.venv\Scripts\python.exe -m ruff check app model_server ml pipelines tests
 .\.venv\Scripts\python.exe -m pytest -q
 docker compose config
+
+# STREAMLIT-1 authenticated Streamlit app + memory API (2026-05-22)
+.\.venv\Scripts\python.exe -m ruff check app model_server ml pipelines tests chatbot chatbot_streamlit
+.\.venv\Scripts\python.exe -m pytest -q
+# start app: .\.venv\Scripts\python.exe -m streamlit run chatbot/main.py
+
+# CI-1 deterministic CI + eval gates (2026-05-22)
+.\.venv\Scripts\python.exe -m ruff check app model_server ml pipelines tests chatbot
+.\.venv\Scripts\python.exe -m pipelines.classifier.eval_golden
+.\.venv\Scripts\python.exe -m pipelines.rag.eval_api
+.\.venv\Scripts\python.exe -m pytest -q
+
+# REPORTS-AND-NOTEBOOKS-1 audit/review layer (2026-05-22)
+.\.venv\Scripts\python.exe scripts/audit_reports.py
+.\.venv\Scripts\python.exe -m ruff check scripts notebooks
+.\.venv\Scripts\python.exe -m pytest -q
 ```
 
 ```powershell

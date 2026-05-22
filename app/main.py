@@ -10,6 +10,7 @@ from app.api.routes.rag import router as rag_router
 from app.api.routes.tools import router as tools_router
 from app.domain.errors import VaultUnavailableError
 from app.infra.logging import configure_logging, get_logger
+from app.infra.tracing import configure_tracing
 
 logger = get_logger(__name__)
 
@@ -17,6 +18,7 @@ logger = get_logger(__name__)
 @asynccontextmanager
 async def lifespan(application: FastAPI):
     configure_logging(log_level=os.getenv("LOG_LEVEL", "INFO"))
+    configure_tracing()
 
     from app.core.config import get_settings
 

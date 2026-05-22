@@ -30,14 +30,14 @@ Startup order (automatic via depends_on):
 ## Testing
 
 ```powershell
-# Full suite (214 tests — safe: no Docker, no Ollama, no network)
+# Full suite (232 tests — safe: no Docker, no Ollama, no network)
 .\.venv\Scripts\python.exe -m pytest -q
 
 # Dry run (collect only)
 .\.venv\Scripts\python.exe -m pytest --collect-only
 
 # By category
-.\.venv\Scripts\python.exe -m pytest tests/unit        # 127 pure-function tests
+.\.venv\Scripts\python.exe -m pytest tests/unit        # 145 pure-function tests
 .\.venv\Scripts\python.exe -m pytest tests/smoke       # 11 import/route sanity checks
 .\.venv\Scripts\python.exe -m pytest tests/integration # 57 FastAPI endpoint tests (mocked)
 .\.venv\Scripts\python.exe -m pytest tests/eval        # 18 golden/schema/threshold gates

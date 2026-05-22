@@ -324,7 +324,24 @@ Preserves active triage context across breaks without keeping temporary debuggin
 context forever.
 
 ## Tracing backend
-TODO
+
+**Decision:** Jaeger all-in-one (local Docker) + OpenTelemetry SDK with OTLP HTTP exporter.
+
+**Why Jaeger:**
+- Single Docker container (`jaegertracing/all-in-one:1.57`); no API key or external account required.
+- Ships a browser UI at `http://localhost:16686` — search by service, trace, and tag.
+- Accepts OTLP natively on HTTP (port 4318) and gRPC (port 4317) since v1.35.
+- Zero operational cost for a local demo: `docker compose up` starts everything.
+
+**Implementation:**
+- `app/infra/tracing.py`: `OtelTracerWrapper` wraps OTEL SDK tracer with the existing `start_span(name)` interface. `configure_tracing()` initializes a `TracerProvider` with `BatchSpanProcessor` + `OTLPSpanExporter` when `OTEL_EXPORTER_OTLP_ENDPOINT` is set.
+- NoOpTracer remains the default for local `pytest` runs (no Jaeger needed).
+- docker-compose.yml: `OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318/v1/traces` wired into the `api` service; tracing is on by default in Docker and off locally.
+- `opentelemetry-exporter-otlp-proto-http` added to `pyproject.toml`; requires `uv sync` to install.
+- Falls back to `ConsoleSpanExporter` if the OTLP package is not installed.
+
+**Trace attributes in use:**
+`chat.request`, `llm.groq.chat`, `tool.{name}`, `rag.retrieve`, `memory.short_term.write`, `auth.register`, `auth.login`, `auth.me`.
 
 ## Widget bundle target
 TODO

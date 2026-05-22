@@ -1,11 +1,17 @@
-"""Unit tests: NoOpTracer trace propagation correctness."""
+"""Unit tests: NoOpTracer trace propagation + OTEL configure_tracing behaviour."""
 
 from __future__ import annotations
 
 import pytest
 
 from app.infra.logging import trace_id_var
-from app.infra.tracing import _active_span_id_var, get_tracer
+from app.infra.tracing import (
+    NoOpTracer,
+    OtelTracerWrapper,
+    _active_span_id_var,
+    configure_tracing,
+    get_tracer,
+)
 
 pytestmark = pytest.mark.unit
 
@@ -137,3 +143,79 @@ def test_rag_noop_tracer_integration():
 
     assert len(set(trace_ids)) == 1, "all RAG spans must share one trace_id per request"
     assert trace_id_var.get() == ""
+
+
+# ---------------------------------------------------------------------------
+# configure_tracing() — no-network behaviour
+# ---------------------------------------------------------------------------
+
+
+def test_configure_tracing_no_op_when_no_endpoint(monkeypatch):
+    """configure_tracing() leaves NoOpTracer in place when endpoint is empty."""
+    import app.infra.tracing as tracing_mod
+
+    monkeypatch.delenv("OTEL_EXPORTER_OTLP_ENDPOINT", raising=False)
+    original = tracing_mod._tracer
+
+    configure_tracing()
+
+    assert tracing_mod._tracer is original
+
+
+def test_configure_tracing_keeps_noop_when_otlp_missing(monkeypatch):
+    """When OTLP exporter package is absent, configure_tracing keeps NoOpTracer — no exporter, no background thread."""
+    import sys
+
+    import app.infra.tracing as tracing_mod
+
+    monkeypatch.setenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4318/v1/traces")
+    monkeypatch.setitem(
+        sys.modules, "opentelemetry.exporter.otlp.proto.http.trace_exporter", None
+    )
+
+    saved = tracing_mod._tracer
+    try:
+        configure_tracing(service_name="test-service")
+        assert tracing_mod._tracer is saved  # NoOpTracer — no exporter created
+    finally:
+        tracing_mod._tracer = saved
+
+
+def test_noop_fallback_works_without_jaeger():
+    """NoOpTracer produces spans with no external network calls."""
+    tracer = NoOpTracer()
+    with tracer.start_span("test.op") as span:
+        span.set_attribute("key", "value")
+        assert trace_id_var.get() != ""
+    assert trace_id_var.get() == ""
+
+
+def test_otel_wrapper_sets_trace_id_var_from_otel_context(monkeypatch):
+    """OtelTracerWrapper sets trace_id_var to the OTEL trace_id (no network needed)."""
+    import app.infra.tracing as tracing_mod
+    from opentelemetry import trace as otel_trace
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+    from opentelemetry.sdk.trace.export.in_memory_span_exporter import (
+        InMemorySpanExporter,
+    )
+
+    exporter = InMemorySpanExporter()
+    provider = TracerProvider()
+    provider.add_span_processor(SimpleSpanProcessor(exporter))
+    otel_trace.set_tracer_provider(provider)
+
+    otel_tracer = otel_trace.get_tracer("test")
+    wrapper = OtelTracerWrapper(otel_tracer)
+
+    saved = tracing_mod._tracer
+    try:
+        with wrapper.start_span("outer"):
+            outer_trace_id = trace_id_var.get()
+            assert len(outer_trace_id) == 32  # 128-bit hex
+            with wrapper.start_span("inner"):
+                assert trace_id_var.get() == outer_trace_id
+        assert trace_id_var.get() == ""
+    finally:
+        tracing_mod._tracer = saved
+        provider.shutdown()  # release exporter; prevents residual state at process exit

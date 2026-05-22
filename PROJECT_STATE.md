@@ -174,12 +174,12 @@ data/experiments/failed/strict_text/         strict preprocessing — rejected, 
 
 | Category | Path | Count | Status |
 |---|---|---|---|
-| unit | tests/unit/ | 127 | 127/127 PASS |
+| unit | tests/unit/ | 145 | 145/145 PASS |
 | smoke | tests/smoke/ | 11 | 11/11 PASS |
 | integration | tests/integration/ | 57 | 57/57 PASS |
 | eval | tests/eval/ | 18 | 18/18 PASS |
 | build | tests/build/ | 1 | 1/1 PASS |
-| **Total** | | **214** | **214/214 PASS** |
+| **Total** | | **232** | **232/232 PASS** |
 
 Markers registered in pyproject.toml: `unit`, `smoke`, `integration`, `eval`, `build`.
 See `tests/README.md` for category definitions and run commands.
@@ -224,9 +224,9 @@ none
 
 ### Next 3 tasks
 
-1. TRACING-1: Real tracing backend (Jaeger recommended); wire `app/infra/tracing.py`; update `DECISIONS.md`.
-2. MEMORY-2: Long-term Postgres/pgvector memory + audit log + alembic migration.
-3. STREAMLIT-1: Authenticated Streamlit chat app (AUTH-1 + MEMORY-1 unblock this).
+1. `uv sync` to install `opentelemetry-exporter-otlp-proto-http` (required before demo or Docker build).
+2. STREAMLIT-1: Authenticated Streamlit chat app (AUTH-1 + MEMORY-1 + MEMORY-2 + TRACING-1 unblock this).
+3. WIDGET-1: Widget config API + origin enforcement + CSP + `/widget.js` loader plan.
 
 ## Chatbot + Memory + Widget
 
@@ -236,7 +236,7 @@ none
 | CHAT-1 | Auth + widget config schema design | **COMPLETE (2026-05-21)** |
 | CHAT-2 | Tool-calling chatbot API and tool wrappers | **COMPLETE (2026-05-21)** |
 | MEMORY-1 | Short-term Redis memory with explicit TTL | **COMPLETE (2026-05-22)** |
-| MEMORY-2 | Long-term Postgres/pgvector memory + audit log | TODO |
+| MEMORY-2 | Long-term Postgres/pgvector memory + audit log | **COMPLETE (2026-05-22)** |
 | WIDGET-1 | Widget config API + `/widget.js` loader plan | TODO |
 | WIDGET-2 | React widget bundle + host demo app | TODO |
 
@@ -247,10 +247,11 @@ none
 - [x] CHAT-2: POST /api/v1/chat — Groq llama-3.3-70b-versatile; tools: rag_query/extract_entities/summarize/classify_issue/write_memory (placeholder); `app/infra/groq_client.py`; `app/services/chat/` (orchestrator, tool_registry, prompts); `app/api/routes/chat.py`; `prompts/chat_system.md`; 33 new tests (21 unit + 12 integration); classify_issue calls live model_server `/classify`
 - [x] AUTH-1: JWT register/login/me endpoints — POST /api/v1/auth/register, POST /api/v1/auth/login, GET /api/v1/auth/me; PBKDF2-SHA256 password hashing; HS256 JWT (stdlib only); `app/infra/security.py`; `app/services/auth.py`; `app/api/routes/auth.py`; `require_authenticated_user` dependency + `require_role` guard; 29 new tests (17 unit + 12 integration); 205/205 pass
 - [x] MODEL-SERVER-1: `/classify` route in model_server — LogisticRegression TF-IDF fallback via `artifacts/classical/best_model.joblib`; no Torch import; 4 unit tests
-- [x] MEMORY-1: Redis short-term memory service — `app/infra/redis_client.py`; `app/services/memory/short_term.py`; `store_memory`/`read_memory`; TTL=24h; redaction before RPUSH; `write_memory` tool wired (real Redis); 8 unit tests (fake client); 214/214 pass
-- [ ] TRACING-1: Real tracing backend (Jaeger or Honeycomb); DECISIONS.md tracing choice TODO
+- [x] MEMORY-1: Redis short-term memory service — `app/infra/redis_client.py`; `app/services/memory/short_term.py`; `store_memory`/`read_memory`; TTL=24h; redaction before RPUSH; `write_memory` tool wired (real Redis); 8 unit tests (fake client)
+- [x] TRACING-1: Real Jaeger/OTEL tracing — `OtelTracerWrapper` in `app/infra/tracing.py`; `configure_tracing()` at lifespan; OTLP HTTP → Jaeger; Jaeger in docker-compose (UI :16686, OTLP :4318); `DECISIONS.md` updated; 4 new unit tests; 218/218 pass
+- [x] TRACING-1b: Test noise fix — removed `ConsoleSpanExporter` fallback (was spawning `BatchSpanProcessor` background thread that flushed to closed stdout after pytest); OTLP package absent → NoOpTracer kept silently; `provider.shutdown()` added to OTEL wrapper test; 218/218 pass clean
+- [x] MEMORY-2: Long-term Postgres episodic memory + audit log — `app/services/memory/long_term.py` (`store_long_term_memory`, `list_long_term_memories`, `store_long_term_memory_with_db`); `app/repositories/memories.py` + `list_by_conversation`; `alembic/versions/003_memory2_long_term.py` (user_id nullable + conversation_id + memory_type + log_metadata); `write_memory` tool routes by `scope` param; 14 new unit tests; 232/232 pass; **pgvector embedding stays ARRAY(Float) until extension installed**
 - [ ] STREAMLIT-1: Authenticated Streamlit chat app (after AUTH-1)
-- [ ] MEMORY-2: Long-term memory in Postgres with pgvector and audit log
 - [ ] WIDGET-1: Widget config API + origin enforcement + CSP + `/widget.js` loader
 - [ ] WIDGET-2: React widget bundle + host demo app
 - [ ] Generation eval: faithfulness/answer_relevancy via LLM judge (after CHAT functional)
@@ -308,6 +309,15 @@ Get-ChildItem -Recurse -File | Select-String -Pattern 'Path\(__file__\)\.parent\
 .\.venv\Scripts\python.exe -m pytest -q
 
 # MEMORY-1 Redis short-term memory (2026-05-22)
+.\.venv\Scripts\python.exe -m ruff check app model_server ml pipelines tests
+.\.venv\Scripts\python.exe -m pytest -q
+
+# TRACING-1 Jaeger/OTEL tracing (2026-05-22)
+.\.venv\Scripts\python.exe -m ruff check app model_server ml pipelines tests
+.\.venv\Scripts\python.exe -m pytest -q
+docker compose config
+
+# MEMORY-2 long-term Postgres memory + audit log (2026-05-22)
 .\.venv\Scripts\python.exe -m ruff check app model_server ml pipelines tests
 .\.venv\Scripts\python.exe -m pytest -q
 ```

@@ -19,3 +19,14 @@ class MemoryRepository(BaseRepository[Memory]):
             .limit(limit)
         )
         return list(result.scalars().all())
+
+    async def list_by_conversation(
+        self, conversation_id: str, limit: int = 50
+    ) -> list[Memory]:
+        result = await self._session.execute(
+            select(Memory)
+            .where(Memory.conversation_id == conversation_id)
+            .order_by(Memory.created_at.desc())
+            .limit(limit)
+        )
+        return list(result.scalars().all())

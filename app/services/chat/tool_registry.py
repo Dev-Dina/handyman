@@ -10,10 +10,16 @@ from __future__ import annotations
 import json
 
 from app.domain.errors import ModelServerUnavailableError, OllamaUnavailableError
-from app.domain.memory import RedisUnavailableError
+from app.domain.memory import (
+    MEMORY_SCOPE_LONG,
+    MEMORY_SCOPE_SHORT,
+    LongTermMemoryError,
+    RedisUnavailableError,
+)
 from app.infra.redis_client import get_redis_client
 from app.infra.redaction import redact
 from app.infra.tracing import get_tracer
+from app.services.memory.long_term import store_long_term_memory_with_db
 from app.services.memory.short_term import store_memory
 from app.services.rag.retrieval import retrieve
 from app.services.tools import extract_entities_service, summarize_service
@@ -114,14 +120,23 @@ TOOL_DEFINITIONS: list[dict] = [
         "type": "function",
         "function": {
             "name": "write_memory",
-            "description": "Save an important fact or user preference for future reference.",
+            "description": (
+                "Save an important fact or user preference for future reference. "
+                "Use scope='short_term' (default) for session context or "
+                "scope='long_term' for permanent episodic memory."
+            ),
             "parameters": {
                 "type": "object",
                 "properties": {
                     "content": {
                         "type": "string",
                         "description": "The fact or preference to remember",
-                    }
+                    },
+                    "scope": {
+                        "type": "string",
+                        "enum": ["short_term", "long_term"],
+                        "description": "Storage scope: short_term (Redis, TTL=24h) or long_term (Postgres, permanent)",
+                    },
                 },
                 "required": ["content"],
             },
@@ -234,22 +249,48 @@ async def dispatch_tool(
     if name == "write_memory":
         with tracer.start_span("tool.write_memory") as span:
             content = str(arguments.get("content", ""))
+            scope = str(arguments.get("scope", MEMORY_SCOPE_SHORT))
             span.set_attribute("content_len", str(len(content)))
             span.set_attribute("conversation_id", conversation_id)
-            try:
-                result = await store_memory(
-                    redis_client=get_redis_client(),
-                    conversation_id=conversation_id,
-                    content=content,
-                )
-                return json.dumps(result)
-            except RedisUnavailableError as exc:
-                span.record_exception(exc)
-                return json.dumps(
-                    {"status": "memory_unavailable", "reason": "Redis not reachable"}
-                )
-            except Exception as exc:
-                span.record_exception(exc)
-                return json.dumps({"error": str(exc), "tool": "write_memory"})
+            span.set_attribute("scope", scope)
+
+            if scope == MEMORY_SCOPE_LONG:
+                try:
+                    result = await store_long_term_memory_with_db(
+                        content=content,
+                        conversation_id=conversation_id,
+                    )
+                    return json.dumps(result)
+                except LongTermMemoryError as exc:
+                    span.record_exception(exc)
+                    return json.dumps(
+                        {
+                            "status": "memory_unavailable",
+                            "scope": "long_term",
+                            "reason": "Postgres not reachable",
+                        }
+                    )
+                except Exception as exc:
+                    span.record_exception(exc)
+                    return json.dumps({"error": str(exc), "tool": "write_memory"})
+            else:
+                try:
+                    result = await store_memory(
+                        redis_client=get_redis_client(),
+                        conversation_id=conversation_id,
+                        content=content,
+                    )
+                    return json.dumps(result)
+                except RedisUnavailableError as exc:
+                    span.record_exception(exc)
+                    return json.dumps(
+                        {
+                            "status": "memory_unavailable",
+                            "reason": "Redis not reachable",
+                        }
+                    )
+                except Exception as exc:
+                    span.record_exception(exc)
+                    return json.dumps({"error": str(exc), "tool": "write_memory"})
 
     return json.dumps({"error": "unknown_tool", "tool": name})

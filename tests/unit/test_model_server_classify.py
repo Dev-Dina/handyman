@@ -74,6 +74,30 @@ def test_classify_returns_503_when_artifact_missing(monkeypatch) -> None:
     assert response.json()["detail"]["error"] == "classifier_unavailable"
 
 
+def test_model_server_config_does_not_import_app() -> None:
+    """model_server/config.py must be self-contained — no app.* imports."""
+    import ast
+
+    from app.core.paths import PROJECT_ROOT
+
+    config_src = (PROJECT_ROOT / "model_server" / "config.py").read_text()
+    tree = ast.parse(config_src)
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom):
+            if node.module and node.module.startswith("app"):
+                pytest.fail(
+                    f"model_server/config.py must not import from app.*: "
+                    f"found 'from {node.module} import ...'"
+                )
+        elif isinstance(node, ast.Import):
+            for alias in node.names:
+                if alias.name.startswith("app"):
+                    pytest.fail(
+                        f"model_server/config.py must not import app.*: "
+                        f"found 'import {alias.name}'"
+                    )
+
+
 def test_model_server_classify_does_not_require_torch_import(monkeypatch) -> None:
     sys.modules.pop("torch", None)
     monkeypatch.setattr(

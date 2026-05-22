@@ -150,6 +150,17 @@ Outputs:
 The notebooks read existing reports only. They do not retrain, fetch data, call
 external services, or mutate source artifacts.
 
+## API Docker image dependencies
+
+The API image (`Dockerfile`) installs base project dependencies only — no `[ml]` extras.
+
+| Package | Included | Reason |
+|---|---|---|
+| `scikit-learn` | Yes (base dep) | `app/services/rag/retrieval.py` imports `TfidfVectorizer` at module load — runtime hard dependency |
+| `torch` | **No** | Model server boundary only. Assertion in Dockerfile enforces absence at build time. |
+| `transformers` | No | Model server boundary only (`[ml]` extra). |
+| `datasets` | No | Training pipeline only (`[ml]` extra). |
+
 ## Day-to-day
 
 ```bash

@@ -179,12 +179,12 @@ data/experiments/failed/strict_text/         strict preprocessing — rejected, 
 
 | Category | Path | Count | Status |
 |---|---|---|---|
-| unit | tests/unit/ | 201 | 201/201 PASS |
+| unit | tests/unit/ | 212 | 212/212 PASS |
 | smoke | tests/smoke/ | 20 | 20/20 PASS |
-| integration | tests/integration/ | 77 | 77/77 PASS |
-| eval | tests/eval/ | 24 | 24/24 PASS |
-| build | tests/build/ | 2 | 2/2 PASS |
-| **Total** | | **323** | **323/323 PASS** |
+| integration | tests/integration/ | 69 | 69/69 PASS |
+| eval | tests/eval/ | 31 | 31/31 PASS |
+| build | tests/build/ | 10 | 10/10 PASS |
+| **Total** | | **332** | **332/332 PASS** |
 
 Markers registered in pyproject.toml: `unit`, `smoke`, `integration`, `eval`, `build`.
 See `tests/README.md` for category definitions and run commands.
@@ -231,7 +231,7 @@ none
 
 1. EVALS-1: Generation judge eval (faithfulness/answer_relevancy on RAG golden set 5 hand-labeled rows).
 2. FINAL-DOCS: README + submission block + git tag `v0.1.0-week7`.
-3. SECURITY.md: fill per-pattern rationale defense (brief requires it).
+3. Commit pending changes (CI-3, CI-4, WIDGET-AUDIT-1, DOCKER-PROD-READINESS-1, DOCKER-FIX-API-SKLEARN).
 
 ## Chatbot + Memory + Widget
 
@@ -267,6 +267,8 @@ none
 - [x] CI-4: fix tests-build exit code 5 — root cause: `build/` in .gitignore matched `tests/build/`; added `!tests/build/` + `!tests/build/**` exceptions; changed CI command from `pytest -m build` to `pytest tests/build` (pytest default norecursedirs includes "build"); updated RUNBOOK + EVALS; 323/323 pass
 - [x] WIDGET-AUDIT-1: npm audit — 2 moderate vulns (esbuild ≤ 0.24.2, vite ≤ 6.4.1, GHSA-67mh-4wv8-2f99); dev-server only, production bundle unaffected; `npm audit fix` no-ops (only `--force` fix available, breaks vite@8); deferred; DECISIONS.md bundle target filled (145,290 bytes raw / ~47.05 kB gzip); RUNBOOK.md audit warning added
 - [x] DOCKER-PROD-READINESS-1: production-shaped Docker — `app/core/config.py` production validation (refuses dev-root-token + placeholder jwt_signing_key when ENVIRONMENT=production/staging); 8 new unit tests (331/331 pass); `docker/widget.Dockerfile` multi-stage build (npm ci + npm run build, dist/ not committed); `docker/host.Dockerfile` fixed to copy from `demo/host/` (was placeholder `host/`); `docker/chatbot.Dockerfile` added httpx; `docker-compose.yml` fixed API_URL→API_BASE_URL mismatch + vault local-dev comment; `Dockerfile` (API) torch absence assertion added; `docker/vault-init.sh` local-dev bootstrap comments; SECURITY.md rewritten with per-pattern rationale; README.md expanded with services/ports/widget URL flow; RUNBOOK.md Vault secrets reference + production deployment section + widget URL flow; docker compose config valid
+- [x] DOCKER-FIX-API-SKLEARN: moved `scikit-learn>=1.5.0` from `[ml]` optional dep to base deps in `pyproject.toml` — `app/services/rag/retrieval.py` imports TfidfVectorizer at module load (not optional); API Docker image now includes sklearn without torch; torch absence assertion still passes; `docker compose build api` succeeds; RUNBOOK.md API Docker image deps table added; 331/331 pass
+- [x] DOCKER-FIX-MODELSERVER-PATHS: removed `from app.core.paths import ARTIFACTS_DIR` from `model_server/config.py` — model_server is now self-contained; `CLASSIFIER_ARTIFACT_PATH` computed via env var override or `Path(__file__).parent.parent` fallback (resolves correctly both in Docker `/app/model_server/` → `/app/` and locally); `docker/model_server.Dockerfile` adds `scikit-learn joblib` to pip install and `COPY artifacts/classical/best_model.joblib`; AST test added to verify no `app.*` imports in config; `docker compose build model_server` succeeds; 332/332 pass
 - [x] REPORTS-AND-NOTEBOOKS-1: reports audit/review layer — `scripts/audit_reports.py`; `reports/README.md`; `reports/report_inventory.csv/json`; marimo notebooks `notebooks/00_reports_map.py`, `01_classifier_experiments_review.py`, `02_rag_retrieval_review.py`; documentation/indexing only, no artifacts deleted, moved, renamed, retrained, or fetched
 - [x] STREAMLIT-1: Authenticated Streamlit chat app — `chatbot/main.py` (login, chat, memory inspector, widget admin placeholder); `chatbot/config.py` + `chatbot/api_client.py` (httpx sync); `app/api/routes/memory.py` (GET /short-term + /long-term, auth-gated, graceful Redis fallback); `app/api/schemas/memory.py`; 8 integration tests; 292/292 pass
 - [x] WIDGET-1: Widget config API + origin enforcement + CSP; 22 new tests; 314/314 pass

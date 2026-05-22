@@ -8,6 +8,16 @@ from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.infra.db import Base
+from app.services.memory.config import MEMORY_EMBEDDING_DIM
+
+try:
+    from pgvector.sqlalchemy import Vector as _PgVector  # type: ignore[import-untyped]
+
+    _memory_embedding_type: object = _PgVector(MEMORY_EMBEDDING_DIM)
+    PGVECTOR_AVAILABLE: bool = True
+except ImportError:
+    _memory_embedding_type = ARRAY(Float)
+    PGVECTOR_AVAILABLE = False
 
 
 class User(Base):
@@ -121,8 +131,8 @@ class Memory(Base):
         String(50), nullable=False, server_default="episodic"
     )
     log_metadata: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
-    # Placeholder: replace with Vector(1536) when pgvector extension is installed
-    embedding = mapped_column(ARRAY(Float), nullable=True)
+    # vector(384) when pgvector installed; ARRAY(Float) fallback when not yet installed
+    embedding = mapped_column(_memory_embedding_type, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

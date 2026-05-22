@@ -30,18 +30,18 @@ Startup order (automatic via depends_on):
 ## Testing
 
 ```powershell
-# Full suite (232 tests — safe: no Docker, no Ollama, no network)
+# Full suite (246 tests — safe: no Docker, no Ollama, no network)
 .\.venv\Scripts\python.exe -m pytest -q
 
 # Dry run (collect only)
 .\.venv\Scripts\python.exe -m pytest --collect-only
 
 # By category
-.\.venv\Scripts\python.exe -m pytest tests/unit        # 145 pure-function tests
+.\.venv\Scripts\python.exe -m pytest tests/unit        # 159 pure-function tests
 .\.venv\Scripts\python.exe -m pytest tests/smoke       # 11 import/route sanity checks
 .\.venv\Scripts\python.exe -m pytest tests/integration # 57 FastAPI endpoint tests (mocked)
 .\.venv\Scripts\python.exe -m pytest tests/eval        # 18 golden/schema/threshold gates
-.\.venv\Scripts\python.exe -m pytest tests/build       # 1 compose/config structural check
+.\.venv\Scripts\python.exe -m pytest tests/build       # 2 compose/config structural checks
 
 # By marker
 .\.venv\Scripts\python.exe -m pytest -m unit
@@ -111,6 +111,12 @@ DATABASE_URL=postgresql+asyncpg://handyman:password@localhost:5432/handyman \
 ```
 
 The `migrate` docker-compose service runs `alembic upgrade head` with `DATABASE_URL` injected.
+
+Migration chain: 001 (baseline) → 002 (chat1 schema) → 003 (memory2 long-term) → 004 (pgvector embedding).
+
+Migration 004 requires the Postgres image to have the pgvector extension installed.
+The docker-compose `db` service uses `pgvector/pgvector:pg16` which provides it.
+Running migration 004 against a vanilla Postgres image will fail.
 
 ## Dataset pipeline (kubernetes/kubernetes)
 

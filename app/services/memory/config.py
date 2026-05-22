@@ -12,3 +12,5 @@ LONG_TERM_MEMORY_TYPE: str = "episodic"
 LONG_TERM_AUDIT_ACTION: str = "memory.write"
 LONG_TERM_AUDIT_TARGET_TYPE: str = "memory"
 LONG_TERM_LIST_LIMIT: int = 50
+# intfloat/e5-small-v2 output dimension — confirmed from 2189×384 cached embeddings
+MEMORY_EMBEDDING_DIM: int = 384

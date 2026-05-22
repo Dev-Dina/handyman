@@ -1,0 +1,1592 @@
+[
+  {
+    "path": "reports/archive/classical_confusion_matrix.csv",
+    "extension": ".csv",
+    "size_bytes": 113,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive/classical_eval.json",
+    "extension": ".json",
+    "size_bytes": 1152,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive/multilabel_conflicts.csv",
+    "extension": ".csv",
+    "size_bytes": 97858,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive/numpy/class_balance_before_split.csv",
+    "extension": ".csv",
+    "size_bytes": 325,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive/numpy/dataset_validation_numpy.json",
+    "extension": ".json",
+    "size_bytes": 4561,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive/numpy/label_cooccurrence.csv",
+    "extension": ".csv",
+    "size_bytes": 1640,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive/numpy/label_counts.csv",
+    "extension": ".csv",
+    "size_bytes": 3186,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive/numpy/label_eda.json",
+    "extension": ".json",
+    "size_bytes": 9191,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive/numpy/multilabel_conflicts.csv",
+    "extension": ".csv",
+    "size_bytes": 128834,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive/numpy/split_report.json",
+    "extension": ".json",
+    "size_bytes": 1255,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive/numpy/unlabeled_issues_sample.csv",
+    "extension": ".csv",
+    "size_bytes": 51,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive/unlabeled_issues_sample.csv",
+    "extension": ".csv",
+    "size_bytes": 51,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive_numpy/class_balance_before_split.csv",
+    "extension": ".csv",
+    "size_bytes": 325,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive_numpy/dataset_validation_numpy.json",
+    "extension": ".json",
+    "size_bytes": 4561,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive_numpy/label_cooccurrence.csv",
+    "extension": ".csv",
+    "size_bytes": 1640,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive_numpy/label_counts.csv",
+    "extension": ".csv",
+    "size_bytes": 3186,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive_numpy/label_eda.json",
+    "extension": ".json",
+    "size_bytes": 9191,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive_numpy/multilabel_conflicts.csv",
+    "extension": ".csv",
+    "size_bytes": 128834,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive_numpy/split_report.json",
+    "extension": ".json",
+    "size_bytes": 1255,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/archive_numpy/unlabeled_issues_sample.csv",
+    "extension": ".csv",
+    "size_bytes": 51,
+    "category": "archive",
+    "track": "archive",
+    "status": "ARCHIVE",
+    "used_by": "historical evidence only",
+    "notes": "Archived earlier dataset/report output."
+  },
+  {
+    "path": "reports/artifact_manifest.json",
+    "extension": ".json",
+    "size_bytes": 17757,
+    "category": "project_manifest",
+    "track": "ci",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "project tracking",
+    "notes": "Full path manifest and implementation evidence index."
+  },
+  {
+    "path": "reports/classical/best_classical_eval.json",
+    "extension": ".json",
+    "size_bytes": 2219,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official classical classifier evidence."
+  },
+  {
+    "path": "reports/classical/classical_comparison.csv",
+    "extension": ".csv",
+    "size_bytes": 418,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official classical classifier evidence."
+  },
+  {
+    "path": "reports/classical/classical_comparison.json",
+    "extension": ".json",
+    "size_bytes": 5782,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official classical classifier evidence."
+  },
+  {
+    "path": "reports/classical/confusion_matrix.csv",
+    "extension": ".csv",
+    "size_bytes": 113,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official classical classifier evidence."
+  },
+  {
+    "path": "reports/classification_eval_report.json",
+    "extension": ".json",
+    "size_bytes": 1217,
+    "category": "eval_gate",
+    "track": "classifier",
+    "status": "ACTIVE_EVAL",
+    "used_by": "CI eval gate",
+    "notes": "Deterministic LR golden-set eval report."
+  },
+  {
+    "path": "reports/classifier_three_way_comparison.csv",
+    "extension": ".csv",
+    "size_bytes": 403,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official dataset/classifier evidence."
+  },
+  {
+    "path": "reports/classifier_three_way_comparison.json",
+    "extension": ".json",
+    "size_bytes": 1641,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official dataset/classifier evidence."
+  },
+  {
+    "path": "reports/cleaning_audit_report.json",
+    "extension": ".json",
+    "size_bytes": 1675,
+    "category": "superseded_output",
+    "track": "classifier",
+    "status": "CACHE",
+    "used_by": "historical debugging",
+    "notes": "Superseded top-level output; canonical run reports live in subdirectories."
+  },
+  {
+    "path": "reports/cleaning_examples.csv",
+    "extension": ".csv",
+    "size_bytes": 17242,
+    "category": "superseded_output",
+    "track": "classifier",
+    "status": "CACHE",
+    "used_by": "historical debugging",
+    "notes": "Superseded top-level output; canonical run reports live in subdirectories."
+  },
+  {
+    "path": "reports/experiments/failed/cleaned_splits/classical_cleaned/best_classical_eval.json",
+    "extension": ".json",
+    "size_bytes": 2219,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/cleaned_splits/classical_cleaned/classical_comparison.csv",
+    "extension": ".csv",
+    "size_bytes": 419,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/cleaned_splits/classical_cleaned/classical_comparison.json",
+    "extension": ".json",
+    "size_bytes": 5783,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/cleaned_splits/classical_cleaned/confusion_matrix.csv",
+    "extension": ".csv",
+    "size_bytes": 113,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/cleaned_splits/cleaning_audit_report.json",
+    "extension": ".json",
+    "size_bytes": 1675,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/cleaned_splits/cleaning_examples.csv",
+    "extension": ".csv",
+    "size_bytes": 17242,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/strict_text/classical_strict/best_classical_eval.json",
+    "extension": ".json",
+    "size_bytes": 2203,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/strict_text/classical_strict/classical_comparison.csv",
+    "extension": ".csv",
+    "size_bytes": 422,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/strict_text/classical_strict/classical_comparison.json",
+    "extension": ".json",
+    "size_bytes": 5738,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/strict_text/classical_strict/confusion_matrix.csv",
+    "extension": ".csv",
+    "size_bytes": 115,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/strict_text/strict_text_audit_report.json",
+    "extension": ".json",
+    "size_bytes": 1740,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/strict_text/strict_text_examples.csv",
+    "extension": ".csv",
+    "size_bytes": 6815,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/support_augmented/best_classical_eval.json",
+    "extension": ".json",
+    "size_bytes": 2228,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/support_augmented/classical_comparison.csv",
+    "extension": ".csv",
+    "size_bytes": 428,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/support_augmented/classical_comparison.json",
+    "extension": ".json",
+    "size_bytes": 5784,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/support_augmented/clean_single_target_counts.csv",
+    "extension": ".csv",
+    "size_bytes": 176,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/support_augmented/clean_single_target_counts.json",
+    "extension": ".json",
+    "size_bytes": 7855,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/support_augmented/clean_support_fetch_report.json",
+    "extension": ".json",
+    "size_bytes": 398,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/support_augmented/confusion_matrix.csv",
+    "extension": ".csv",
+    "size_bytes": 112,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/support_augmented/kubernetes_augmented_class_balance_before_split.csv",
+    "extension": ".csv",
+    "size_bytes": 326,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/support_augmented/kubernetes_augmented_label_cooccurrence.csv",
+    "extension": ".csv",
+    "size_bytes": 1653,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/support_augmented/kubernetes_augmented_label_counts.csv",
+    "extension": ".csv",
+    "size_bytes": 3231,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/support_augmented/kubernetes_augmented_label_eda.json",
+    "extension": ".json",
+    "size_bytes": 9508,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/support_augmented/kubernetes_augmented_multilabel_conflicts.csv",
+    "extension": ".csv",
+    "size_bytes": 97858,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/support_augmented/kubernetes_augmented_split_report.json",
+    "extension": ".json",
+    "size_bytes": 6142,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/experiments/failed/support_augmented/kubernetes_augmented_unlabeled_issues_sample.csv",
+    "extension": ".csv",
+    "size_bytes": 51,
+    "category": "failed_experiment_evidence",
+    "track": "failed_experiment",
+    "status": "FAILED_EXPERIMENT",
+    "used_by": "decision rationale only",
+    "notes": "Archived rejected experiment evidence; do not train from this."
+  },
+  {
+    "path": "reports/figures/.gitkeep",
+    "extension": "(none)",
+    "size_bytes": 0,
+    "category": "directory_placeholder",
+    "track": "unknown",
+    "status": "CACHE",
+    "used_by": "git directory retention",
+    "notes": "Placeholder file used to keep an empty directory."
+  },
+  {
+    "path": "reports/figures/01_class_counts_before_after_resolution.png",
+    "extension": ".png",
+    "size_bytes": 52235,
+    "category": "working_figure",
+    "track": "figures",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "figure generation pipeline",
+    "notes": "Working figure source; official copies live under reports/official/figures."
+  },
+  {
+    "path": "reports/figures/02_split_class_balance.png",
+    "extension": ".png",
+    "size_bytes": 38269,
+    "category": "working_figure",
+    "track": "figures",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "figure generation pipeline",
+    "notes": "Working figure source; official copies live under reports/official/figures."
+  },
+  {
+    "path": "reports/figures/03_top_kubernetes_labels.png",
+    "extension": ".png",
+    "size_bytes": 87865,
+    "category": "working_figure",
+    "track": "figures",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "figure generation pipeline",
+    "notes": "Working figure source; official copies live under reports/official/figures."
+  },
+  {
+    "path": "reports/figures/04_multilabel_conflict_combinations.png",
+    "extension": ".png",
+    "size_bytes": 63920,
+    "category": "working_figure",
+    "track": "figures",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "figure generation pipeline",
+    "notes": "Working figure source; official copies live under reports/official/figures."
+  },
+  {
+    "path": "reports/figures/05_text_quality_by_split.png",
+    "extension": ".png",
+    "size_bytes": 50139,
+    "category": "working_figure",
+    "track": "figures",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "figure generation pipeline",
+    "notes": "Working figure source; official copies live under reports/official/figures."
+  },
+  {
+    "path": "reports/figures/06_very_long_rows_by_class.png",
+    "extension": ".png",
+    "size_bytes": 40556,
+    "category": "working_figure",
+    "track": "figures",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "figure generation pipeline",
+    "notes": "Working figure source; official copies live under reports/official/figures."
+  },
+  {
+    "path": "reports/figures/07_classical_confusion_matrix.png",
+    "extension": ".png",
+    "size_bytes": 43294,
+    "category": "working_figure",
+    "track": "figures",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "figure generation pipeline",
+    "notes": "Working figure source; official copies live under reports/official/figures."
+  },
+  {
+    "path": "reports/figures/08_classical_model_comparison_macro_f1.png",
+    "extension": ".png",
+    "size_bytes": 55944,
+    "category": "working_figure",
+    "track": "figures",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "figure generation pipeline",
+    "notes": "Working figure source; official copies live under reports/official/figures."
+  },
+  {
+    "path": "reports/figures/09_classical_per_class_f1.png",
+    "extension": ".png",
+    "size_bytes": 24419,
+    "category": "working_figure",
+    "track": "figures",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "figure generation pipeline",
+    "notes": "Working figure source; official copies live under reports/official/figures."
+  },
+  {
+    "path": "reports/kubernetes_class_balance_before_split.csv",
+    "extension": ".csv",
+    "size_bytes": 325,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official dataset/classifier evidence."
+  },
+  {
+    "path": "reports/kubernetes_label_cooccurrence.csv",
+    "extension": ".csv",
+    "size_bytes": 1640,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official dataset/classifier evidence."
+  },
+  {
+    "path": "reports/kubernetes_label_counts.csv",
+    "extension": ".csv",
+    "size_bytes": 3186,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official dataset/classifier evidence."
+  },
+  {
+    "path": "reports/kubernetes_label_eda.json",
+    "extension": ".json",
+    "size_bytes": 9519,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official dataset/classifier evidence."
+  },
+  {
+    "path": "reports/kubernetes_multilabel_conflicts.csv",
+    "extension": ".csv",
+    "size_bytes": 128834,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official dataset/classifier evidence."
+  },
+  {
+    "path": "reports/llm/llama3_full/llm_eval.json",
+    "extension": ".json",
+    "size_bytes": 1241,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official LLM baseline evidence."
+  },
+  {
+    "path": "reports/llm/llama3_full/llm_predictions.csv",
+    "extension": ".csv",
+    "size_bytes": 50708,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official LLM baseline evidence."
+  },
+  {
+    "path": "reports/llm/llama3_full/llm_raw_responses.jsonl",
+    "extension": ".jsonl",
+    "size_bytes": 157054,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official LLM baseline evidence."
+  },
+  {
+    "path": "reports/llm/llm_runs_summary.csv",
+    "extension": ".csv",
+    "size_bytes": 405,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official LLM baseline evidence."
+  },
+  {
+    "path": "reports/llm/smoke_10/llm_eval.json",
+    "extension": ".json",
+    "size_bytes": 1192,
+    "category": "llm_cache",
+    "track": "classifier",
+    "status": "CACHE",
+    "used_by": "manual baseline debugging",
+    "notes": "Non-official LLM run output."
+  },
+  {
+    "path": "reports/llm/smoke_10/llm_predictions.csv",
+    "extension": ".csv",
+    "size_bytes": 1554,
+    "category": "llm_cache",
+    "track": "classifier",
+    "status": "CACHE",
+    "used_by": "manual baseline debugging",
+    "notes": "Non-official LLM run output."
+  },
+  {
+    "path": "reports/llm/smoke_10/llm_raw_responses.jsonl",
+    "extension": ".jsonl",
+    "size_bytes": 4519,
+    "category": "llm_cache",
+    "track": "classifier",
+    "status": "CACHE",
+    "used_by": "manual baseline debugging",
+    "notes": "Non-official LLM run output."
+  },
+  {
+    "path": "reports/official/figures/.gitkeep",
+    "extension": "(none)",
+    "size_bytes": 0,
+    "category": "directory_placeholder",
+    "track": "unknown",
+    "status": "CACHE",
+    "used_by": "git directory retention",
+    "notes": "Placeholder file used to keep an empty directory."
+  },
+  {
+    "path": "reports/official/figures/01_class_counts_before_after_resolution.png",
+    "extension": ".png",
+    "size_bytes": 52235,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/official/figures/02_split_class_balance.png",
+    "extension": ".png",
+    "size_bytes": 38269,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/official/figures/03_top_kubernetes_labels.png",
+    "extension": ".png",
+    "size_bytes": 87865,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/official/figures/04_multilabel_conflict_combinations.png",
+    "extension": ".png",
+    "size_bytes": 63920,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/official/figures/05_text_quality_by_split.png",
+    "extension": ".png",
+    "size_bytes": 50139,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/official/figures/06_very_long_rows_by_class.png",
+    "extension": ".png",
+    "size_bytes": 40556,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/official/figures/07_classical_confusion_matrix.png",
+    "extension": ".png",
+    "size_bytes": 43294,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/official/figures/08_classical_model_comparison_macro_f1.png",
+    "extension": ".png",
+    "size_bytes": 53756,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/official/figures/09_classical_per_class_f1.png",
+    "extension": ".png",
+    "size_bytes": 27442,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/official/figures/10_transformer_encoder_macro_f1.png",
+    "extension": ".png",
+    "size_bytes": 44922,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/official/figures/11_transformer_question_f1.png",
+    "extension": ".png",
+    "size_bytes": 50132,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/official/figures/12_classical_vs_transformer_macro_f1.png",
+    "extension": ".png",
+    "size_bytes": 52554,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/official/figures/13_codebert_per_class_f1.png",
+    "extension": ".png",
+    "size_bytes": 42055,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/official/figures/14_classifier_decision_summary.png",
+    "extension": ".png",
+    "size_bytes": 97736,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/official/figures/15_three_way_macro_f1.png",
+    "extension": ".png",
+    "size_bytes": 48877,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/official/figures/16_three_way_accuracy.png",
+    "extension": ".png",
+    "size_bytes": 46719,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/official/figures/17_three_way_question_f1.png",
+    "extension": ".png",
+    "size_bytes": 46740,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/official/figures/18_three_way_latency.png",
+    "extension": ".png",
+    "size_bytes": 51445,
+    "category": "presentation_figure",
+    "track": "figures",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "final presentation",
+    "notes": "Official presentation figure copy."
+  },
+  {
+    "path": "reports/rag/.gitkeep",
+    "extension": "(none)",
+    "size_bytes": 0,
+    "category": "directory_placeholder",
+    "track": "unknown",
+    "status": "CACHE",
+    "used_by": "git directory retention",
+    "notes": "Placeholder file used to keep an empty directory."
+  },
+  {
+    "path": "reports/rag/api_eval_report.json",
+    "extension": ".json",
+    "size_bytes": 41491,
+    "category": "eval_gate",
+    "track": "rag",
+    "status": "ACTIVE_EVAL",
+    "used_by": "CI eval gate",
+    "notes": "Deterministic TF-IDF RAG eval report."
+  },
+  {
+    "path": "reports/rag/chunking_examples.csv",
+    "extension": ".csv",
+    "size_bytes": 3046,
+    "category": "rag_pipeline_report",
+    "track": "rag",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "RAG decision rationale",
+    "notes": "Official RAG corpus/chunking evidence."
+  },
+  {
+    "path": "reports/rag/chunking_report.json",
+    "extension": ".json",
+    "size_bytes": 1728,
+    "category": "rag_pipeline_report",
+    "track": "rag",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "RAG decision rationale",
+    "notes": "Official RAG corpus/chunking evidence."
+  },
+  {
+    "path": "reports/rag/corpus_collection_report.json",
+    "extension": ".json",
+    "size_bytes": 1007,
+    "category": "rag_pipeline_report",
+    "track": "rag",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "RAG decision rationale",
+    "notes": "Official RAG corpus/chunking evidence."
+  },
+  {
+    "path": "reports/rag/embeddings_cache/BAAI_bge_small_en_v1_5_chunks.npy",
+    "extension": ".npy",
+    "size_bytes": 3362432,
+    "category": "embedding_cache",
+    "track": "rag",
+    "status": "CACHE",
+    "used_by": "manual retrieval experiments",
+    "notes": "Embedding cache; not a source of truth."
+  },
+  {
+    "path": "reports/rag/embeddings_cache/intfloat_e5_small_v2_chunks.npy",
+    "extension": ".npy",
+    "size_bytes": 3362432,
+    "category": "embedding_cache",
+    "track": "rag",
+    "status": "CACHE",
+    "used_by": "manual retrieval experiments",
+    "notes": "Embedding cache; not a source of truth."
+  },
+  {
+    "path": "reports/rag/embeddings_cache/sentence_transformers_all_MiniLM_L6_v2_chunks.npy",
+    "extension": ".npy",
+    "size_bytes": 3362432,
+    "category": "embedding_cache",
+    "track": "rag",
+    "status": "CACHE",
+    "used_by": "manual retrieval experiments",
+    "notes": "Embedding cache; not a source of truth."
+  },
+  {
+    "path": "reports/rag/figures/.gitkeep",
+    "extension": "(none)",
+    "size_bytes": 0,
+    "category": "directory_placeholder",
+    "track": "unknown",
+    "status": "CACHE",
+    "used_by": "git directory retention",
+    "notes": "Placeholder file used to keep an empty directory."
+  },
+  {
+    "path": "reports/rag/leakage_report.json",
+    "extension": ".json",
+    "size_bytes": 324,
+    "category": "rag_pipeline_report",
+    "track": "rag",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "RAG decision rationale",
+    "notes": "Official RAG corpus/chunking evidence."
+  },
+  {
+    "path": "reports/rag/retrieval/dense_BAAI_bge_small_en_v1_5.csv",
+    "extension": ".csv",
+    "size_bytes": 18001,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/dense_BAAI_bge_small_en_v1_5.json",
+    "extension": ".json",
+    "size_bytes": 35418,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/dense_BAAI_bge_small_en_v1_5_qt_technical_terms.csv",
+    "extension": ".csv",
+    "size_bytes": 18061,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/dense_BAAI_bge_small_en_v1_5_qt_technical_terms.json",
+    "extension": ".json",
+    "size_bytes": 35514,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/dense_intfloat_e5_small_v2.csv",
+    "extension": ".csv",
+    "size_bytes": 19289,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/dense_intfloat_e5_small_v2.json",
+    "extension": ".json",
+    "size_bytes": 36692,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/dense_sentence_transformers_all_MiniLM_L6_v2.csv",
+    "extension": ".csv",
+    "size_bytes": 18493,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/dense_sentence_transformers_all_MiniLM_L6_v2.json",
+    "extension": ".json",
+    "size_bytes": 35988,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/embedding_model_comparison.csv",
+    "extension": ".csv",
+    "size_bytes": 426,
+    "category": "retrieval_decision_report",
+    "track": "rag",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "RAG decision rationale",
+    "notes": "Official retrieval comparison evidence."
+  },
+  {
+    "path": "reports/rag/retrieval/embedding_model_comparison.json",
+    "extension": ".json",
+    "size_bytes": 1201,
+    "category": "retrieval_decision_report",
+    "track": "rag",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "RAG decision rationale",
+    "notes": "Official retrieval comparison evidence."
+  },
+  {
+    "path": "reports/rag/retrieval/hybrid_alpha_comparison.csv",
+    "extension": ".csv",
+    "size_bytes": 603,
+    "category": "retrieval_decision_report",
+    "track": "rag",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "RAG decision rationale",
+    "notes": "Official retrieval comparison evidence."
+  },
+  {
+    "path": "reports/rag/retrieval/hybrid_alpha_comparison.json",
+    "extension": ".json",
+    "size_bytes": 1806,
+    "category": "retrieval_decision_report",
+    "track": "rag",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "RAG decision rationale",
+    "notes": "Official retrieval comparison evidence."
+  },
+  {
+    "path": "reports/rag/retrieval/hybrid_BAAI_bge_small_en_v1_5_alpha0_3.csv",
+    "extension": ".csv",
+    "size_bytes": 18095,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/hybrid_BAAI_bge_small_en_v1_5_alpha0_3.json",
+    "extension": ".json",
+    "size_bytes": 35337,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/hybrid_BAAI_bge_small_en_v1_5_alpha0_5.csv",
+    "extension": ".csv",
+    "size_bytes": 18046,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/hybrid_BAAI_bge_small_en_v1_5_alpha0_5.json",
+    "extension": ".json",
+    "size_bytes": 35250,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/hybrid_BAAI_bge_small_en_v1_5_alpha0_7.csv",
+    "extension": ".csv",
+    "size_bytes": 18416,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/hybrid_BAAI_bge_small_en_v1_5_alpha0_7.json",
+    "extension": ".json",
+    "size_bytes": 35589,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/hybrid_intfloat_e5_small_v2_alpha0_3.csv",
+    "extension": ".csv",
+    "size_bytes": 18125,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/hybrid_intfloat_e5_small_v2_alpha0_3.json",
+    "extension": ".json",
+    "size_bytes": 35478,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/hybrid_intfloat_e5_small_v2_alpha0_5.csv",
+    "extension": ".csv",
+    "size_bytes": 18255,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/hybrid_intfloat_e5_small_v2_alpha0_5.json",
+    "extension": ".json",
+    "size_bytes": 35550,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/hybrid_intfloat_e5_small_v2_alpha0_7.csv",
+    "extension": ".csv",
+    "size_bytes": 18704,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/hybrid_intfloat_e5_small_v2_alpha0_7.json",
+    "extension": ".json",
+    "size_bytes": 35985,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/query_transform_comparison.json",
+    "extension": ".json",
+    "size_bytes": 738,
+    "category": "retrieval_decision_report",
+    "track": "rag",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "RAG decision rationale",
+    "notes": "Official retrieval comparison evidence."
+  },
+  {
+    "path": "reports/rag/retrieval/rerank_BAAI_bge_small_en_v1_5_alpha0_7_cross_encoder_ms_marco_MiniLM_L_6_v2.csv",
+    "extension": ".csv",
+    "size_bytes": 18460,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/rerank_BAAI_bge_small_en_v1_5_alpha0_7_cross_encoder_ms_marco_MiniLM_L_6_v2.json",
+    "extension": ".json",
+    "size_bytes": 35962,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/rerank_comparison.csv",
+    "extension": ".csv",
+    "size_bytes": 326,
+    "category": "retrieval_decision_report",
+    "track": "rag",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "RAG decision rationale",
+    "notes": "Official retrieval comparison evidence."
+  },
+  {
+    "path": "reports/rag/retrieval/rerank_comparison.json",
+    "extension": ".json",
+    "size_bytes": 848,
+    "category": "retrieval_decision_report",
+    "track": "rag",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "RAG decision rationale",
+    "notes": "Official retrieval comparison evidence."
+  },
+  {
+    "path": "reports/rag/retrieval/rerank_intfloat_e5_small_v2_alpha0_7_cross_encoder_ms_marco_MiniLM_L_6_v2.csv",
+    "extension": ".csv",
+    "size_bytes": 18781,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/rerank_intfloat_e5_small_v2_alpha0_7_cross_encoder_ms_marco_MiniLM_L_6_v2.json",
+    "extension": ".json",
+    "size_bytes": 36288,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/retrieval_runs_summary.csv",
+    "extension": ".csv",
+    "size_bytes": 2079,
+    "category": "retrieval_decision_report",
+    "track": "rag",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "RAG decision rationale",
+    "notes": "Official retrieval comparison evidence."
+  },
+  {
+    "path": "reports/rag/retrieval/tfidf_section_aware.csv",
+    "extension": ".csv",
+    "size_bytes": 17919,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/tfidf_section_aware.json",
+    "extension": ".json",
+    "size_bytes": 35504,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/tfidf_section_aware_qt_technical_terms.csv",
+    "extension": ".csv",
+    "size_bytes": 18119,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/rag/retrieval/tfidf_section_aware_qt_technical_terms.json",
+    "extension": ".json",
+    "size_bytes": 35727,
+    "category": "retrieval_run_output",
+    "track": "rag",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "RAG experiments",
+    "notes": "Individual retrieval run output."
+  },
+  {
+    "path": "reports/README.md",
+    "extension": ".md",
+    "size_bytes": 2769,
+    "category": "report_documentation",
+    "track": "ci",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "team review",
+    "notes": "Explains report categories and retention rules."
+  },
+  {
+    "path": "reports/report_inventory.csv",
+    "extension": ".csv",
+    "size_bytes": 28259,
+    "category": "report_inventory",
+    "track": "ci",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "reports/README.md; notebooks/00_reports_map.py",
+    "notes": "Generated report inventory."
+  },
+  {
+    "path": "reports/report_inventory.json",
+    "extension": ".json",
+    "size_bytes": 53164,
+    "category": "report_inventory",
+    "track": "ci",
+    "status": "ACTIVE_RUNTIME",
+    "used_by": "reports/README.md; notebooks/00_reports_map.py",
+    "notes": "Generated report inventory."
+  },
+  {
+    "path": "reports/split_report.json",
+    "extension": ".json",
+    "size_bytes": 6141,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official dataset/classifier evidence."
+  },
+  {
+    "path": "reports/text_quality_report.json",
+    "extension": ".json",
+    "size_bytes": 3185,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official dataset/classifier evidence."
+  },
+  {
+    "path": "reports/transformer/bert-tiny/transformer_eval.json",
+    "extension": ".json",
+    "size_bytes": 700,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official transformer evidence."
+  },
+  {
+    "path": "reports/transformer/bert-tiny/transformer_training_history.json",
+    "extension": ".json",
+    "size_bytes": 2092,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official transformer evidence."
+  },
+  {
+    "path": "reports/transformer/codebert_base_e3_len384/transformer_eval.json",
+    "extension": ".json",
+    "size_bytes": 718,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official transformer evidence."
+  },
+  {
+    "path": "reports/transformer/codebert_base_e3_len384/transformer_training_history.json",
+    "extension": ".json",
+    "size_bytes": 2120,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official transformer evidence."
+  },
+  {
+    "path": "reports/transformer/electra_small_e5_len384/transformer_eval.json",
+    "extension": ".json",
+    "size_bytes": 728,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official transformer evidence."
+  },
+  {
+    "path": "reports/transformer/electra_small_e5_len384/transformer_training_history.json",
+    "extension": ".json",
+    "size_bytes": 3432,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official transformer evidence."
+  },
+  {
+    "path": "reports/transformer/minilm_l12_e5_len384/transformer_eval.json",
+    "extension": ".json",
+    "size_bytes": 728,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official transformer evidence."
+  },
+  {
+    "path": "reports/transformer/minilm_l12_e5_len384/transformer_training_history.json",
+    "extension": ".json",
+    "size_bytes": 3413,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official transformer evidence."
+  },
+  {
+    "path": "reports/transformer/transformer_runs_summary.csv",
+    "extension": ".csv",
+    "size_bytes": 784,
+    "category": "classifier_report",
+    "track": "classifier",
+    "status": "ACTIVE_OFFICIAL",
+    "used_by": "classifier decision rationale",
+    "notes": "Official transformer evidence."
+  },
+  {
+    "path": "reports/transformer_eval.json",
+    "extension": ".json",
+    "size_bytes": 701,
+    "category": "superseded_output",
+    "track": "classifier",
+    "status": "CACHE",
+    "used_by": "historical debugging",
+    "notes": "Superseded top-level output; canonical run reports live in subdirectories."
+  },
+  {
+    "path": "reports/transformer_training_history.json",
+    "extension": ".json",
+    "size_bytes": 2081,
+    "category": "superseded_output",
+    "track": "classifier",
+    "status": "CACHE",
+    "used_by": "historical debugging",
+    "notes": "Superseded top-level output; canonical run reports live in subdirectories."
+  }
+]

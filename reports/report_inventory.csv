@@ -1,0 +1,160 @@
+path,extension,size_bytes,category,track,status,used_by,notes
+reports/archive/classical_confusion_matrix.csv,.csv,113,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive/classical_eval.json,.json,1152,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive/multilabel_conflicts.csv,.csv,97858,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive/numpy/class_balance_before_split.csv,.csv,325,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive/numpy/dataset_validation_numpy.json,.json,4561,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive/numpy/label_cooccurrence.csv,.csv,1640,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive/numpy/label_counts.csv,.csv,3186,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive/numpy/label_eda.json,.json,9191,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive/numpy/multilabel_conflicts.csv,.csv,128834,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive/numpy/split_report.json,.json,1255,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive/numpy/unlabeled_issues_sample.csv,.csv,51,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive/unlabeled_issues_sample.csv,.csv,51,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive_numpy/class_balance_before_split.csv,.csv,325,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive_numpy/dataset_validation_numpy.json,.json,4561,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive_numpy/label_cooccurrence.csv,.csv,1640,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive_numpy/label_counts.csv,.csv,3186,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive_numpy/label_eda.json,.json,9191,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive_numpy/multilabel_conflicts.csv,.csv,128834,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive_numpy/split_report.json,.json,1255,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/archive_numpy/unlabeled_issues_sample.csv,.csv,51,archive,archive,ARCHIVE,historical evidence only,Archived earlier dataset/report output.
+reports/artifact_manifest.json,.json,17757,project_manifest,ci,ACTIVE_RUNTIME,project tracking,Full path manifest and implementation evidence index.
+reports/classical/best_classical_eval.json,.json,2219,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official classical classifier evidence.
+reports/classical/classical_comparison.csv,.csv,418,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official classical classifier evidence.
+reports/classical/classical_comparison.json,.json,5782,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official classical classifier evidence.
+reports/classical/confusion_matrix.csv,.csv,113,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official classical classifier evidence.
+reports/classification_eval_report.json,.json,1217,eval_gate,classifier,ACTIVE_EVAL,CI eval gate,Deterministic LR golden-set eval report.
+reports/classifier_three_way_comparison.csv,.csv,403,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official dataset/classifier evidence.
+reports/classifier_three_way_comparison.json,.json,1641,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official dataset/classifier evidence.
+reports/cleaning_audit_report.json,.json,1675,superseded_output,classifier,CACHE,historical debugging,Superseded top-level output; canonical run reports live in subdirectories.
+reports/cleaning_examples.csv,.csv,17242,superseded_output,classifier,CACHE,historical debugging,Superseded top-level output; canonical run reports live in subdirectories.
+reports/experiments/failed/cleaned_splits/classical_cleaned/best_classical_eval.json,.json,2219,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/cleaned_splits/classical_cleaned/classical_comparison.csv,.csv,419,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/cleaned_splits/classical_cleaned/classical_comparison.json,.json,5783,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/cleaned_splits/classical_cleaned/confusion_matrix.csv,.csv,113,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/cleaned_splits/cleaning_audit_report.json,.json,1675,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/cleaned_splits/cleaning_examples.csv,.csv,17242,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/strict_text/classical_strict/best_classical_eval.json,.json,2203,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/strict_text/classical_strict/classical_comparison.csv,.csv,422,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/strict_text/classical_strict/classical_comparison.json,.json,5738,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/strict_text/classical_strict/confusion_matrix.csv,.csv,115,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/strict_text/strict_text_audit_report.json,.json,1740,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/strict_text/strict_text_examples.csv,.csv,6815,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/support_augmented/best_classical_eval.json,.json,2228,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/support_augmented/classical_comparison.csv,.csv,428,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/support_augmented/classical_comparison.json,.json,5784,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/support_augmented/clean_single_target_counts.csv,.csv,176,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/support_augmented/clean_single_target_counts.json,.json,7855,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/support_augmented/clean_support_fetch_report.json,.json,398,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/support_augmented/confusion_matrix.csv,.csv,112,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/support_augmented/kubernetes_augmented_class_balance_before_split.csv,.csv,326,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/support_augmented/kubernetes_augmented_label_cooccurrence.csv,.csv,1653,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/support_augmented/kubernetes_augmented_label_counts.csv,.csv,3231,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/support_augmented/kubernetes_augmented_label_eda.json,.json,9508,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/support_augmented/kubernetes_augmented_multilabel_conflicts.csv,.csv,97858,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/support_augmented/kubernetes_augmented_split_report.json,.json,6142,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/experiments/failed/support_augmented/kubernetes_augmented_unlabeled_issues_sample.csv,.csv,51,failed_experiment_evidence,failed_experiment,FAILED_EXPERIMENT,decision rationale only,Archived rejected experiment evidence; do not train from this.
+reports/figures/.gitkeep,(none),0,directory_placeholder,unknown,CACHE,git directory retention,Placeholder file used to keep an empty directory.
+reports/figures/01_class_counts_before_after_resolution.png,.png,52235,working_figure,figures,ACTIVE_RUNTIME,figure generation pipeline,Working figure source; official copies live under reports/official/figures.
+reports/figures/02_split_class_balance.png,.png,38269,working_figure,figures,ACTIVE_RUNTIME,figure generation pipeline,Working figure source; official copies live under reports/official/figures.
+reports/figures/03_top_kubernetes_labels.png,.png,87865,working_figure,figures,ACTIVE_RUNTIME,figure generation pipeline,Working figure source; official copies live under reports/official/figures.
+reports/figures/04_multilabel_conflict_combinations.png,.png,63920,working_figure,figures,ACTIVE_RUNTIME,figure generation pipeline,Working figure source; official copies live under reports/official/figures.
+reports/figures/05_text_quality_by_split.png,.png,50139,working_figure,figures,ACTIVE_RUNTIME,figure generation pipeline,Working figure source; official copies live under reports/official/figures.
+reports/figures/06_very_long_rows_by_class.png,.png,40556,working_figure,figures,ACTIVE_RUNTIME,figure generation pipeline,Working figure source; official copies live under reports/official/figures.
+reports/figures/07_classical_confusion_matrix.png,.png,43294,working_figure,figures,ACTIVE_RUNTIME,figure generation pipeline,Working figure source; official copies live under reports/official/figures.
+reports/figures/08_classical_model_comparison_macro_f1.png,.png,55944,working_figure,figures,ACTIVE_RUNTIME,figure generation pipeline,Working figure source; official copies live under reports/official/figures.
+reports/figures/09_classical_per_class_f1.png,.png,24419,working_figure,figures,ACTIVE_RUNTIME,figure generation pipeline,Working figure source; official copies live under reports/official/figures.
+reports/kubernetes_class_balance_before_split.csv,.csv,325,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official dataset/classifier evidence.
+reports/kubernetes_label_cooccurrence.csv,.csv,1640,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official dataset/classifier evidence.
+reports/kubernetes_label_counts.csv,.csv,3186,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official dataset/classifier evidence.
+reports/kubernetes_label_eda.json,.json,9519,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official dataset/classifier evidence.
+reports/kubernetes_multilabel_conflicts.csv,.csv,128834,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official dataset/classifier evidence.
+reports/llm/llama3_full/llm_eval.json,.json,1241,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official LLM baseline evidence.
+reports/llm/llama3_full/llm_predictions.csv,.csv,50708,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official LLM baseline evidence.
+reports/llm/llama3_full/llm_raw_responses.jsonl,.jsonl,157054,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official LLM baseline evidence.
+reports/llm/llm_runs_summary.csv,.csv,405,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official LLM baseline evidence.
+reports/llm/smoke_10/llm_eval.json,.json,1192,llm_cache,classifier,CACHE,manual baseline debugging,Non-official LLM run output.
+reports/llm/smoke_10/llm_predictions.csv,.csv,1554,llm_cache,classifier,CACHE,manual baseline debugging,Non-official LLM run output.
+reports/llm/smoke_10/llm_raw_responses.jsonl,.jsonl,4519,llm_cache,classifier,CACHE,manual baseline debugging,Non-official LLM run output.
+reports/official/figures/.gitkeep,(none),0,directory_placeholder,unknown,CACHE,git directory retention,Placeholder file used to keep an empty directory.
+reports/official/figures/01_class_counts_before_after_resolution.png,.png,52235,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/official/figures/02_split_class_balance.png,.png,38269,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/official/figures/03_top_kubernetes_labels.png,.png,87865,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/official/figures/04_multilabel_conflict_combinations.png,.png,63920,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/official/figures/05_text_quality_by_split.png,.png,50139,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/official/figures/06_very_long_rows_by_class.png,.png,40556,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/official/figures/07_classical_confusion_matrix.png,.png,43294,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/official/figures/08_classical_model_comparison_macro_f1.png,.png,53756,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/official/figures/09_classical_per_class_f1.png,.png,27442,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/official/figures/10_transformer_encoder_macro_f1.png,.png,44922,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/official/figures/11_transformer_question_f1.png,.png,50132,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/official/figures/12_classical_vs_transformer_macro_f1.png,.png,52554,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/official/figures/13_codebert_per_class_f1.png,.png,42055,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/official/figures/14_classifier_decision_summary.png,.png,97736,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/official/figures/15_three_way_macro_f1.png,.png,48877,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/official/figures/16_three_way_accuracy.png,.png,46719,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/official/figures/17_three_way_question_f1.png,.png,46740,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/official/figures/18_three_way_latency.png,.png,51445,presentation_figure,figures,ACTIVE_OFFICIAL,final presentation,Official presentation figure copy.
+reports/rag/.gitkeep,(none),0,directory_placeholder,unknown,CACHE,git directory retention,Placeholder file used to keep an empty directory.
+reports/rag/api_eval_report.json,.json,41491,eval_gate,rag,ACTIVE_EVAL,CI eval gate,Deterministic TF-IDF RAG eval report.
+reports/rag/chunking_examples.csv,.csv,3046,rag_pipeline_report,rag,ACTIVE_OFFICIAL,RAG decision rationale,Official RAG corpus/chunking evidence.
+reports/rag/chunking_report.json,.json,1728,rag_pipeline_report,rag,ACTIVE_OFFICIAL,RAG decision rationale,Official RAG corpus/chunking evidence.
+reports/rag/corpus_collection_report.json,.json,1007,rag_pipeline_report,rag,ACTIVE_OFFICIAL,RAG decision rationale,Official RAG corpus/chunking evidence.
+reports/rag/embeddings_cache/BAAI_bge_small_en_v1_5_chunks.npy,.npy,3362432,embedding_cache,rag,CACHE,manual retrieval experiments,Embedding cache; not a source of truth.
+reports/rag/embeddings_cache/intfloat_e5_small_v2_chunks.npy,.npy,3362432,embedding_cache,rag,CACHE,manual retrieval experiments,Embedding cache; not a source of truth.
+reports/rag/embeddings_cache/sentence_transformers_all_MiniLM_L6_v2_chunks.npy,.npy,3362432,embedding_cache,rag,CACHE,manual retrieval experiments,Embedding cache; not a source of truth.
+reports/rag/figures/.gitkeep,(none),0,directory_placeholder,unknown,CACHE,git directory retention,Placeholder file used to keep an empty directory.
+reports/rag/leakage_report.json,.json,324,rag_pipeline_report,rag,ACTIVE_OFFICIAL,RAG decision rationale,Official RAG corpus/chunking evidence.
+reports/rag/retrieval/dense_BAAI_bge_small_en_v1_5.csv,.csv,18001,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/dense_BAAI_bge_small_en_v1_5.json,.json,35418,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/dense_BAAI_bge_small_en_v1_5_qt_technical_terms.csv,.csv,18061,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/dense_BAAI_bge_small_en_v1_5_qt_technical_terms.json,.json,35514,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/dense_intfloat_e5_small_v2.csv,.csv,19289,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/dense_intfloat_e5_small_v2.json,.json,36692,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/dense_sentence_transformers_all_MiniLM_L6_v2.csv,.csv,18493,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/dense_sentence_transformers_all_MiniLM_L6_v2.json,.json,35988,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/embedding_model_comparison.csv,.csv,426,retrieval_decision_report,rag,ACTIVE_OFFICIAL,RAG decision rationale,Official retrieval comparison evidence.
+reports/rag/retrieval/embedding_model_comparison.json,.json,1201,retrieval_decision_report,rag,ACTIVE_OFFICIAL,RAG decision rationale,Official retrieval comparison evidence.
+reports/rag/retrieval/hybrid_alpha_comparison.csv,.csv,603,retrieval_decision_report,rag,ACTIVE_OFFICIAL,RAG decision rationale,Official retrieval comparison evidence.
+reports/rag/retrieval/hybrid_alpha_comparison.json,.json,1806,retrieval_decision_report,rag,ACTIVE_OFFICIAL,RAG decision rationale,Official retrieval comparison evidence.
+reports/rag/retrieval/hybrid_BAAI_bge_small_en_v1_5_alpha0_3.csv,.csv,18095,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/hybrid_BAAI_bge_small_en_v1_5_alpha0_3.json,.json,35337,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/hybrid_BAAI_bge_small_en_v1_5_alpha0_5.csv,.csv,18046,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/hybrid_BAAI_bge_small_en_v1_5_alpha0_5.json,.json,35250,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/hybrid_BAAI_bge_small_en_v1_5_alpha0_7.csv,.csv,18416,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/hybrid_BAAI_bge_small_en_v1_5_alpha0_7.json,.json,35589,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/hybrid_intfloat_e5_small_v2_alpha0_3.csv,.csv,18125,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/hybrid_intfloat_e5_small_v2_alpha0_3.json,.json,35478,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/hybrid_intfloat_e5_small_v2_alpha0_5.csv,.csv,18255,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/hybrid_intfloat_e5_small_v2_alpha0_5.json,.json,35550,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/hybrid_intfloat_e5_small_v2_alpha0_7.csv,.csv,18704,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/hybrid_intfloat_e5_small_v2_alpha0_7.json,.json,35985,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/query_transform_comparison.json,.json,738,retrieval_decision_report,rag,ACTIVE_OFFICIAL,RAG decision rationale,Official retrieval comparison evidence.
+reports/rag/retrieval/rerank_BAAI_bge_small_en_v1_5_alpha0_7_cross_encoder_ms_marco_MiniLM_L_6_v2.csv,.csv,18460,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/rerank_BAAI_bge_small_en_v1_5_alpha0_7_cross_encoder_ms_marco_MiniLM_L_6_v2.json,.json,35962,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/rerank_comparison.csv,.csv,326,retrieval_decision_report,rag,ACTIVE_OFFICIAL,RAG decision rationale,Official retrieval comparison evidence.
+reports/rag/retrieval/rerank_comparison.json,.json,848,retrieval_decision_report,rag,ACTIVE_OFFICIAL,RAG decision rationale,Official retrieval comparison evidence.
+reports/rag/retrieval/rerank_intfloat_e5_small_v2_alpha0_7_cross_encoder_ms_marco_MiniLM_L_6_v2.csv,.csv,18781,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/rerank_intfloat_e5_small_v2_alpha0_7_cross_encoder_ms_marco_MiniLM_L_6_v2.json,.json,36288,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/retrieval_runs_summary.csv,.csv,2079,retrieval_decision_report,rag,ACTIVE_OFFICIAL,RAG decision rationale,Official retrieval comparison evidence.
+reports/rag/retrieval/tfidf_section_aware.csv,.csv,17919,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/tfidf_section_aware.json,.json,35504,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/tfidf_section_aware_qt_technical_terms.csv,.csv,18119,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/rag/retrieval/tfidf_section_aware_qt_technical_terms.json,.json,35727,retrieval_run_output,rag,ACTIVE_RUNTIME,RAG experiments,Individual retrieval run output.
+reports/README.md,.md,2769,report_documentation,ci,ACTIVE_RUNTIME,team review,Explains report categories and retention rules.
+reports/report_inventory.csv,.csv,28259,report_inventory,ci,ACTIVE_RUNTIME,reports/README.md; notebooks/00_reports_map.py,Generated report inventory.
+reports/report_inventory.json,.json,53164,report_inventory,ci,ACTIVE_RUNTIME,reports/README.md; notebooks/00_reports_map.py,Generated report inventory.
+reports/split_report.json,.json,6141,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official dataset/classifier evidence.
+reports/text_quality_report.json,.json,3185,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official dataset/classifier evidence.
+reports/transformer/bert-tiny/transformer_eval.json,.json,700,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official transformer evidence.
+reports/transformer/bert-tiny/transformer_training_history.json,.json,2092,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official transformer evidence.
+reports/transformer/codebert_base_e3_len384/transformer_eval.json,.json,718,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official transformer evidence.
+reports/transformer/codebert_base_e3_len384/transformer_training_history.json,.json,2120,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official transformer evidence.
+reports/transformer/electra_small_e5_len384/transformer_eval.json,.json,728,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official transformer evidence.
+reports/transformer/electra_small_e5_len384/transformer_training_history.json,.json,3432,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official transformer evidence.
+reports/transformer/minilm_l12_e5_len384/transformer_eval.json,.json,728,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official transformer evidence.
+reports/transformer/minilm_l12_e5_len384/transformer_training_history.json,.json,3413,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official transformer evidence.
+reports/transformer/transformer_runs_summary.csv,.csv,784,classifier_report,classifier,ACTIVE_OFFICIAL,classifier decision rationale,Official transformer evidence.
+reports/transformer_eval.json,.json,701,superseded_output,classifier,CACHE,historical debugging,Superseded top-level output; canonical run reports live in subdirectories.
+reports/transformer_training_history.json,.json,2081,superseded_output,classifier,CACHE,historical debugging,Superseded top-level output; canonical run reports live in subdirectories.

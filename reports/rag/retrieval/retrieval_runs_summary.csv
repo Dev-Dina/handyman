@@ -1,0 +1,15 @@
+run_name,retriever,model,alpha,query_transform,chunk_count,hit_at_5,recall_at_5,mrr_at_10,latency_seconds,timestamp
+tfidf_section_aware,tfidf,,0.5,none,2189,0.36,0.36,0.1937,0.06,2026-05-21T12:20:57.506106+00:00
+tfidf_section_aware_qt_technical_terms,tfidf,,0.5,technical_terms,2189,0.44,0.44,0.2027,0.05,2026-05-21T12:21:12.216222+00:00
+dense_sentence_transformers_all_MiniLM_L6_v2,dense,sentence-transformers/all-MiniLM-L6-v2,0.5,none,2189,0.48,0.48,0.2091,20.59,2026-05-21T12:22:49.130472+00:00
+dense_BAAI_bge_small_en_v1_5,dense,BAAI/bge-small-en-v1.5,0.5,none,2189,0.52,0.52,0.2815,175.86,2026-05-21T12:26:17.264427+00:00
+hybrid_BAAI_bge_small_en_v1_5_alpha0_3,hybrid,BAAI/bge-small-en-v1.5,0.3,none,2189,0.52,0.52,0.2348,5.45,2026-05-21T13:20:00.662011+00:00
+hybrid_BAAI_bge_small_en_v1_5_alpha0_5,hybrid,BAAI/bge-small-en-v1.5,0.5,none,2189,0.56,0.56,0.2717,5.36,2026-05-21T13:20:19.069597+00:00
+hybrid_BAAI_bge_small_en_v1_5_alpha0_7,hybrid,BAAI/bge-small-en-v1.5,0.7,none,2189,0.56,0.56,0.327,5.3,2026-05-21T13:20:39.645973+00:00
+dense_BAAI_bge_small_en_v1_5_qt_technical_terms,dense,BAAI/bge-small-en-v1.5,0.5,technical_terms,2189,0.52,0.52,0.2858,6.45,2026-05-21T13:24:59.758671+00:00
+rerank_BAAI_bge_small_en_v1_5_alpha0_7_cross_encoder_ms_marco_MiniLM_L_6_v2,rerank,BAAI/bge-small-en-v1.5,0.7,none,2189,0.6,0.6,0.3159,166.98,2026-05-21T13:28:08.037736+00:00
+dense_intfloat_e5_small_v2,dense,intfloat/e5-small-v2,0.5,none,2189,0.6,0.6,0.3307,170.14,2026-05-21T14:46:25.786084+00:00
+hybrid_intfloat_e5_small_v2_alpha0_3,hybrid,intfloat/e5-small-v2,0.3,none,2189,0.52,0.52,0.2278,5.36,2026-05-21T14:59:15.336422+00:00
+hybrid_intfloat_e5_small_v2_alpha0_5,hybrid,intfloat/e5-small-v2,0.5,none,2189,0.6,0.6,0.2621,6.7,2026-05-21T15:04:38.787727+00:00
+hybrid_intfloat_e5_small_v2_alpha0_7,hybrid,intfloat/e5-small-v2,0.7,none,2189,0.68,0.68,0.3293,5.38,2026-05-21T15:05:08.893076+00:00
+rerank_intfloat_e5_small_v2_alpha0_7_cross_encoder_ms_marco_MiniLM_L_6_v2,rerank,intfloat/e5-small-v2,0.7,none,2189,0.56,0.56,0.3117,6.39,2026-05-21T15:05:44.801271+00:00

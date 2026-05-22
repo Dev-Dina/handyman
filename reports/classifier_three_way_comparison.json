@@ -1,0 +1,53 @@
+{
+  "generated_at": "2026-05-20T17:58:19.257543+00:00",
+  "test_set": "data/processed/test.csv",
+  "test_rows": 360,
+  "deployment_decision": {
+    "primary": "microsoft/codebert-base",
+    "rationale": "Highest held-out test macro-F1 (0.7061) and accuracy (0.7500) across all three tracks.",
+    "operational_fallback": "LogisticRegression (TF-IDF)",
+    "fallback_rationale": "Close macro-F1 (0.6938), no GPU required, ~110k\u00d7 faster inference.",
+    "llm_not_selected": "Llama 3 has the lowest macro-F1 (0.5554) and slowest inference (24.9 s/sample) despite zero API cost."
+  },
+  "models": {
+    "classical": {
+      "model": "LogisticRegression (TF-IDF)",
+      "accuracy": 0.713889,
+      "macro_f1": 0.693839,
+      "per_class_f1": {
+        "bug": 0.706977,
+        "docs": 0.847458,
+        "feature": 0.86631,
+        "question": 0.35461
+      },
+      "avg_latency_seconds": 0.000219775,
+      "deployment": "operational_fallback"
+    },
+    "codebert": {
+      "model": "microsoft/codebert-base",
+      "accuracy": 0.75,
+      "macro_f1": 0.7061,
+      "per_class_f1": {
+        "bug": 0.7265,
+        "docs": 0.9206,
+        "feature": 0.8864,
+        "question": 0.2909
+      },
+      "avg_latency_seconds": null,
+      "deployment": "PRIMARY"
+    },
+    "llm": {
+      "model": "llama3:latest (Ollama)",
+      "accuracy": 0.585,
+      "macro_f1": 0.5554,
+      "per_class_f1": {
+        "bug": 0.5952,
+        "docs": 0.6968,
+        "feature": 0.6909,
+        "question": 0.2385
+      },
+      "avg_latency_seconds": 24.9,
+      "deployment": "not_selected"
+    }
+  }
+}

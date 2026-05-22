@@ -1,0 +1,27 @@
+{
+  "generated_at": "2026-05-21T15:06:18.599158+00:00",
+  "best_run": "rerank_BAAI_bge_small_en_v1_5_alpha0_7_cross_encoder_ms_marco_MiniLM_L_6_v2",
+  "selection_criterion": "mrr_at_10 (primary), hit_at_5 (tiebreak)",
+  "runs": [
+    {
+      "run_name": "rerank_BAAI_bge_small_en_v1_5_alpha0_7_cross_encoder_ms_marco_MiniLM_L_6_v2",
+      "model": "BAAI/bge-small-en-v1.5",
+      "alpha": 0.7,
+      "hit_at_5": 0.6,
+      "recall_at_5": 0.6,
+      "mrr_at_10": 0.3159,
+      "latency_seconds": 166.98,
+      "rank": 1
+    },
+    {
+      "run_name": "rerank_intfloat_e5_small_v2_alpha0_7_cross_encoder_ms_marco_MiniLM_L_6_v2",
+      "model": "intfloat/e5-small-v2",
+      "alpha": 0.7,
+      "hit_at_5": 0.56,
+      "recall_at_5": 0.56,
+      "mrr_at_10": 0.3117,
+      "latency_seconds": 6.39,
+      "rank": 2
+    }
+  ]
+}

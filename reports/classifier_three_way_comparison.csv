@@ -1,0 +1,4 @@
+track,model,accuracy,macro_f1,bug_f1,docs_f1,feature_f1,question_f1,avg_latency_s,deployment
+Classical,LogisticRegression (TF-IDF),0.713889,0.693839,0.706977,0.847458,0.86631,0.35461,0.000220,operational_fallback
+Transformer,microsoft/codebert-base,0.75,0.7061,0.7265,0.9206,0.8864,0.2909,N/A,PRIMARY
+LLM (zero-shot),llama3:latest (Ollama),0.585,0.5554,0.5952,0.6968,0.6909,0.2385,24.9,not_selected

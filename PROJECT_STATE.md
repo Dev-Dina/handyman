@@ -174,12 +174,12 @@ data/experiments/failed/strict_text/         strict preprocessing — rejected, 
 
 | Category | Path | Count | Status |
 |---|---|---|---|
-| unit | tests/unit/ | 101 | 101/101 PASS |
+| unit | tests/unit/ | 118 | 118/118 PASS |
 | smoke | tests/smoke/ | 11 | 11/11 PASS |
-| integration | tests/integration/ | 45 | 45/45 PASS |
+| integration | tests/integration/ | 57 | 57/57 PASS |
 | eval | tests/eval/ | 18 | 18/18 PASS |
 | build | tests/build/ | 1 | 1/1 PASS |
-| **Total** | | **176** | **176/176 PASS** |
+| **Total** | | **205** | **205/205 PASS** |
 
 Markers registered in pyproject.toml: `unit`, `smoke`, `integration`, `eval`, `build`.
 See `tests/README.md` for category definitions and run commands.
@@ -224,7 +224,7 @@ none
 
 ### Next 3 tasks
 
-1. AUTH-1: JWT register/login/me endpoints (jwt_signing_key already in Vault; schema done).
+1. MODEL-SERVER-1: `/classify` route in model_server wired to `artifacts/classical/best_model.joblib`.
 2. MEMORY-1: Short-term Redis memory service with explicit TTL=24h.
 3. TRACING-1: Real tracing backend decision and implementation.
 
@@ -245,7 +245,7 @@ none
 - [x] CHAT-0: tracking docs created — `docs/CHATBOT_TRACK_REPORT.md`, `docs/CHATBOT_CODE_REVIEW_NOTES.md`, `docs/MEMORY_TRACK_REPORT.md`, `docs/WIDGET_TRACK_REPORT.md`
 - [x] CHAT-1: ORM models (User+is_active, WidgetConfig structured, AuditLog renamed, Conversation+widget_id); domain models; `app/domain/auth.py`; `app/domain/widgets.py`; repositories (WidgetConfigRepository, AuditLogRepository); `alembic/versions/002_chat1_schema.py`; 17 unit tests
 - [x] CHAT-2: POST /api/v1/chat — Groq llama-3.3-70b-versatile; tools: rag_query/extract_entities/summarize/classify_issue/write_memory (placeholder); `app/infra/groq_client.py`; `app/services/chat/` (orchestrator, tool_registry, prompts); `app/api/routes/chat.py`; `prompts/chat_system.md`; 33 new tests (21 unit + 12 integration); classify_issue calls live model_server `/classify`
-- [ ] AUTH-1: JWT register/login/me endpoints (jwt_signing_key in Vault; ORM schema done)
+- [x] AUTH-1: JWT register/login/me endpoints — POST /api/v1/auth/register, POST /api/v1/auth/login, GET /api/v1/auth/me; PBKDF2-SHA256 password hashing; HS256 JWT (stdlib only); `app/infra/security.py`; `app/services/auth.py`; `app/api/routes/auth.py`; `require_authenticated_user` dependency + `require_role` guard; 29 new tests (17 unit + 12 integration); 205/205 pass
 - [x] MODEL-SERVER-1: `/classify` route in model_server — LogisticRegression TF-IDF fallback via `artifacts/classical/best_model.joblib`; no Torch import; 4 unit tests; 176/176 pass
 - [ ] MEMORY-1: Redis short-term memory service + wire write_memory tool (TTL=24h decided)
 - [ ] TRACING-1: Real tracing backend (Jaeger or Honeycomb); DECISIONS.md tracing choice TODO

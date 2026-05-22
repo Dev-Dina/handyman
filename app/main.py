@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.api.middleware import RequestContextMiddleware
+from app.api.routes.auth import router as auth_router
 from app.api.routes.chat import router as chat_router
 from app.api.routes.rag import router as rag_router
 from app.api.routes.tools import router as tools_router
@@ -31,6 +32,7 @@ async def lifespan(application: FastAPI):
 
 app = FastAPI(title="Maintainer's Copilot API", lifespan=lifespan)
 app.add_middleware(RequestContextMiddleware)
+app.include_router(auth_router)
 app.include_router(tools_router)
 app.include_router(rag_router)
 app.include_router(chat_router)

@@ -19,3 +19,7 @@ class InvalidCredentialsError(RuntimeError):
 
 class InactiveUserError(RuntimeError):
     """Raised when an inactive user attempts an authenticated operation."""
+
+
+class PermissionDeniedError(RuntimeError):
+    """Raised when a user lacks the required role for an operation."""

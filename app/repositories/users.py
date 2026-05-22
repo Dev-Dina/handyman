@@ -12,3 +12,7 @@ class UserRepository(BaseRepository[User]):
     async def get_by_email(self, email: str) -> User | None:
         result = await self._session.execute(select(User).where(User.email == email))
         return result.scalar_one_or_none()
+
+    async def create(self, email: str, hashed_password: str, role: str) -> User:
+        user = User(email=email, hashed_password=hashed_password, role=role)
+        return await self.save(user)

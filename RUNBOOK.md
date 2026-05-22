@@ -30,16 +30,16 @@ Startup order (automatic via depends_on):
 ## Testing
 
 ```powershell
-# Full suite (176 tests — safe: no Docker, no Ollama, no network)
+# Full suite (205 tests — safe: no Docker, no Ollama, no network)
 .\.venv\Scripts\python.exe -m pytest -q
 
 # Dry run (collect only)
 .\.venv\Scripts\python.exe -m pytest --collect-only
 
 # By category
-.\.venv\Scripts\python.exe -m pytest tests/unit        # 97 pure-function tests
+.\.venv\Scripts\python.exe -m pytest tests/unit        # 118 pure-function tests
 .\.venv\Scripts\python.exe -m pytest tests/smoke       # 11 import/route sanity checks
-.\.venv\Scripts\python.exe -m pytest tests/integration # 45 FastAPI endpoint tests (mocked)
+.\.venv\Scripts\python.exe -m pytest tests/integration # 57 FastAPI endpoint tests (mocked)
 .\.venv\Scripts\python.exe -m pytest tests/eval        # 18 golden/schema/threshold gates
 .\.venv\Scripts\python.exe -m pytest tests/build       # 1 compose/config structural check
 
@@ -489,6 +489,60 @@ app/services/chat/orchestrator.py   tool-calling loop — up to MAX_TOOL_ROUNDS=
 app/api/routes/chat.py              HTTP only — maps GroqUnavailableError → 503
 app/api/schemas/chat.py             ChatRequest / ChatResponse / ToolCallRecord
 app/domain/errors.py                GroqUnavailableError
+```
+
+## AUTH-1: JWT register/login/me (LIVE)
+
+JWT signing key must be in Vault at `secret/handyman / jwt_signing_key`.
+
+```powershell
+# Unit + integration tests (no network required)
+.\.venv\Scripts\python.exe -m pytest tests/unit/test_auth_service.py tests/integration/test_auth_api.py -v
+
+# Lint
+.\.venv\Scripts\python.exe -m ruff check app ml pipelines tests
+
+# Full suite
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+Endpoints:
+
+| Endpoint | Method | Auth | Description |
+|---|---|---|---|
+| `/api/v1/auth/register` | POST | none | Create new user (role=user always) |
+| `/api/v1/auth/login` | POST | none | Returns JWT + user object |
+| `/api/v1/auth/me` | GET | Bearer JWT | Returns current user |
+
+Request examples (with API running):
+
+```bash
+# Register
+curl -s -X POST http://localhost:8000/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email": "dev@example.com", "password": "strongpassword"}' \
+  | python -m json.tool
+
+# Login
+curl -s -X POST http://localhost:8000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "dev@example.com", "password": "strongpassword"}' \
+  | python -m json.tool
+
+# Me (replace TOKEN with access_token from login)
+curl -s http://localhost:8000/api/v1/auth/me \
+  -H "Authorization: Bearer TOKEN" \
+  | python -m json.tool
+```
+
+Architecture:
+
+```
+app/infra/security.py         PBKDF2-SHA256 password hashing; HS256 JWT (stdlib only, no PyJWT)
+app/services/auth.py          register_user / login_user / get_current_user_by_id / require_role
+app/api/routes/auth.py        HTTP boundary; require_authenticated_user dependency (importable)
+app/api/schemas/auth.py       RegisterRequest / LoginRequest / UserPublic / LoginResponse
+app/domain/auth.py            ROLE_USER/ROLE_ADMIN constants; auth error classes
 ```
 
 ## RAG pipeline

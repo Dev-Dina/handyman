@@ -11,6 +11,9 @@ import os
 API_BASE_URL: str = os.getenv("API_BASE_URL", "http://localhost:8000")
 API_DOCS_URL: str = os.getenv("API_DOCS_URL", "http://localhost:8000/docs")
 MODEL_SERVER_URL: str = os.getenv("MODEL_SERVER_URL", "http://localhost:8001")
+MODEL_SERVER_PUBLIC_URL: str = os.getenv(
+    "MODEL_SERVER_PUBLIC_URL", "http://localhost:8001"
+)
 STREAMLIT_URL: str = os.getenv("STREAMLIT_URL", "http://localhost:8501")
 HOST_DEMO_URL: str = os.getenv("HOST_DEMO_URL", "http://localhost:8080")
 WIDGET_APP_URL: str = os.getenv("WIDGET_APP_URL", "http://localhost:3000/widget-app/")

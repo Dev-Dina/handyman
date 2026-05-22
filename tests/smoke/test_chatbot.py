@@ -24,6 +24,7 @@ def test_chatbot_config_all_urls_defined():
         "API_BASE_URL",
         "API_DOCS_URL",
         "MODEL_SERVER_URL",
+        "MODEL_SERVER_PUBLIC_URL",
         "STREAMLIT_URL",
         "HOST_DEMO_URL",
         "WIDGET_APP_URL",
@@ -42,6 +43,7 @@ def test_chatbot_config_defaults_are_localhost():
         HOST_DEMO_URL,
         JAEGER_URL,
         MINIO_URL,
+        MODEL_SERVER_PUBLIC_URL,
         MODEL_SERVER_URL,
         STREAMLIT_URL,
         WIDGET_APP_URL,
@@ -51,6 +53,7 @@ def test_chatbot_config_defaults_are_localhost():
     for url in [
         API_BASE_URL,
         MODEL_SERVER_URL,
+        MODEL_SERVER_PUBLIC_URL,
         STREAMLIT_URL,
         HOST_DEMO_URL,
         WIDGET_APP_URL,

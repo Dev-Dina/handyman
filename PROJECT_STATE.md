@@ -231,7 +231,7 @@ none
 
 1. EVALS-1: Generation judge eval (faithfulness/answer_relevancy on RAG golden set 5 hand-labeled rows).
 2. FINAL-DOCS: README + submission block + git tag `v0.1.0-week7`.
-3. Commit pending changes (CI-3, CI-4, WIDGET-AUDIT-1, DOCKER-PROD-READINESS-1, DOCKER-FIX-API-SKLEARN, DOCKER-FIX-MODELSERVER-PATHS, DOCKER-FIX-UI-SERVING, DOCKER-FIX-RAG-CORPUS, DOCKER-FIX-CHAT-PROMPTS, DOCKER-FIX-MEMORY-WIDGET-RUNTIME, UI-UNIFY-1).
+3. Commit pending changes (CI-3, CI-4, WIDGET-AUDIT-1, DOCKER-PROD-READINESS-1, DOCKER-FIX-API-SKLEARN, DOCKER-FIX-MODELSERVER-PATHS, DOCKER-FIX-UI-SERVING, DOCKER-FIX-RAG-CORPUS, DOCKER-FIX-CHAT-PROMPTS, DOCKER-FIX-MEMORY-WIDGET-RUNTIME, UI-UNIFY-1, UI-FIX-DOCKER-SERVICE-URLS).
 
 ## Chatbot + Memory + Widget
 
@@ -248,6 +248,7 @@ none
 | WIDGET-1 | Widget config API + origin/CSP enforcement | **COMPLETE (2026-05-22)** |
 | WIDGET-2 | React widget bundle + host demo app | **COMPLETE (2026-05-22)** |
 | UI-UNIFY-1 | Streamlit AI Ops Control Center — 10-page unified dashboard | **COMPLETE (2026-05-22)** |
+| UI-FIX-DOCKER-SERVICE-URLS | Split MODEL_SERVER_URL (internal) vs MODEL_SERVER_PUBLIC_URL (browser); set all chatbot env vars in docker-compose | **COMPLETE (2026-05-22)** |
 
 ### Chatbot implementation status
 

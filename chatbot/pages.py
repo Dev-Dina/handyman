@@ -15,7 +15,7 @@ from chatbot.config import (
     HOST_DEMO_URL,
     JAEGER_URL,
     MINIO_URL,
-    MODEL_SERVER_URL,
+    MODEL_SERVER_PUBLIC_URL,
     STREAMLIT_URL,
     WIDGET_APP_URL,
 )
@@ -212,7 +212,7 @@ def page_system_health() -> None:
         st.metric(
             label=f"{badge} model_server", value=ms_result.get("status", "unknown")
         )
-        st.caption(f"`{MODEL_SERVER_URL}/healthz`")
+        st.caption(f"[model_server health]({MODEL_SERVER_PUBLIC_URL}/healthz)")
 
     st.divider()
 

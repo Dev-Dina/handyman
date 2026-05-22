@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.api.middleware import RequestContextMiddleware
@@ -38,6 +39,21 @@ async def lifespan(application: FastAPI):
 
 
 app = FastAPI(title="Maintainer's Copilot API", lifespan=lifespan)
+
+# CORS: allow widget (port 3000) and host demo (port 8080) to call the API from the browser.
+# Set CORS_ALLOWED_ORIGINS env var to a comma-separated list of origins.
+_cors_origins = [
+    o.strip() for o in os.getenv("CORS_ALLOWED_ORIGINS", "").split(",") if o.strip()
+]
+if _cors_origins:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=_cors_origins,
+        allow_methods=["GET", "POST", "OPTIONS", "PATCH", "DELETE"],
+        allow_headers=["*"],
+        allow_credentials=False,
+    )
+
 app.add_middleware(RequestContextMiddleware)
 app.include_router(auth_router)
 app.include_router(tools_router)

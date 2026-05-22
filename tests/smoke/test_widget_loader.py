@@ -67,3 +67,44 @@ def test_build_loader_script_no_template_placeholder() -> None:
 
     js = build_loader_script()
     assert "__WIDGET_APP_PATH__" not in js
+
+
+def test_build_loader_script_contains_widget_app_path() -> None:
+    from app.services.widgets.loader import WIDGET_APP_PATH, build_loader_script
+
+    js = build_loader_script()
+    assert WIDGET_APP_PATH in js
+    assert "/widget-app/" in js
+
+
+def test_build_loader_script_reads_data_widget_url() -> None:
+    """Loader must read data-widget-url so Docker widget nginx (port 3000) is used."""
+    from app.services.widgets.loader import build_loader_script
+
+    js = build_loader_script()
+    assert "data-widget-url" in js, (
+        "Loader must read data-widget-url attribute — "
+        "without it, iframe falls back to API /widget-app/ which returns 404 in Docker"
+    )
+
+
+def test_build_loader_script_reads_data_api_base_url() -> None:
+    """Loader must read data-api-base-url so widget React app calls the correct API."""
+    from app.services.widgets.loader import build_loader_script
+
+    js = build_loader_script()
+    assert "data-api-base-url" in js, (
+        "Loader must read data-api-base-url attribute — "
+        "widget React app uses this to call POST /api/v1/chat"
+    )
+
+
+def test_build_loader_script_passes_api_base_to_iframe() -> None:
+    """Loader must append api_base to the iframe URL so the widget knows where to call."""
+    from app.services.widgets.loader import build_loader_script
+
+    js = build_loader_script()
+    assert "api_base" in js, (
+        "Loader must include api_base in the iframe src query string — "
+        "widget reads it via URL params to call the correct API endpoint"
+    )

@@ -180,11 +180,11 @@ data/experiments/failed/strict_text/         strict preprocessing — rejected, 
 | Category | Path | Count | Status |
 |---|---|---|---|
 | unit | tests/unit/ | 212 | 212/212 PASS |
-| smoke | tests/smoke/ | 20 | 20/20 PASS |
+| smoke | tests/smoke/ | 21 | 21/21 PASS |
 | integration | tests/integration/ | 69 | 69/69 PASS |
 | eval | tests/eval/ | 31 | 31/31 PASS |
-| build | tests/build/ | 10 | 10/10 PASS |
-| **Total** | | **332** | **332/332 PASS** |
+| build | tests/build/ | 21 | 21/21 PASS |
+| **Total** | | **336** | **336/336 PASS** |
 
 Markers registered in pyproject.toml: `unit`, `smoke`, `integration`, `eval`, `build`.
 See `tests/README.md` for category definitions and run commands.
@@ -231,7 +231,7 @@ none
 
 1. EVALS-1: Generation judge eval (faithfulness/answer_relevancy on RAG golden set 5 hand-labeled rows).
 2. FINAL-DOCS: README + submission block + git tag `v0.1.0-week7`.
-3. Commit pending changes (CI-3, CI-4, WIDGET-AUDIT-1, DOCKER-PROD-READINESS-1, DOCKER-FIX-API-SKLEARN).
+3. Commit pending changes (CI-3, CI-4, WIDGET-AUDIT-1, DOCKER-PROD-READINESS-1, DOCKER-FIX-API-SKLEARN, DOCKER-FIX-MODELSERVER-PATHS, DOCKER-FIX-UI-SERVING, DOCKER-FIX-RAG-CORPUS, DOCKER-FIX-CHAT-PROMPTS, DOCKER-FIX-MEMORY-WIDGET-RUNTIME).
 
 ## Chatbot + Memory + Widget
 
@@ -269,6 +269,10 @@ none
 - [x] DOCKER-PROD-READINESS-1: production-shaped Docker — `app/core/config.py` production validation (refuses dev-root-token + placeholder jwt_signing_key when ENVIRONMENT=production/staging); 8 new unit tests (331/331 pass); `docker/widget.Dockerfile` multi-stage build (npm ci + npm run build, dist/ not committed); `docker/host.Dockerfile` fixed to copy from `demo/host/` (was placeholder `host/`); `docker/chatbot.Dockerfile` added httpx; `docker-compose.yml` fixed API_URL→API_BASE_URL mismatch + vault local-dev comment; `Dockerfile` (API) torch absence assertion added; `docker/vault-init.sh` local-dev bootstrap comments; SECURITY.md rewritten with per-pattern rationale; README.md expanded with services/ports/widget URL flow; RUNBOOK.md Vault secrets reference + production deployment section + widget URL flow; docker compose config valid
 - [x] DOCKER-FIX-API-SKLEARN: moved `scikit-learn>=1.5.0` from `[ml]` optional dep to base deps in `pyproject.toml` — `app/services/rag/retrieval.py` imports TfidfVectorizer at module load (not optional); API Docker image now includes sklearn without torch; torch absence assertion still passes; `docker compose build api` succeeds; RUNBOOK.md API Docker image deps table added; 331/331 pass
 - [x] DOCKER-FIX-MODELSERVER-PATHS: removed `from app.core.paths import ARTIFACTS_DIR` from `model_server/config.py` — model_server is now self-contained; `CLASSIFIER_ARTIFACT_PATH` computed via env var override or `Path(__file__).parent.parent` fallback (resolves correctly both in Docker `/app/model_server/` → `/app/` and locally); `docker/model_server.Dockerfile` adds `scikit-learn joblib` to pip install and `COPY artifacts/classical/best_model.joblib`; AST test added to verify no `app.*` imports in config; `docker compose build model_server` succeeds; 332/332 pass
+- [x] DOCKER-FIX-UI-SERVING: fixed Streamlit `ModuleNotFoundError: No module named 'chatbot'` — added `ENV PYTHONPATH=/app` to `docker/chatbot.Dockerfile`; fixed widget nginx path — `docker/widget.Dockerfile` now copies `dist/` to `/usr/share/nginx/html/widget-app/` instead of root, `docker/nginx-widget.conf` added with `location /widget-app/` SPA block so asset paths match Vite `base='/widget-app/'`; `demo/host/index.html` adds `data-widget-url="http://localhost:3000/widget-app/"` for Docker iframe; smoke test + 3 build tests added; verified: 3000/widget-app/ → 200 text/html, assets → 200 application/javascript, 8501 → 200; 333/333 pass
+- [x] DOCKER-FIX-RAG-CORPUS: API image now includes `data/rag/chunks/chunks_section_aware.jsonl` (2.33 MB) at `/app/data/rag/chunks/`; added `COPY data/rag/chunks/chunks_section_aware.jsonl` to `Dockerfile`; created `.dockerignore` excluding `data/raw/`, `data/processed/`, `data/experiments/`, reports, notebooks, tests, ml, pipelines, envs, git from build context; improved error logging in `app/api/routes/chat.py` and `app/api/routes/rag.py` (exc_type + redacted exc_msg); 3 new build tests; verified chunk file at `/app/data/rag/chunks/` inside image; API health ok after rebuild; 333/333 pass (build=16 via pytest tests/build)
+- [x] DOCKER-FIX-CHAT-PROMPTS: API image now includes `prompts/chat_system.md` at `/app/prompts/`; added `COPY prompts/ ./prompts/` to `Dockerfile`; `.dockerignore` does not exclude `prompts/` (no exception needed); 3 new build tests (copies prompts, file exists locally, dockerignore does not block); verified `docker run --rm handyman-api:latest ls /app/prompts/` → `chat_system.md llm_baseline_classifier.md`; 333/333 pass (build=19 via pytest tests/build)
+- [x] DOCKER-FIX-MEMORY-WIDGET-RUNTIME: added `REDIS_URL: redis://redis:6379/0` to api service in `docker-compose.yml` — `app/infra/redis_client.py` defaulted to `localhost:6379` which is unreachable inside the container; added `CORS_ALLOWED_ORIGINS` env var to api service (ports 3000/8080/5173) — widget React app at `http://localhost:3000` makes cross-origin fetch calls to API at `http://localhost:8000` without CORS middleware browser silently blocks them; added `CORSMiddleware` to `app/main.py` reading `CORS_ALLOWED_ORIGINS` env var; rebuilt host/widget Docker images (host image was stale, lacked `data-widget-url` pointing iframe to nginx port 3000 instead of FastAPI `/widget-app/`); 2 new build tests + 3 new smoke tests; 336/336 pass (build=21 via pytest tests/build)
 - [x] REPORTS-AND-NOTEBOOKS-1: reports audit/review layer — `scripts/audit_reports.py`; `reports/README.md`; `reports/report_inventory.csv/json`; marimo notebooks `notebooks/00_reports_map.py`, `01_classifier_experiments_review.py`, `02_rag_retrieval_review.py`; documentation/indexing only, no artifacts deleted, moved, renamed, retrained, or fetched
 - [x] STREAMLIT-1: Authenticated Streamlit chat app — `chatbot/main.py` (login, chat, memory inspector, widget admin placeholder); `chatbot/config.py` + `chatbot/api_client.py` (httpx sync); `app/api/routes/memory.py` (GET /short-term + /long-term, auth-gated, graceful Redis fallback); `app/api/schemas/memory.py`; 8 integration tests; 292/292 pass
 - [x] WIDGET-1: Widget config API + origin enforcement + CSP; 22 new tests; 314/314 pass

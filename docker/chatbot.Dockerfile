@@ -5,6 +5,10 @@ RUN pip install --no-cache-dir streamlit httpx
 
 WORKDIR /app
 
+# Required so `from chatbot.api_client import ...` resolves when streamlit
+# runs chatbot/main.py as a script — streamlit does not add WORKDIR to sys.path.
+ENV PYTHONPATH=/app
+
 COPY chatbot/ ./chatbot/
 
 EXPOSE 8501

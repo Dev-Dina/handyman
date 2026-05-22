@@ -60,7 +60,7 @@
         <code>curl -X POST http://localhost:8000/api/v1/auth/register -H "Content-Type: application/json" -d '{"email":"admin@example.com","password":"yourpassword"}'</code>
       </li>
       <li>Create a widget config via the Streamlit admin page or the admin API, copy the <code>public_widget_id</code> UUID.</li>
-      <li>Replace <code>YOUR-PUBLIC-WIDGET-ID</code> in the <code>&lt;script&gt;</code> tag at the bottom of this file.</li>
+      <li>Replace <code>99a70ab8-cbff-4615-9b46-f0f0da8064b7</code> in the <code>&lt;script&gt;</code> tag at the bottom of this file.</li>
       <li>Open this file directly in a browser — no build step required for the host page.</li>
     </ol>
   </div>
@@ -91,18 +91,23 @@
   <h2>Embed snippet</h2>
   <pre>&lt;script
   src="http://localhost:8000/widget.js"
-  data-widget-id="YOUR-PUBLIC-WIDGET-ID"
+  data-widget-id="99a70ab8-cbff-4615-9b46-f0f0da8064b7"
   data-api-base-url="http://localhost:8000"
 &gt;&lt;/script&gt;</pre>
 
   <!--
-    Replace YOUR-PUBLIC-WIDGET-ID with a real public_widget_id UUID from the database.
+    Replace 99a70ab8-cbff-4615-9b46-f0f0da8064b7 with a real public_widget_id UUID from the database.
     The widget will silently fail to load config if the ID is invalid or the API is offline.
+
+    data-widget-url points to the widget nginx service (port 3000) for Docker deployments.
+    In local dev without Docker, omit data-widget-url — the loader defaults to
+    http://localhost:8000/widget-app/ (FastAPI StaticFiles, requires `npm run build` locally).
   -->
   <script
     src="http://localhost:8000/widget.js"
-    data-widget-id="YOUR-PUBLIC-WIDGET-ID"
+    data-widget-id="99a70ab8-cbff-4615-9b46-f0f0da8064b7"
     data-api-base-url="http://localhost:8000"
+    data-widget-url="http://localhost:3000/widget-app/"
   ></script>
 </body>
 </html>

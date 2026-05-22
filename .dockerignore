@@ -1,0 +1,55 @@
+# Python build artifacts and caches
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local environments (rebuilt from scratch inside containers)
+.venv/
+.venv-gpu/
+venv/
+widget/node_modules/
+
+# Large data NOT needed at runtime in any Docker image.
+# data/rag/ is NOT excluded — API image needs chunks_section_aware.jsonl.
+data/raw/
+data/processed/
+data/experiments/
+data/archive_numpy/
+
+# Analysis outputs (not runtime)
+reports/
+notebooks/
+
+# Training + pipeline code (not runtime in containers)
+ml/
+pipelines/
+evals/
+
+# Scripts and docs (not runtime)
+scripts/
+docs/
+
+# Test code (not runtime in containers)
+tests/
+
+# CI/CD
+.github/
+
+# Secrets and local config
+.env
+*.log
+*.db
+*.sqlite
+.DS_Store
+
+# Git history (large, not needed in image)
+.git/
+
+# Local dev / Claude config (not committed, not needed in image)
+.claude/
+CLAUDE.md
+CODEX.md
+AGENTS.md

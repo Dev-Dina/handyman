@@ -13,6 +13,7 @@ from fastapi import APIRouter, HTTPException, status
 from app.api.schemas.rag import RagChunkResult, RagQueryRequest, RagQueryResponse
 from app.domain.errors import RagCorpusNotReadyError
 from app.infra.logging import get_logger, request_id_var
+from app.infra.redaction import redact
 from app.infra.tracing import get_tracer
 from app.services.rag.config import HYBRID_ALPHA
 from app.services.rag.retrieval import build_extractive_answer, retrieve
@@ -63,8 +64,13 @@ async def rag_query(req: RagQueryRequest) -> RagQueryResponse:
                 status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                 detail=str(exc),
             )
-        except Exception:
-            logger.error("rag.query.unexpected_error", request_id=req_id)
+        except Exception as exc:
+            logger.error(
+                "rag.query.unexpected_error",
+                request_id=req_id,
+                exc_type=type(exc).__name__,
+                exc_msg=redact(str(exc)),
+            )
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An unexpected error occurred.",

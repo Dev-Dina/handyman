@@ -13,6 +13,13 @@ COPY app ./app
 COPY alembic ./alembic
 COPY alembic.ini ./
 
+# Runtime prompt files — chat orchestrator loads prompts/chat_system.md at first call.
+COPY prompts/ ./prompts/
+
+# RAG runtime corpus — only the deployed chunk file is copied.
+# raw/, processed/, experiments/ are excluded by .dockerignore.
+COPY data/rag/chunks/chunks_section_aware.jsonl ./data/rag/chunks/chunks_section_aware.jsonl
+
 # Install main dependencies only (no [ml] extras — torch must not be present).
 # Torch and transformers live behind the model_server boundary only.
 RUN uv pip install --system --no-cache .

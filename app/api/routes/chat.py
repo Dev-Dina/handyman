@@ -11,6 +11,7 @@ from fastapi import APIRouter, HTTPException, status
 from app.api.schemas.chat import ChatRequest, ChatResponse
 from app.domain.errors import GroqUnavailableError
 from app.infra.logging import get_logger, request_id_var
+from app.infra.redaction import redact
 from app.services.chat.orchestrator import run_chat
 
 router = APIRouter(prefix="/api/v1", tags=["chat"])
@@ -40,8 +41,13 @@ async def chat(req: ChatRequest) -> ChatResponse:
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=str(exc),
         )
-    except Exception:
-        logger.error("chat.unexpected_error", request_id=req_id)
+    except Exception as exc:
+        logger.error(
+            "chat.unexpected_error",
+            request_id=req_id,
+            exc_type=type(exc).__name__,
+            exc_msg=redact(str(exc)),
+        )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An unexpected error occurred.",

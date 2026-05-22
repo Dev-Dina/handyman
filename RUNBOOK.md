@@ -161,6 +161,32 @@ The API image (`Dockerfile`) installs base project dependencies only — no `[ml
 | `transformers` | No | Model server boundary only (`[ml]` extra). |
 | `datasets` | No | Training pipeline only (`[ml]` extra). |
 
+### CORS for the widget
+
+The widget React app is served by the widget nginx at `http://localhost:3000`. It makes browser fetch calls to the API at `http://localhost:8000`. These are cross-origin requests — the browser enforces CORS.
+
+The API reads `CORS_ALLOWED_ORIGINS` (comma-separated list of allowed origins). The docker-compose.yml sets:
+
+```
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8080,http://localhost:5173
+```
+
+Port 3000 = widget nginx, port 8080 = host demo, port 5173 = Vite dev server.
+
+Without `CORS_ALLOWED_ORIGINS`, the API adds no CORS headers and browser fetch requests from the widget fail silently.
+
+### Redis URL in Docker
+
+The `write_memory` tool (short-term scope) stores to Redis via `app/infra/redis_client.py`. That module reads the `REDIS_URL` env var; the default is `redis://localhost:6379`. Inside Docker containers, `localhost` refers to the container itself — not the Redis service. The `docker-compose.yml` api service sets `REDIS_URL=redis://redis:6379/0` to use the Docker service name.
+
+### Runtime files packaged in the API image
+
+| File | Image path | Why |
+|---|---|---|
+| `prompts/chat_system.md` | `/app/prompts/chat_system.md` | Chat orchestrator loads via `app/services/chat/prompts.py` at first `/api/v1/chat` call |
+| `prompts/llm_baseline_classifier.md` | `/app/prompts/llm_baseline_classifier.md` | Copied as part of `COPY prompts/` |
+| `data/rag/chunks/chunks_section_aware.jsonl` | `/app/data/rag/chunks/chunks_section_aware.jsonl` | RAG retrieval service loads corpus at startup |
+
 ## Day-to-day
 
 ```bash
@@ -185,17 +211,32 @@ docker compose down -v
 
 ## Widget (WIDGET-2)
 
+### UI surfaces
+
+| Surface | URL | Purpose |
+|---|---|---|
+| Streamlit (internal) | http://localhost:8501 | Authenticated internal chat + memory inspector; maintainers only |
+| Host demo (production embed) | http://localhost:8080 | Demo host page with embedded widget iframe — simulates a customer site |
+| Widget service | http://localhost:3000/widget-app/ | React widget SPA; loaded inside iframe by the host page |
+| FastAPI docs | http://localhost:8000/docs | Developer API reference; not an end-user UI |
+| Jaeger | http://localhost:16686 | Distributed tracing UI; operational tooling |
+
 ### Widget URL flow
 
 ```
-Host page (port 8080 via Docker, or open demo/host/index.html directly)
+Host page (port 8080 via Docker)
   └─ loads /widget.js from API  →  http://localhost:8000/widget.js
-       └─ loader creates <iframe> pointing to the widget bundle:
-            Docker:   http://localhost:3000   (widget service = nginx serving dist/)
-            Local dev: http://localhost:8000/widget-app/  (if widget/dist/ is built)
-                    or http://localhost:5173  (Vite dev server with npm run dev)
-            └─ widget React app POSTs to  http://localhost:8000/api/v1/chat
+       └─ loader reads data-widget-url attribute → http://localhost:3000/widget-app/
+            └─ nginx widget service (port 3000) serves React SPA at /widget-app/
+                 └─ widget React app POSTs to  http://localhost:8000/api/v1/chat
 ```
+
+**Docker** (production-shaped): the host page sets `data-widget-url="http://localhost:3000/widget-app/"`.
+Widget nginx serves `dist/` under `/widget-app/`; Vite `base='/widget-app/'` so asset paths match.
+
+**Local dev** (no Docker): omit `data-widget-url`; loader defaults to `http://localhost:8000/widget-app/`.
+FastAPI mounts `widget/dist/` at `/widget-app/` if the directory exists (requires `npm run build`).
+Or use `data-widget-url="http://localhost:5173/widget-app/"` for Vite dev server hot-reload.
 
 `widget/dist/` is NOT committed. It is either:
 - Built at `docker compose build` time inside `docker/widget.Dockerfile` (multi-stage: `npm ci && npm run build`), or

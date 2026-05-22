@@ -115,6 +115,10 @@ services:
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
       ENVIRONMENT: ${ENVIRONMENT:-local}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://jaeger:4318/v1/traces}
+      # Redis uses service name, not localhost — required for write_memory tool
+      REDIS_URL: redis://redis:6379/0
+      # CORS origins for the widget (port 3000) and host demo (port 8080)
+      CORS_ALLOWED_ORIGINS: "http://localhost:3000,http://localhost:8080,http://localhost:5173"
     ports:
       - "${API_PORT:-8000}:8000"
     depends_on:

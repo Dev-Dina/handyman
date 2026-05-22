@@ -7,36 +7,194 @@ on:
     branches: ["main"]
 
 jobs:
-  quality:
-    name: Deterministic lint, tests, and eval gates
+  # ── asset gate ──────────────────────────────────────────────────────────────
+  # Checks that gitignored but pipeline-required files exist before eval jobs
+  # run. Fails fast with a clear per-file message instead of a cryptic
+  # FileNotFoundError inside the eval pipeline.
+  ci-assets:
+    name: CI assets
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Check required CI assets
+        run: python scripts/check_ci_assets.py
 
+  # ── lint ────────────────────────────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - name: Install dependencies
         run: uv sync --extra dev --extra ml --extra chatbot
+      - name: Assert torch absent
+        run: uv run python -c "import importlib.util; assert importlib.util.find_spec('torch') is None"
+      - name: Ruff
+        run: uv run ruff check app model_server ml pipelines tests chatbot scripts notebooks
 
-      - name: Assert torch is absent
-        run: uv run python -c "import importlib.util; raise SystemExit(0 if importlib.util.find_spec('torch') is None else 1)"
+  # ── test layers ─────────────────────────────────────────────────────────────
+  tests-unit:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: uv sync --extra dev --extra ml --extra chatbot
+      - name: Assert torch absent
+        run: uv run python -c "import importlib.util; assert importlib.util.find_spec('torch') is None"
+      - name: Run unit tests
+        run: uv run pytest -m unit -q
 
-      - name: Ruff lint
-        run: uv run ruff check app model_server ml pipelines tests chatbot
+  tests-smoke:
+    name: Smoke tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: uv sync --extra dev --extra ml --extra chatbot
+      - name: Assert torch absent
+        run: uv run python -c "import importlib.util; assert importlib.util.find_spec('torch') is None"
+      - name: Run smoke tests
+        run: uv run pytest -m smoke -q
 
-      - name: Classification golden eval
+  tests-integration:
+    name: Integration tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: uv sync --extra dev --extra ml --extra chatbot
+      - name: Assert torch absent
+        run: uv run python -c "import importlib.util; assert importlib.util.find_spec('torch') is None"
+      - name: Run integration tests
+        run: uv run pytest -m integration -q
+
+  tests-eval:
+    name: Eval schema tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: uv sync --extra dev --extra ml --extra chatbot
+      - name: Assert torch absent
+        run: uv run python -c "import importlib.util; assert importlib.util.find_spec('torch') is None"
+      - name: Run eval schema tests
+        run: uv run pytest -m eval -q
+
+  tests-build:
+    name: Build/compose tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: uv sync --extra dev --extra ml --extra chatbot
+      - name: Assert torch absent
+        run: uv run python -c "import importlib.util; assert importlib.util.find_spec('torch') is None"
+      - name: Run build tests
+        run: uv run pytest -m build -q
+
+  # ── golden evals (gated on ci-assets) ───────────────────────────────────────
+  # Both jobs are skipped automatically if ci-assets fails, giving a clear
+  # "asset check failed" signal instead of a cryptic FileNotFoundError.
+  classifier-golden-eval:
+    name: Classification golden eval
+    needs: [ci-assets]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: uv sync --extra dev --extra ml --extra chatbot
+      - name: Assert torch absent
+        run: uv run python -c "import importlib.util; assert importlib.util.find_spec('torch') is None"
+      - name: Run classification golden eval
         run: uv run python -m pipelines.classifier.eval_golden
+      - name: Upload eval report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: classification-eval-report
+          path: reports/classification_eval_report.json
 
-      - name: RAG TF-IDF eval
+  rag-golden-eval:
+    name: RAG golden eval
+    needs: [ci-assets]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: uv sync --extra dev --extra ml --extra chatbot
+      - name: Assert torch absent
+        run: uv run python -c "import importlib.util; assert importlib.util.find_spec('torch') is None"
+      - name: Run RAG TF-IDF eval
         run: uv run python -m pipelines.rag.eval_api
+      - name: Upload eval report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rag-eval-report
+          path: reports/rag/api_eval_report.json
 
-      - name: Run tests
-        run: uv run pytest -q
+  # ── widget ───────────────────────────────────────────────────────────────────
+  widget-build:
+    name: Widget build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install widget dependencies
+        working-directory: widget
+        run: npm ci
+      - name: Build widget
+        working-directory: widget
+        run: npm run build
+      - name: Upload widget dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: widget-dist
+          path: widget/dist/
+
+  # ── docker ───────────────────────────────────────────────────────────────────
+  docker-compose-config:
+    name: Docker compose config
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate docker compose config
+        run: docker compose config

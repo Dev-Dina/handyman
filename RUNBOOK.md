@@ -52,26 +52,50 @@ See `tests/README.md` for category definitions and rules.
 
 ## CI / eval gates
 
-GitHub CI uses `uv sync --extra dev --extra ml --extra chatbot` and never uses
-`--all-extras`, Docker runtime, `.venv-gpu`, Groq, Ollama, or live MinIO.
+GitHub CI splits checks into independent jobs so each failure points to the exact layer.
+Never uses `--all-extras`, Docker runtime, `.venv-gpu`, Groq, Ollama, or live MinIO.
+
+Local equivalents for each CI job:
 
 ```powershell
-# Local equivalent of CI lint
-.\.venv\Scripts\python.exe -m ruff check app model_server ml pipelines tests chatbot
+# ci-assets — check gitignored assets exist before eval jobs run
+python scripts/check_ci_assets.py
 
-# CI-safe classification eval (LR TF-IDF fallback only)
+# lint — ruff on all source directories (includes scripts + notebooks)
+.\.venv\Scripts\python.exe -m ruff check app model_server ml pipelines tests chatbot scripts notebooks
+
+# tests-unit
+.\.venv\Scripts\python.exe -m pytest -m unit -q
+
+# tests-smoke
+.\.venv\Scripts\python.exe -m pytest -m smoke -q
+
+# tests-integration
+.\.venv\Scripts\python.exe -m pytest -m integration -q
+
+# tests-eval (golden schema + threshold gate tests)
+.\.venv\Scripts\python.exe -m pytest -m eval -q
+
+# tests-build (docker compose structural checks — no Docker execution)
+.\.venv\Scripts\python.exe -m pytest -m build -q
+
+# classifier-golden-eval (requires artifacts/classical/best_model.joblib)
 .\.venv\Scripts\python.exe -m pipelines.classifier.eval_golden
 
-# CI-safe RAG eval (TF-IDF only)
+# rag-golden-eval (requires data/rag/chunks/chunks_section_aware.jsonl)
 .\.venv\Scripts\python.exe -m pipelines.rag.eval_api
 
-# Full test suite
-.\.venv\Scripts\python.exe -m pytest -q
+# widget-build (requires Node 20)
+cd widget && npm ci && npm run build && cd ..
+
+# docker-compose-config (config validation only — does not start services)
+docker compose config
 ```
 
 Outputs:
 - `reports/classification_eval_report.json`
 - `reports/rag/api_eval_report.json`
+- `widget/dist/` (from widget-build)
 
 ## Reports audit and review notebooks
 

@@ -154,6 +154,10 @@ npm install
 npm run build
 cd ..
 
+# Security note: npm audit reports 2 moderate vulnerabilities (esbuild/vite dev server,
+# GHSA-67mh-4wv8-2f99). Both are dev-server only — production bundle is unaffected.
+# Do NOT run npm audit fix --force without review; it installs vite@8 (breaking change).
+
 # Widget dev server (hot-reload at http://localhost:5173/widget-app/)
 # Use data-widget-url="http://localhost:5173/widget-app/" in the loader script
 # to point the iframe at the dev server during development

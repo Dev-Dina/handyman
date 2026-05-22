@@ -344,4 +344,24 @@ context forever.
 `chat.request`, `llm.groq.chat`, `tool.{name}`, `rag.retrieve`, `memory.short_term.write`, `auth.register`, `auth.login`, `auth.me`.
 
 ## Widget bundle target
-TODO
+
+| Metric | Value |
+|---|---|
+| JS bundle raw | 145,290 bytes (≈ 142 KB) |
+| JS bundle gzip | ~47.05 kB (Vite report) |
+| CSS raw | 1,884 bytes |
+| Builder | Vite 5.x (`tsc && vite build`) |
+| `widget/dist/` committed | No — built at deploy/demo time via `npm run build` |
+
+**npm audit status (2026-05-22):** 2 moderate vulnerabilities.
+
+| Package | Severity | Advisory | Scope | Fix available |
+|---|---|---|---|---|
+| `esbuild ≤ 0.24.2` | moderate | GHSA-67mh-4wv8-2f99 | dev server only | `--force` only (breaking) |
+| `vite ≤ 6.4.1` | moderate | (depends on esbuild) | dev server only | `--force` only (breaking) |
+
+**Assessment:** Both vulnerabilities affect only the Vite dev server (`npm run dev`) — the
+advisory states "any website to send any requests to the development server and read the
+response". The production bundle (`npm run build` output) is unaffected. Fix requires
+`npm audit fix --force` → vite@8.0.14 (major breaking change). **Deferred** — dev-only
+risk, not relevant to production or the demo bundle.

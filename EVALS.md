@@ -47,7 +47,7 @@ uv run pytest -m unit -q
 uv run pytest -m smoke -q
 uv run pytest -m integration -q
 uv run pytest -m eval -q
-uv run pytest -m build -q
+uv run pytest tests/build -q
 ```
 
 Every Python job asserts that `torch` is not installed in the main environment.

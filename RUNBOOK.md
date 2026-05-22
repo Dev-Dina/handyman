@@ -77,7 +77,7 @@ python scripts/check_ci_assets.py
 .\.venv\Scripts\python.exe -m pytest -m eval -q
 
 # tests-build (docker compose structural checks — no Docker execution)
-.\.venv\Scripts\python.exe -m pytest -m build -q
+.\.venv\Scripts\python.exe -m pytest tests/build -q
 
 # classifier-golden-eval (requires artifacts/classical/best_model.joblib)
 .\.venv\Scripts\python.exe -m pipelines.classifier.eval_golden

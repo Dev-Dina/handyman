@@ -118,7 +118,7 @@ jobs:
       - name: Assert torch absent
         run: uv run python -c "import importlib.util; assert importlib.util.find_spec('torch') is None"
       - name: Run build tests
-        run: uv run pytest -m build -q
+        run: uv run pytest tests/build -q
 
   # ── golden evals (gated on ci-assets) ───────────────────────────────────────
   # Both jobs are skipped automatically if ci-assets fails, giving a clear

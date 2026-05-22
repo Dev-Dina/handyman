@@ -140,12 +140,13 @@ Status key: **COMPLETE** | **PARTIAL** | **TODO** | **BLOCKED** | **NOT_REQUIRED
 | RAG eval CI gate | CI runs RAG eval and fails if below threshold | `tests/eval/test_rag_eval_schema.py` checks `api_eval_report.json` if present; `pipelines/rag/eval_api.py` produces it | **COMPLETE** | none | â€” |
 | Redaction test | Test proves secret never logs unredacted | 5 redaction tests pass | **COMPLETE** | none | â€” |
 | CI on every push | lint, type-check, build images, eval suites, redaction, smoke | 11 independent jobs: ci-assets, lint, tests-unit, tests-smoke, tests-integration, tests-eval, tests-build, classifier-golden-eval (needs ci-assets), rag-golden-eval (needs ci-assets), widget-build, docker-compose-config; `scripts/check_ci_assets.py` gates eval jobs on gitignored assets | **COMPLETE** | Docker image build intentionally excluded from deterministic CI gate | optional Docker image build job later |
-| Fresh clone path | `docker compose up` after `cp .env.example .env` | `docker-compose.yml` exists; `.env.example` present | **COMPLETE** | none | â€” |
-| README contains ARCH/DECISIONS/RUNBOOK/EVALS/SECURITY | All docs present | `ARCH.md`, `DECISIONS.md`, `RUNBOOK.md`, `EVALS.md`, `SECURITY.md` all exist | **COMPLETE** | none | â€” |
-| Tag `v0.1.0-week7` | Public repo, tagged | Not yet created | **TODO** | â€” | tag at submission |
-| DECISIONS.md â€” tracing backend | "Pick a tracing backend and defend the choice" | `DECISIONS.md` â€” Jaeger chosen; rationale: local Docker, no API key, OTLP-native, browser UI for demo | **COMPLETE** | none | â€” |
-| DECISIONS.md â€” widget bundle target | Bundle size target | `DECISIONS.md` says "Widget bundle target: TODO" | **TODO** | â€” | set target after React build |
-| Submission block filled in | Name/repo/tag/dataset/F1/RAG/mem-type/tracing/bundle-size | All fields present | **PARTIAL** | tracing + widget bundle + faithfulness score missing | fill after implementation |
+| Fresh clone path | `docker compose up` after `cp .env.example .env` | `docker-compose.yml` valid; `.env.example` present; vault-init.sh seeds local-dev secrets; widget built in Docker via multi-stage Dockerfile | **COMPLETE** | none | — |
+| Production hardening | Production mode refuses placeholder secrets | `ENVIRONMENT=production` rejects `dev-root-token` + placeholder `jwt_signing_key` at startup; `app/core/config.py` `_assert_production_secrets()`; 8 unit tests pass | **COMPLETE** | none | — |
+| README contains ARCH/DECISIONS/RUNBOOK/EVALS/SECURITY | All docs present | `ARCH.md`, `DECISIONS.md`, `RUNBOOK.md`, `EVALS.md`, `SECURITY.md` all exist; README expanded with services/ports/widget URL flow | **COMPLETE** | none | — |
+| Tag `v0.1.0-week7` | Public repo, tagged | Not yet created | **TODO** | — | tag at submission |
+| DECISIONS.md — tracing backend | “Pick a tracing backend and defend the choice” | `DECISIONS.md` — Jaeger chosen; rationale: local Docker, no API key, OTLP-native, browser UI for demo | **COMPLETE** | none | — |
+| DECISIONS.md — widget bundle target | Bundle size target | `DECISIONS.md` — 145,290 bytes raw / ~47.05 kB gzip; Vite build; dist not committed | **COMPLETE** | none | — |
+| Submission block filled in | Name/repo/tag/dataset/F1/RAG/mem-type/tracing/bundle-size | All fields present | **PARTIAL** | faithfulness score missing; git tag missing | fill after generation eval |
 
 ---
 

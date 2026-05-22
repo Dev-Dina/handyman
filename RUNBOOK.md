@@ -12,20 +12,54 @@ Three documents govern what must be built and in what order:
 
 Future implementation must follow `docs/PROJECT_BRIEF_CANONICAL.md`.
 
-## First setup
+## Local Docker setup
 
 ```bash
 cp .env.example .env
-# Edit .env to set real LLM/tracing keys if needed, then:
+# Optionally edit .env — leave VAULT_DEV_ROOT_TOKEN=dev-root-token for local dev.
 docker compose up --build
 ```
 
 Startup order (automatic via depends_on):
-1. db, redis, minio, vault start
-2. vault-init seeds secrets into Vault and exits
+1. db, redis, minio, vault, jaeger start
+2. vault-init seeds local-dev placeholder secrets into Vault and exits
 3. migrate runs `alembic upgrade head` and exits
 4. api, model_server start
 5. chatbot starts after api is healthy
+
+After startup, provision the Groq key for live chat (vault-init does NOT do this):
+
+```bash
+docker compose exec vault vault kv put secret/llm groq_api_key="gsk_your_real_key"
+```
+
+Without `secret/llm/groq_api_key`, `/api/v1/chat` returns 503. All other features work.
+
+## Vault secrets reference
+
+| Path | Key | Seeded by vault-init.sh | Production requirement |
+|---|---|---|---|
+| `secret/handyman` | `database_password` | Yes (from DB_PASSWORD env) | Real password |
+| `secret/handyman` | `jwt_signing_key` | Yes (placeholder — **MUST change in prod**) | Real secret key |
+| `secret/handyman` | `minio_access_key` | Yes (from MINIO_ROOT_USER env) | Real MinIO cred |
+| `secret/handyman` | `minio_secret_key` | Yes (from MINIO_ROOT_PASSWORD env) | Real MinIO cred |
+| `secret/handyman` | `llm_api_key` | Yes (placeholder — not used for chat) | Placeholder OK |
+| `secret/handyman` | `tracing_api_key` | Yes (placeholder — Jaeger needs none) | Placeholder OK |
+| `secret/llm` | `groq_api_key` | **No — manual** | Real Groq key |
+| `secret/github` | `token` | **No — manual** | Real GitHub PAT |
+
+## Production deployment
+
+Production mode (`ENVIRONMENT=production` in `.env`) refuses startup if:
+- `VAULT_DEV_ROOT_TOKEN=dev-root-token` — use a real Vault token or AppRole
+- `jwt_signing_key` contains `local-dev` or `change-in-prod` — provision a real key
+
+Steps for production-shaped deployment:
+1. Provision a real Vault HA instance (not dev mode).
+2. Write all secrets listed above to Vault.
+3. Set `.env`: `ENVIRONMENT=production`, `VAULT_ADDR=https://your-vault`, real `VAULT_DEV_ROOT_TOKEN` or AppRole credentials.
+4. `docker compose up --build` — vault-init.sh is skipped (secrets already in Vault).
+5. The app will refuse to start with a clear error if any required production secret is missing or placeholder.
 
 ## Testing
 
@@ -139,6 +173,22 @@ docker compose down -v
 ```
 
 ## Widget (WIDGET-2)
+
+### Widget URL flow
+
+```
+Host page (port 8080 via Docker, or open demo/host/index.html directly)
+  └─ loads /widget.js from API  →  http://localhost:8000/widget.js
+       └─ loader creates <iframe> pointing to the widget bundle:
+            Docker:   http://localhost:3000   (widget service = nginx serving dist/)
+            Local dev: http://localhost:8000/widget-app/  (if widget/dist/ is built)
+                    or http://localhost:5173  (Vite dev server with npm run dev)
+            └─ widget React app POSTs to  http://localhost:8000/api/v1/chat
+```
+
+`widget/dist/` is NOT committed. It is either:
+- Built at `docker compose build` time inside `docker/widget.Dockerfile` (multi-stage: `npm ci && npm run build`), or
+- Built locally with `npm run build` and served by FastAPI at `/widget-app/` (local dev only).
 
 ### Build and run
 

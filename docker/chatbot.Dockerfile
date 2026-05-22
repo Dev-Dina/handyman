@@ -1,6 +1,7 @@
 FROM python:3.11-slim
 
-RUN pip install --no-cache-dir streamlit
+# httpx is required by chatbot/api_client.py for all API calls.
+RUN pip install --no-cache-dir streamlit httpx
 
 WORKDIR /app
 

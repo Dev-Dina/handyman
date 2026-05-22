@@ -63,6 +63,7 @@ services:
 
   vault:
     image: hashicorp/vault
+    # dev mode only — not for production. Use HA Vault in prod.
     command: server -dev
     environment:
       SKIP_SETCAP: "true"
@@ -152,7 +153,7 @@ services:
       context: .
       dockerfile: docker/chatbot.Dockerfile
     environment:
-      API_URL: http://api:8000
+      API_BASE_URL: http://api:8000
     ports:
       - "${CHATBOT_PORT:-8501}:8501"
     depends_on:

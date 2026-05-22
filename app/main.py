@@ -1,13 +1,16 @@
 import os
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 from app.api.middleware import RequestContextMiddleware
 from app.api.routes.auth import router as auth_router
 from app.api.routes.chat import router as chat_router
 from app.api.routes.memory import router as memory_router
 from app.api.routes.rag import router as rag_router
+from app.api.routes.widget_loader import router as widget_loader_router
 from app.api.routes.widgets import router as widgets_router
 from app.api.routes.tools import router as tools_router
 from app.domain.errors import VaultUnavailableError
@@ -42,6 +45,15 @@ app.include_router(rag_router)
 app.include_router(chat_router)
 app.include_router(memory_router)
 app.include_router(widgets_router)
+app.include_router(widget_loader_router)
+
+_widget_dist = Path("widget/dist")
+if _widget_dist.exists():
+    app.mount(
+        "/widget-app",
+        StaticFiles(directory=str(_widget_dist), html=True),
+        name="widget-app",
+    )
 
 
 @app.get("/healthz")

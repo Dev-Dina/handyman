@@ -114,6 +114,67 @@ docker compose down
 docker compose down -v
 ```
 
+## Widget (WIDGET-2)
+
+### Build and run
+
+The embeddable React widget lives in `widget/`. The backend serves the built files.
+
+```powershell
+# One-time dependency install (run after cloning or after package.json changes)
+cd widget
+npm install
+
+# Production build — outputs to widget/dist/
+# FastAPI auto-serves dist/ at /widget-app/ once the directory exists
+npm run build
+cd ..
+
+# Widget dev server (hot-reload at http://localhost:5173/widget-app/)
+# Use data-widget-url="http://localhost:5173/widget-app/" in the loader script
+# to point the iframe at the dev server during development
+cd widget
+npm run dev
+```
+
+### Open the host demo
+
+```powershell
+# 1. Start the backend
+docker compose up -d
+
+# 2. Build the widget (see above)
+
+# 3. Create a widget config and note the public_widget_id UUID
+#    (via Streamlit admin page or POST /api/v1/admin/widgets)
+
+# 4. Edit demo/host/index.html — replace YOUR-PUBLIC-WIDGET-ID with the real UUID
+
+# 5. Open in a browser directly (no extra server needed)
+#    Windows: start demo\host\index.html
+#    Or drag the file into a browser tab
+```
+
+### Embed snippet
+
+```html
+<script
+  src="http://localhost:8000/widget.js"
+  data-widget-id="YOUR-PUBLIC-WIDGET-ID"
+  data-api-base-url="http://localhost:8000"
+></script>
+```
+
+### Architecture
+
+```
+GET /widget.js          → app/api/routes/widget_loader.py
+                           → app/services/widgets/loader.py (JavaScript string)
+GET /widget-app/*       → FastAPI StaticFiles mount on widget/dist/ (requires npm run build)
+GET /api/v1/widgets/:id → widget fetches config (theme, greeting, enabled_tools)
+POST /api/v1/chat       → widget sends chat messages
+```
+
 ## Streamlit internal app (STREAMLIT-1)
 
 The Streamlit app is the authenticated internal interface for demos and operational review.

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo — Maintainer's Copilot Host Page</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 860px;
+      margin: 60px auto;
+      padding: 0 24px;
+      color: #111;
+      line-height: 1.6;
+    }
+    h1 { margin-bottom: 8px; }
+    h2 { margin: 32px 0 8px; color: #374151; }
+    p { margin-bottom: 12px; }
+    .callout {
+      background: #f0f9ff;
+      border-left: 4px solid #0284c7;
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .callout ol { margin: 8px 0 0 20px; }
+    .callout li { margin-bottom: 6px; }
+    code {
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: monospace;
+    }
+    pre {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 16px 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <h1>Maintainer's Copilot — Demo Host Page</h1>
+  <p>
+    This page simulates an external website that has embedded the
+    Maintainer's Copilot chat widget. The chat bubble appears in the
+    bottom-right corner once the backend is running and a valid widget ID is set.
+  </p>
+
+  <div class="callout">
+    <strong>Before opening this page:</strong>
+    <ol>
+      <li>Start the backend: <code>docker compose up -d</code></li>
+      <li>Build the widget: <code>cd widget &amp;&amp; npm install &amp;&amp; npm run build</code></li>
+      <li>Register a user via the Streamlit app or:<br>
+        <code>curl -X POST http://localhost:8000/api/v1/auth/register -H "Content-Type: application/json" -d '{"email":"admin@example.com","password":"yourpassword"}'</code>
+      </li>
+      <li>Create a widget config via the Streamlit admin page or the admin API, copy the <code>public_widget_id</code> UUID.</li>
+      <li>Replace <code>YOUR-PUBLIC-WIDGET-ID</code> in the <code>&lt;script&gt;</code> tag at the bottom of this file.</li>
+      <li>Open this file directly in a browser — no build step required for the host page.</li>
+    </ol>
+  </div>
+
+  <h2>Simulated page content</h2>
+  <p>
+    This is a typical host page. The Maintainer's Copilot chat widget floats
+    in the bottom-right corner. Click the bubble to expand the chat panel.
+  </p>
+  <p>
+    The widget fetches its configuration (greeting, theme, enabled tools) from
+    <code>GET /api/v1/widgets/{public_widget_id}</code> at load time and calls
+    <code>POST /api/v1/chat</code> for every user message.
+  </p>
+
+  <h2>How embedding works</h2>
+  <p>
+    Paste one <code>&lt;script&gt;</code> tag anywhere in your page's
+    <code>&lt;body&gt;</code>. The loader script at <code>/widget.js</code>:
+  </p>
+  <ol>
+    <li>Reads <code>data-widget-id</code> and <code>data-api-base-url</code> from the tag.</li>
+    <li>Creates an <code>&lt;iframe&gt;</code> pointing to the React widget app (<code>/widget-app/</code>).</li>
+    <li>Listens for <code>postMessage</code> events from the widget to resize the iframe when the user opens or closes the chat panel.</li>
+    <li>Keeps widget CSS and JavaScript isolated from the host page via the iframe boundary.</li>
+  </ol>
+
+  <h2>Embed snippet</h2>
+  <pre>&lt;script
+  src="http://localhost:8000/widget.js"
+  data-widget-id="YOUR-PUBLIC-WIDGET-ID"
+  data-api-base-url="http://localhost:8000"
+&gt;&lt;/script&gt;</pre>
+
+  <!--
+    Replace YOUR-PUBLIC-WIDGET-ID with a real public_widget_id UUID from the database.
+    The widget will silently fail to load config if the ID is invalid or the API is offline.
+  -->
+  <script
+    src="http://localhost:8000/widget.js"
+    data-widget-id="YOUR-PUBLIC-WIDGET-ID"
+    data-api-base-url="http://localhost:8000"
+  ></script>
+</body>
+</html>

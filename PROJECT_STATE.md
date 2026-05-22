@@ -180,11 +180,11 @@ data/experiments/failed/strict_text/         strict preprocessing — rejected, 
 | Category | Path | Count | Status |
 |---|---|---|---|
 | unit | tests/unit/ | 201 | 201/201 PASS |
-| smoke | tests/smoke/ | 11 | 11/11 PASS |
+| smoke | tests/smoke/ | 20 | 20/20 PASS |
 | integration | tests/integration/ | 77 | 77/77 PASS |
 | eval | tests/eval/ | 24 | 24/24 PASS |
 | build | tests/build/ | 2 | 2/2 PASS |
-| **Total** | | **314** | **314/314 PASS** |
+| **Total** | | **323** | **323/323 PASS** |
 
 Markers registered in pyproject.toml: `unit`, `smoke`, `integration`, `eval`, `build`.
 See `tests/README.md` for category definitions and run commands.
@@ -229,9 +229,9 @@ none
 
 ### Next 3 tasks
 
-1. `uv lock && uv sync --extra dev --extra ml --extra chatbot` — installs `streamlit`, `pgvector`, `minio`, `opentelemetry-exporter-otlp-proto-http`; required before demo.
-2. WIDGET-1: Widget config API + origin enforcement + CSP (`GET /api/v1/widgets/{public_widget_id}`, admin CRUD routes, CORS middleware, `frame-ancestors`).
-3. EVALS-1: Classification eval harness + generation judge eval + CI gates.
+1. `cd widget && npm install && npm run build` — builds React widget bundle to `widget/dist/`; required before iframe loads in demo.
+2. EVALS-1: Classification eval harness + generation judge eval + CI gates.
+3. FINAL-DOCS: README + submission block + fill `DECISIONS.md` (tracing backend + widget bundle target).
 
 ## Chatbot + Memory + Widget
 
@@ -246,7 +246,7 @@ none
 | MINIO-1 | MinIO blob adapter + artifact/eval/retrieval snapshot upload pipeline | **COMPLETE (2026-05-22)** |
 | STREAMLIT-1 | Authenticated Streamlit chat app + memory API endpoints | **COMPLETE (2026-05-22)** |
 | WIDGET-1 | Widget config API + origin/CSP enforcement | **COMPLETE (2026-05-22)** |
-| WIDGET-2 | React widget bundle + host demo app | TODO |
+| WIDGET-2 | React widget bundle + host demo app | **COMPLETE (2026-05-22)** |
 
 ### Chatbot implementation status
 
@@ -264,8 +264,8 @@ none
 - [x] CI-1: deterministic CI + eval gates — `.github/workflows/ci.yml` uses `uv sync --extra dev --extra ml --extra chatbot` (never `--all-extras`); asserts no Torch; runs ruff, LR classification golden eval, TF-IDF RAG eval, and pytest; `pipelines/classifier/eval_golden.py`; `reports/classification_eval_report.json` macro_f1=0.6691, accuracy=0.7200; `reports/rag/api_eval_report.json` hit@5=0.4000, mrr@10=0.1960; 284/284 pass
 - [x] REPORTS-AND-NOTEBOOKS-1: reports audit/review layer — `scripts/audit_reports.py`; `reports/README.md`; `reports/report_inventory.csv/json`; marimo notebooks `notebooks/00_reports_map.py`, `01_classifier_experiments_review.py`, `02_rag_retrieval_review.py`; documentation/indexing only, no artifacts deleted, moved, renamed, retrained, or fetched
 - [x] STREAMLIT-1: Authenticated Streamlit chat app — `chatbot/main.py` (login, chat, memory inspector, widget admin placeholder); `chatbot/config.py` + `chatbot/api_client.py` (httpx sync); `app/api/routes/memory.py` (GET /short-term + /long-term, auth-gated, graceful Redis fallback); `app/api/schemas/memory.py`; 8 integration tests; 292/292 pass
-- [ ] WIDGET-1: Widget config API + origin enforcement + CSP + `/widget.js` loader
-- [ ] WIDGET-2: React widget bundle + host demo app
+- [x] WIDGET-1: Widget config API + origin enforcement + CSP; 22 new tests; 314/314 pass
+- [x] WIDGET-2: React widget bundle + `/widget.js` loader + host demo app; `widget/src/` Vite+React; `app/api/routes/widget_loader.py`; `demo/host/index.html`; 9 smoke tests; 323/323 pass
 - [ ] Generation eval: faithfulness/answer_relevancy via LLM judge (after CHAT functional)
 - [ ] Classifier eval harness: runs classification_golden.jsonl against all 3 models
 
@@ -347,6 +347,12 @@ docker compose config
 .\.venv\Scripts\python.exe -m ruff check app model_server ml pipelines tests chatbot chatbot_streamlit
 .\.venv\Scripts\python.exe -m pytest -q
 # start app: .\.venv\Scripts\python.exe -m streamlit run chatbot/main.py
+
+# WIDGET-2 React widget bundle + /widget.js loader + host demo (2026-05-22)
+.\.venv\Scripts\python.exe -m ruff check app model_server ml pipelines tests chatbot
+.\.venv\Scripts\python.exe -m pytest -q
+# build widget: cd widget && npm install && npm run build && cd ..
+# open demo: start demo\host\index.html
 
 # CI-1 deterministic CI + eval gates (2026-05-22)
 .\.venv\Scripts\python.exe -m ruff check app model_server ml pipelines tests chatbot

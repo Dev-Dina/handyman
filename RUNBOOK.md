@@ -12,6 +12,34 @@ Three documents govern what must be built and in what order:
 
 Future implementation must follow `docs/PROJECT_BRIEF_CANONICAL.md`.
 
+## UI surfaces
+
+| Surface | URL | Purpose |
+|---|---|---|
+| **Streamlit AI Ops Control Center** | http://localhost:8501 | **Main unified application** — chat, RAG, classifier, memory, widget admin, observability, artifacts |
+| React widget | http://localhost:3000/widget-app/ | Embeddable production chat widget |
+| Host demo page | http://localhost:8080 | External widget demo page |
+| FastAPI docs | http://localhost:8000/docs | Developer API reference |
+| Jaeger tracing | http://localhost:16686 | Distributed trace viewer |
+| MinIO console | http://localhost:9001 | Artifact and eval bucket browser |
+
+**Streamlit is the main application.** The React widget remains the embeddable production widget. The host demo remains the external widget demo. FastAPI docs remain developer docs.
+
+### Streamlit pages
+
+| Page | What it does |
+|---|---|
+| Overview | Project purpose, architecture, metrics, service links |
+| System Health | Live HTTP checks for API + model_server; Docker healthcheck status for others |
+| Chat Copilot | Authenticated chat with tool toggles (rag_query, classify_issue, write_memory, etc.) + trace_id |
+| RAG Explorer | Run retrieval independently — form → chunks + extractive answer + latency |
+| Classifier Playground | Classify a GitHub issue via classify_issue tool; shows label, confidence, metrics |
+| Memory Inspector | Short-term Redis + long-term Postgres memory for current conversation |
+| Widget Manager | Admin: create/list widget configs, copy embed snippet |
+| Observability | Jaeger span reference, last trace_id, link to Jaeger |
+| Artifacts / MinIO | MinIO bucket info, artifact manifest if available |
+| Demo Runbook | Step-by-step guide for live presentation |
+
 ## Local Docker setup
 
 ```bash

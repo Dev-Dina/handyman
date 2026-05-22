@@ -180,11 +180,11 @@ data/experiments/failed/strict_text/         strict preprocessing — rejected, 
 | Category | Path | Count | Status |
 |---|---|---|---|
 | unit | tests/unit/ | 212 | 212/212 PASS |
-| smoke | tests/smoke/ | 21 | 21/21 PASS |
+| smoke | tests/smoke/ | 38 | 38/38 PASS |
 | integration | tests/integration/ | 69 | 69/69 PASS |
 | eval | tests/eval/ | 31 | 31/31 PASS |
 | build | tests/build/ | 21 | 21/21 PASS |
-| **Total** | | **336** | **336/336 PASS** |
+| **Total** | | **353** | **353/353 PASS** |
 
 Markers registered in pyproject.toml: `unit`, `smoke`, `integration`, `eval`, `build`.
 See `tests/README.md` for category definitions and run commands.
@@ -231,7 +231,7 @@ none
 
 1. EVALS-1: Generation judge eval (faithfulness/answer_relevancy on RAG golden set 5 hand-labeled rows).
 2. FINAL-DOCS: README + submission block + git tag `v0.1.0-week7`.
-3. Commit pending changes (CI-3, CI-4, WIDGET-AUDIT-1, DOCKER-PROD-READINESS-1, DOCKER-FIX-API-SKLEARN, DOCKER-FIX-MODELSERVER-PATHS, DOCKER-FIX-UI-SERVING, DOCKER-FIX-RAG-CORPUS, DOCKER-FIX-CHAT-PROMPTS, DOCKER-FIX-MEMORY-WIDGET-RUNTIME).
+3. Commit pending changes (CI-3, CI-4, WIDGET-AUDIT-1, DOCKER-PROD-READINESS-1, DOCKER-FIX-API-SKLEARN, DOCKER-FIX-MODELSERVER-PATHS, DOCKER-FIX-UI-SERVING, DOCKER-FIX-RAG-CORPUS, DOCKER-FIX-CHAT-PROMPTS, DOCKER-FIX-MEMORY-WIDGET-RUNTIME, UI-UNIFY-1).
 
 ## Chatbot + Memory + Widget
 
@@ -247,6 +247,7 @@ none
 | STREAMLIT-1 | Authenticated Streamlit chat app + memory API endpoints | **COMPLETE (2026-05-22)** |
 | WIDGET-1 | Widget config API + origin/CSP enforcement | **COMPLETE (2026-05-22)** |
 | WIDGET-2 | React widget bundle + host demo app | **COMPLETE (2026-05-22)** |
+| UI-UNIFY-1 | Streamlit AI Ops Control Center — 10-page unified dashboard | **COMPLETE (2026-05-22)** |
 
 ### Chatbot implementation status
 
@@ -277,6 +278,7 @@ none
 - [x] STREAMLIT-1: Authenticated Streamlit chat app — `chatbot/main.py` (login, chat, memory inspector, widget admin placeholder); `chatbot/config.py` + `chatbot/api_client.py` (httpx sync); `app/api/routes/memory.py` (GET /short-term + /long-term, auth-gated, graceful Redis fallback); `app/api/schemas/memory.py`; 8 integration tests; 292/292 pass
 - [x] WIDGET-1: Widget config API + origin enforcement + CSP; 22 new tests; 314/314 pass
 - [x] WIDGET-2: React widget bundle + `/widget.js` loader + host demo app; `widget/src/` Vite+React; `app/api/routes/widget_loader.py`; `demo/host/index.html`; 9 smoke tests; 323/323 pass
+- [x] UI-UNIFY-1: Streamlit AI Ops Control Center — 10-page unified dashboard; `chatbot/state.py` (session state management), `chatbot/components.py` (status_badge), `chatbot/pages.py` (10 page functions: Overview/System Health/Chat Copilot/RAG Explorer/Classifier Playground/Memory Inspector/Widget Manager/Observability/Artifacts+MinIO/Demo Runbook), `chatbot/main.py` (refactored nav), `chatbot/config.py` (all 8 URLs), `chatbot/api_client.py` (me/rag_query/check_api_health/check_model_server_health/list_widgets/create_widget added); 17 new smoke tests; `tests/smoke/test_chatbot.py`; 353/353 pass; docker compose build chatbot succeeds; http://localhost:8501 → 200
 - [ ] Generation eval: faithfulness/answer_relevancy via LLM judge (after CHAT functional)
 - [ ] Classifier eval harness: runs classification_golden.jsonl against all 3 models
 

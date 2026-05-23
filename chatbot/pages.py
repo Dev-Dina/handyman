@@ -8,7 +8,7 @@ from pathlib import Path
 import streamlit as st
 
 import chatbot.api_client as client
-from chatbot.components import status_badge
+from chatbot.components import render_rag_chunks, render_tool_call, status_badge
 from chatbot.config import (
     API_BASE_URL,
     API_DOCS_URL,
@@ -299,7 +299,7 @@ def page_chat() -> None:
     if st.session_state.tool_calls:
         with st.expander("Tool calls from last turn"):
             for tc in st.session_state.tool_calls:
-                st.json(tc)
+                render_tool_call(tc)
 
     # Trace + conversation info
     if st.session_state.trace_id:
@@ -340,9 +340,9 @@ def page_chat() -> None:
                     st.session_state.conversation_id = result["conversation_id"]
 
                 if result.get("tool_calls"):
-                    with st.expander("Tool calls this turn"):
+                    with st.expander("Tool calls this turn", expanded=True):
                         for tc in result["tool_calls"]:
-                            st.json(tc)
+                            render_tool_call(tc)
 
                 meta_parts = []
                 if result.get("trace_id"):
@@ -416,16 +416,7 @@ def page_rag_explorer() -> None:
     chunks = result.get("results", [])
     if chunks:
         st.subheader(f"Retrieved chunks ({len(chunks)})")
-        for i, chunk in enumerate(chunks, 1):
-            score = chunk.get("score", 0.0)
-            source = chunk.get("source_type", "?")
-            chunk_id = chunk.get("chunk_id", "?")
-            preview = chunk.get("text", "")[:80]
-            with st.expander(f"#{i} [{source}] score={score:.4f} — {preview}…"):
-                st.caption(
-                    f"chunk_id: `{chunk_id}` · source_type: `{source}` · score: `{score:.4f}`"
-                )
-                st.write(chunk.get("text", ""))
+        render_rag_chunks(chunks)
     else:
         st.info("No chunks returned.")
 
@@ -491,7 +482,9 @@ def page_classifier() -> None:
     tool_calls = result.get("tool_calls", [])
     classification: dict = {}
     for tc in tool_calls:
-        if tc.get("tool") == "classify_issue" or "label" in str(tc.get("result", {})):
+        if tc.get("tool_name") == "classify_issue" or "label" in str(
+            tc.get("result", {})
+        ):
             raw = tc.get("result", {})
             if isinstance(raw, dict):
                 classification = raw
@@ -518,9 +511,9 @@ def page_classifier() -> None:
     st.write(result.get("answer", ""))
 
     if tool_calls:
-        with st.expander("Raw tool calls"):
+        with st.expander("Tool calls"):
             for tc in tool_calls:
-                st.json(tc)
+                render_tool_call(tc)
 
     if result.get("trace_id"):
         st.caption(f"Trace: `{result['trace_id']}` · [Open in Jaeger]({JAEGER_URL})")

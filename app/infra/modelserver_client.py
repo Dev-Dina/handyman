@@ -11,7 +11,7 @@ import httpx
 
 from app.domain.errors import ModelServerUnavailableError
 
-DEFAULT_MODELSERVER_URL: str = "http://modelserver:8001"
+DEFAULT_MODELSERVER_URL: str = "http://model_server:8001"
 DEFAULT_TIMEOUT_SECONDS: float = 30.0
 
 

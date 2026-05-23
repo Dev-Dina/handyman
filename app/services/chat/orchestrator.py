@@ -35,6 +35,9 @@ from app.services.chat.tool_registry import (
 MAX_TOOL_ROUNDS: int = 2
 DEFAULT_ENABLED_TOOLS: list[str] = ALL_TOOL_NAMES
 _MAX_LOG_CHARS: int = 300
+# UI-facing tool result kept fuller than the log preview so the dashboard can
+# render structured tool output (e.g. RAG chunks) instead of truncated JSON.
+_MAX_RESULT_CHARS: int = 4000
 
 logger = get_logger(__name__)
 
@@ -161,8 +164,8 @@ async def run_chat(
                     tool_call_records.append(
                         {
                             "tool_name": tool_name,
-                            "result": result[:_MAX_LOG_CHARS]
-                            if len(result) > _MAX_LOG_CHARS
+                            "result": result[:_MAX_RESULT_CHARS]
+                            if len(result) > _MAX_RESULT_CHARS
                             else result,
                             "error": None,
                         }

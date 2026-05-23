@@ -71,7 +71,7 @@ CANDIDATE_EMBEDDING_MODELS = (
 RETRIEVAL_EMBEDDING_MODEL: str = "intfloat/e5-small-v2"
 E5_QUERY_PREFIX: str = "query: "
 HYBRID_ALPHA: float = 0.7
-MODELSERVER_DEFAULT_URL: str = "http://modelserver:8001"
+MODELSERVER_DEFAULT_URL: str = "http://model_server:8001"
 TFIDF_MAX_FEATURES: int = 50_000
 
 # ---------------------------------------------------------------------------

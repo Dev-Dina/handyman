@@ -1,0 +1,269 @@
+{
+  "version": "1",
+  "metadata": {
+    "marimo_version": "0.23.6",
+    "script_metadata_hash": null
+  },
+  "cells": [
+    {
+      "id": "Hbol",
+      "code_hash": "4839a382f4766c9001f49295ff5a51e4",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/plain": ""
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "MJUe",
+      "code_hash": "3243b750d0e5510c49e7294cee4b6cf8",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h1 id=\"overview\">Overview</h1>\n<span class=\"paragraph\">Classifier work used the <code>kubernetes/kubernetes</code> issue dataset with\nlocked labels: <code>bug</code>, <code>feature</code>, <code>docs</code>, and <code>question</code>.</span>\n<span class=\"paragraph\">The official dataset is <code>data/processed/</code> and remains locked. The final\ndeployment decision is CodeBERT primary with LogisticRegression TF-IDF\nas the operational fallback.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "vblA",
+      "code_hash": "014d4a8d25599b70075ffba388da6513",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='vblA-0' random-id='c701bfe8-518f-464f-1e3f-a391b9fd8b35'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;&#92;&quot;:1,&#92;&quot;track&#92;&quot;:&#92;&quot;codebert&#92;&quot;,&#92;&quot;model&#92;&quot;:&#92;&quot;microsoft/codebert-base&#92;&quot;,&#92;&quot;accuracy&#92;&quot;:0.75,&#92;&quot;macro_f1&#92;&quot;:0.7061,&#92;&quot;question_f1&#92;&quot;:0.2909,&#92;&quot;avg_latency_seconds&#92;&quot;:NaN,&#92;&quot;deployment&#92;&quot;:&#92;&quot;PRIMARY&#92;&quot;},{&#92;&quot;&#92;&quot;:0,&#92;&quot;track&#92;&quot;:&#92;&quot;classical&#92;&quot;,&#92;&quot;model&#92;&quot;:&#92;&quot;LogisticRegression (TF-IDF)&#92;&quot;,&#92;&quot;accuracy&#92;&quot;:0.713889,&#92;&quot;macro_f1&#92;&quot;:0.693839,&#92;&quot;question_f1&#92;&quot;:0.35461,&#92;&quot;avg_latency_seconds&#92;&quot;:0.000219775,&#92;&quot;deployment&#92;&quot;:&#92;&quot;operational_fallback&#92;&quot;},{&#92;&quot;&#92;&quot;:2,&#92;&quot;track&#92;&quot;:&#92;&quot;llm&#92;&quot;,&#92;&quot;model&#92;&quot;:&#92;&quot;llama3:latest (Ollama)&#92;&quot;,&#92;&quot;accuracy&#92;&quot;:0.585,&#92;&quot;macro_f1&#92;&quot;:0.5554,&#92;&quot;question_f1&#92;&quot;:0.2385,&#92;&quot;avg_latency_seconds&#92;&quot;:24.9,&#92;&quot;deployment&#92;&quot;:&#92;&quot;not_selected&#92;&quot;}]&quot;' data-total-rows='3' data-total-columns='7' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-field-types='[[&quot;track&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;model&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;accuracy&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;macro_f1&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;question_f1&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;avg_latency_seconds&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;deployment&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[[&quot;&quot;,[&quot;integer&quot;,&quot;int64&quot;]]]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "bkHC",
+      "code_hash": "7d989825435591e805f658f456789e0e",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"official-model-comparison\">Official model comparison</h2></span><marimo-ui-element object-id='bkHC-0' random-id='c04bb329-d6e7-f966-4fd4-c42c6373152b'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;&#92;&quot;:1,&#92;&quot;track&#92;&quot;:&#92;&quot;codebert&#92;&quot;,&#92;&quot;model&#92;&quot;:&#92;&quot;microsoft/codebert-base&#92;&quot;,&#92;&quot;accuracy&#92;&quot;:0.75,&#92;&quot;macro_f1&#92;&quot;:0.7061,&#92;&quot;question_f1&#92;&quot;:0.2909,&#92;&quot;avg_latency_seconds&#92;&quot;:NaN,&#92;&quot;deployment&#92;&quot;:&#92;&quot;PRIMARY&#92;&quot;},{&#92;&quot;&#92;&quot;:0,&#92;&quot;track&#92;&quot;:&#92;&quot;classical&#92;&quot;,&#92;&quot;model&#92;&quot;:&#92;&quot;LogisticRegression (TF-IDF)&#92;&quot;,&#92;&quot;accuracy&#92;&quot;:0.713889,&#92;&quot;macro_f1&#92;&quot;:0.693839,&#92;&quot;question_f1&#92;&quot;:0.35461,&#92;&quot;avg_latency_seconds&#92;&quot;:0.000219775,&#92;&quot;deployment&#92;&quot;:&#92;&quot;operational_fallback&#92;&quot;},{&#92;&quot;&#92;&quot;:2,&#92;&quot;track&#92;&quot;:&#92;&quot;llm&#92;&quot;,&#92;&quot;model&#92;&quot;:&#92;&quot;llama3:latest (Ollama)&#92;&quot;,&#92;&quot;accuracy&#92;&quot;:0.585,&#92;&quot;macro_f1&#92;&quot;:0.5554,&#92;&quot;question_f1&#92;&quot;:0.2385,&#92;&quot;avg_latency_seconds&#92;&quot;:24.9,&#92;&quot;deployment&#92;&quot;:&#92;&quot;not_selected&#92;&quot;}]&quot;' data-total-rows='3' data-total-columns='7' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-field-types='[[&quot;track&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;model&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;accuracy&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;macro_f1&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;question_f1&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;avg_latency_seconds&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;deployment&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[[&quot;&quot;,[&quot;integer&quot;,&quot;int64&quot;]]]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "lEQa",
+      "code_hash": "e85c9956bc10da0b3f231dacee63a047",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "exception",
+          "evalue": "The variable 'ax' was defined by another cell",
+          "traceback": null
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "PKri",
+      "code_hash": "60e650fc04c8634bf4062bed58b12dbc",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='PKri-0' random-id='efe19ea9-c8e6-93f3-b8b4-1c9733ec645b'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;experiment&#92;&quot;:&#92;&quot;official_logistic_regression&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;official fallback&#92;&quot;,&#92;&quot;accuracy&#92;&quot;:0.713889,&#92;&quot;macro_f1&#92;&quot;:0.693839,&#92;&quot;question_f1&#92;&quot;:0.35461,&#92;&quot;path&#92;&quot;:&#92;&quot;reports/classical/best_classical_eval.json&#92;&quot;},{&#92;&quot;experiment&#92;&quot;:&#92;&quot;support_question_augmentation&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;rejected / archived&#92;&quot;,&#92;&quot;accuracy&#92;&quot;:0.702778,&#92;&quot;macro_f1&#92;&quot;:0.680766,&#92;&quot;question_f1&#92;&quot;:0.272727,&#92;&quot;path&#92;&quot;:&#92;&quot;reports/experiments/failed/support_augmented/best_classical_eval.json&#92;&quot;},{&#92;&quot;experiment&#92;&quot;:&#92;&quot;cleaned_splits&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;rejected / archived&#92;&quot;,&#92;&quot;accuracy&#92;&quot;:0.713889,&#92;&quot;macro_f1&#92;&quot;:0.693839,&#92;&quot;question_f1&#92;&quot;:0.35461,&#92;&quot;path&#92;&quot;:&#92;&quot;reports/experiments/failed/cleaned_splits/classical_cleaned/best_classical_eval.json&#92;&quot;},{&#92;&quot;experiment&#92;&quot;:&#92;&quot;strict_text_preprocessing&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;rejected / archived&#92;&quot;,&#92;&quot;accuracy&#92;&quot;:0.641667,&#92;&quot;macro_f1&#92;&quot;:0.637926,&#92;&quot;question_f1&#92;&quot;:0.477987,&#92;&quot;path&#92;&quot;:&#92;&quot;reports/experiments/failed/strict_text/classical_strict/best_classical_eval.json&#92;&quot;}]&quot;' data-total-rows='4' data-total-columns='6' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-field-types='[[&quot;experiment&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;status&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;accuracy&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;macro_f1&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;question_f1&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;path&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Xref",
+      "code_hash": "9f300c5b919c1af75bda988a5f03f657",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"experiment-inventory\">Experiment inventory</h2></span><marimo-ui-element object-id='Xref-0' random-id='614e6981-6530-a238-eb30-87c21271307e'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;experiment&#92;&quot;:&#92;&quot;official_logistic_regression&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;official fallback&#92;&quot;,&#92;&quot;accuracy&#92;&quot;:0.713889,&#92;&quot;macro_f1&#92;&quot;:0.693839,&#92;&quot;question_f1&#92;&quot;:0.35461,&#92;&quot;path&#92;&quot;:&#92;&quot;reports/classical/best_classical_eval.json&#92;&quot;},{&#92;&quot;experiment&#92;&quot;:&#92;&quot;support_question_augmentation&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;rejected / archived&#92;&quot;,&#92;&quot;accuracy&#92;&quot;:0.702778,&#92;&quot;macro_f1&#92;&quot;:0.680766,&#92;&quot;question_f1&#92;&quot;:0.272727,&#92;&quot;path&#92;&quot;:&#92;&quot;reports/experiments/failed/support_augmented/best_classical_eval.json&#92;&quot;},{&#92;&quot;experiment&#92;&quot;:&#92;&quot;cleaned_splits&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;rejected / archived&#92;&quot;,&#92;&quot;accuracy&#92;&quot;:0.713889,&#92;&quot;macro_f1&#92;&quot;:0.693839,&#92;&quot;question_f1&#92;&quot;:0.35461,&#92;&quot;path&#92;&quot;:&#92;&quot;reports/experiments/failed/cleaned_splits/classical_cleaned/best_classical_eval.json&#92;&quot;},{&#92;&quot;experiment&#92;&quot;:&#92;&quot;strict_text_preprocessing&#92;&quot;,&#92;&quot;status&#92;&quot;:&#92;&quot;rejected / archived&#92;&quot;,&#92;&quot;accuracy&#92;&quot;:0.641667,&#92;&quot;macro_f1&#92;&quot;:0.637926,&#92;&quot;question_f1&#92;&quot;:0.477987,&#92;&quot;path&#92;&quot;:&#92;&quot;reports/experiments/failed/strict_text/classical_strict/best_classical_eval.json&#92;&quot;}]&quot;' data-total-rows='4' data-total-columns='6' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-field-types='[[&quot;experiment&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;status&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;accuracy&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;macro_f1&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;question_f1&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;path&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "SFPL",
+      "code_hash": "6de78a14dfdfafd0d7f17c34f9c1885a",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "exception",
+          "evalue": "The variable 'ax' was defined by another cell",
+          "traceback": null
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "BYtC",
+      "code_hash": "e53bf4ec3ad04df807876eead88f7cff",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"failed-experiment-review\">Failed experiment review</h2>\n<span class=\"paragraph\">Support/question augmentation, cleaned splits, and strict text\npreprocessing are preserved as evidence under\n<code>reports/experiments/failed/</code>. They are not used for training or\ndeployment.</span>\n<span class=\"paragraph\">The support augmentation run is the most nuanced result: some behavior\nimproved, but macro-F1 and question-class balance were worse than the\nofficial fallback, so it stayed rejected.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "RGSE",
+      "code_hash": "6f4f2be6caf70bdcc41c9c5b58f4b9e7",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='RGSE-0' random-id='c4054771-ee74-7b04-a03c-145d262242f8'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;actual&#92;&#92;&#92;&#92;predicted&#92;&quot;:&#92;&quot;bug&#92;&quot;,&#92;&quot;bug&#92;&quot;:76,&#92;&quot;feature&#92;&quot;:3,&#92;&quot;docs&#92;&quot;:2,&#92;&quot;question&#92;&quot;:9},{&#92;&quot;actual&#92;&#92;&#92;&#92;predicted&#92;&quot;:&#92;&quot;feature&#92;&quot;,&#92;&quot;bug&#92;&quot;:4,&#92;&quot;feature&#92;&quot;:81,&#92;&quot;docs&#92;&quot;:1,&#92;&quot;question&#92;&quot;:4},{&#92;&quot;actual&#92;&#92;&#92;&#92;predicted&#92;&quot;:&#92;&quot;docs&#92;&quot;,&#92;&quot;bug&#92;&quot;:0,&#92;&quot;feature&#92;&quot;:2,&#92;&quot;docs&#92;&quot;:75,&#92;&quot;question&#92;&quot;:13},{&#92;&quot;actual&#92;&#92;&#92;&#92;predicted&#92;&quot;:&#92;&quot;question&#92;&quot;,&#92;&quot;bug&#92;&quot;:45,&#92;&quot;feature&#92;&quot;:11,&#92;&quot;docs&#92;&quot;:9,&#92;&quot;question&#92;&quot;:25}]&quot;' data-total-rows='4' data-total-columns='4' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-field-types='[[&quot;bug&quot;,[&quot;integer&quot;,&quot;int64&quot;]],[&quot;feature&quot;,[&quot;integer&quot;,&quot;int64&quot;]],[&quot;docs&quot;,[&quot;integer&quot;,&quot;int64&quot;]],[&quot;question&quot;,[&quot;integer&quot;,&quot;int64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[[&quot;actual&#92;&#92;predicted&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Kclp",
+      "code_hash": "f1d2e8224be68a310af5ab69479af561",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"confusion-matrices\">Confusion matrices</h2></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "emfo",
+      "code_hash": "e1481fe142608e7ed51c5fde3edd9f77",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "exception",
+          "evalue": "The variable 'ax' was defined by another cell",
+          "traceback": null
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Hstk",
+      "code_hash": "f0288124734095b712d9197f72f1a9d3",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "exception",
+          "evalue": "The variable 'ax' was defined by another cell",
+          "traceback": null
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "nWHF",
+      "code_hash": "08588f42e68c353086c2047a27c2efb6",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='nWHF-0' random-id='9a265c94-ab5e-7a2c-e77f-1528c2d52d5b'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;&#92;&quot;:&#92;&quot;bug&#92;&quot;,&#92;&quot;true_official&#92;&quot;:90,&#92;&quot;predicted_official&#92;&quot;:125,&#92;&quot;true_augmented&#92;&quot;:90,&#92;&quot;predicted_augmented&#92;&quot;:154,&#92;&quot;predicted_delta_augmented_minus_official&#92;&quot;:29},{&#92;&quot;&#92;&quot;:&#92;&quot;feature&#92;&quot;,&#92;&quot;true_official&#92;&quot;:90,&#92;&quot;predicted_official&#92;&quot;:97,&#92;&quot;true_augmented&#92;&quot;:90,&#92;&quot;predicted_augmented&#92;&quot;:87,&#92;&quot;predicted_delta_augmented_minus_official&#92;&quot;:-10},{&#92;&quot;&#92;&quot;:&#92;&quot;docs&#92;&quot;,&#92;&quot;true_official&#92;&quot;:90,&#92;&quot;predicted_official&#92;&quot;:87,&#92;&quot;true_augmented&#92;&quot;:90,&#92;&quot;predicted_augmented&#92;&quot;:77,&#92;&quot;predicted_delta_augmented_minus_official&#92;&quot;:-10},{&#92;&quot;&#92;&quot;:&#92;&quot;question&#92;&quot;,&#92;&quot;true_official&#92;&quot;:90,&#92;&quot;predicted_official&#92;&quot;:51,&#92;&quot;true_augmented&#92;&quot;:90,&#92;&quot;predicted_augmented&#92;&quot;:42,&#92;&quot;predicted_delta_augmented_minus_official&#92;&quot;:-9}]&quot;' data-total-rows='4' data-total-columns='5' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-field-types='[[&quot;true_official&quot;,[&quot;integer&quot;,&quot;int64&quot;]],[&quot;predicted_official&quot;,[&quot;integer&quot;,&quot;int64&quot;]],[&quot;true_augmented&quot;,[&quot;integer&quot;,&quot;int64&quot;]],[&quot;predicted_augmented&quot;,[&quot;integer&quot;,&quot;int64&quot;]],[&quot;predicted_delta_augmented_minus_official&quot;,[&quot;integer&quot;,&quot;int64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[[&quot;&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "iLit",
+      "code_hash": "096c8a17fa0b85ab57e83f0e45577bb1",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"prediction-distribution\">Prediction distribution</h2>\n<span class=\"paragraph\">Confusion matrices let us inspect whether a run improved only by\nshifting predictions toward easier classes. In the augmentation run,\nthe project specifically checks for bug overprediction and question\nunderprediction instead of trusting accuracy alone.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ZHCJ",
+      "code_hash": "623a0e80189a79c5066c335c481fc7a1",
+      "outputs": [
+        {
+          "type": "error",
+          "ename": "exception",
+          "evalue": "The variable 'ax' was defined by another cell",
+          "traceback": null
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "ROlb",
+      "code_hash": "ca076fcea829336f51bba7d02ecdd370",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='ROlb-0' random-id='54db22b6-66a4-a711-15fc-e36b9e1ddaaf'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;&#92;&quot;:&#92;&quot;bug&#92;&quot;,&#92;&quot;official_f1&#92;&quot;:0.706977,&#92;&quot;support_augmented_f1&#92;&quot;:0.672131,&#92;&quot;delta&#92;&quot;:-0.03484599999999993},{&#92;&quot;&#92;&quot;:&#92;&quot;docs&#92;&quot;,&#92;&quot;official_f1&#92;&quot;:0.847458,&#92;&quot;support_augmented_f1&#92;&quot;:0.874251,&#92;&quot;delta&#92;&quot;:0.026792999999999956},{&#92;&quot;&#92;&quot;:&#92;&quot;feature&#92;&quot;,&#92;&quot;official_f1&#92;&quot;:0.86631,&#92;&quot;support_augmented_f1&#92;&quot;:0.903955,&#92;&quot;delta&#92;&quot;:0.03764499999999993},{&#92;&quot;&#92;&quot;:&#92;&quot;question&#92;&quot;,&#92;&quot;official_f1&#92;&quot;:0.35461,&#92;&quot;support_augmented_f1&#92;&quot;:0.272727,&#92;&quot;delta&#92;&quot;:-0.08188299999999998}]&quot;' data-total-rows='4' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-field-types='[[&quot;official_f1&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;support_augmented_f1&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;delta&quot;,[&quot;number&quot;,&quot;float64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[[&quot;&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "qnkX",
+      "code_hash": "693aab3c3c3b642680f8bec0eecea7e5",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<div style='display: flex;flex: 1;flex-direction: column;justify-content: flex-start;align-items: normal;flex-wrap: nowrap;gap: 0.5rem'><span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"per-class-metric-deltas\">Per-class metric deltas</h2></span><marimo-ui-element object-id='qnkX-0' random-id='71273bf2-1b76-ef2e-7642-1091c26a3a05'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;&#92;&quot;:&#92;&quot;bug&#92;&quot;,&#92;&quot;official_f1&#92;&quot;:0.706977,&#92;&quot;support_augmented_f1&#92;&quot;:0.672131,&#92;&quot;delta&#92;&quot;:-0.03484599999999993},{&#92;&quot;&#92;&quot;:&#92;&quot;docs&#92;&quot;,&#92;&quot;official_f1&#92;&quot;:0.847458,&#92;&quot;support_augmented_f1&#92;&quot;:0.874251,&#92;&quot;delta&#92;&quot;:0.026792999999999956},{&#92;&quot;&#92;&quot;:&#92;&quot;feature&#92;&quot;,&#92;&quot;official_f1&#92;&quot;:0.86631,&#92;&quot;support_augmented_f1&#92;&quot;:0.903955,&#92;&quot;delta&#92;&quot;:0.03764499999999993},{&#92;&quot;&#92;&quot;:&#92;&quot;question&#92;&quot;,&#92;&quot;official_f1&#92;&quot;:0.35461,&#92;&quot;support_augmented_f1&#92;&quot;:0.272727,&#92;&quot;delta&#92;&quot;:-0.08188299999999998}]&quot;' data-total-rows='4' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-field-types='[[&quot;official_f1&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;support_augmented_f1&quot;,[&quot;number&quot;,&quot;float64&quot;]],[&quot;delta&quot;,[&quot;number&quot;,&quot;float64&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='false' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[[&quot;&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element></div>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "TqIu",
+      "code_hash": "d62f2e0ad3747b976a2b294ecdf85f39",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/markdown": "<span class=\"markdown prose dark:prose-invert contents\"><h2 id=\"decision-rationale\">Decision rationale</h2>\n<span class=\"paragraph\">Accuracy alone was not enough. The selected classifier needed strong\nmacro-F1 and acceptable per-class behavior across all four labels.\nAugmentation was rejected because it hurt class balance and question\nhandling relative to the official fallback. CodeBERT remained primary\nbecause it had the best held-out macro-F1 and accuracy, while\nLogisticRegression remained the operational fallback because it is\ndeterministic, fast, and requires no GPU.</span></span>"
+          }
+        }
+      ],
+      "console": []
+    },
+    {
+      "id": "Vxnm",
+      "code_hash": "a6527dc6a1faf656c20efe987057ac53",
+      "outputs": [
+        {
+          "type": "data",
+          "data": {
+            "text/html": "<marimo-ui-element object-id='Vxnm-0' random-id='2589b74a-eb40-973a-5f9b-be808fff90d8'><marimo-table data-initial-value='[]' data-label='null' data-data='&quot;[{&#92;&quot;item&#92;&quot;:&#92;&quot;CodeBERT&#92;&quot;,&#92;&quot;decision&#92;&quot;:&#92;&quot;officially used&#92;&quot;,&#92;&quot;reason&#92;&quot;:&#92;&quot;best held-out macro-F1 and accuracy&#92;&quot;},{&#92;&quot;item&#92;&quot;:&#92;&quot;LogisticRegression TF-IDF&#92;&quot;,&#92;&quot;decision&#92;&quot;:&#92;&quot;officially used&#92;&quot;,&#92;&quot;reason&#92;&quot;:&#92;&quot;runtime fallback; no GPU required&#92;&quot;},{&#92;&quot;item&#92;&quot;:&#92;&quot;Ollama llama3 baseline&#92;&quot;,&#92;&quot;decision&#92;&quot;:&#92;&quot;reference only&#92;&quot;,&#92;&quot;reason&#92;&quot;:&#92;&quot;lower macro-F1 and high latency&#92;&quot;},{&#92;&quot;item&#92;&quot;:&#92;&quot;support/question augmentation&#92;&quot;,&#92;&quot;decision&#92;&quot;:&#92;&quot;rejected / archived&#92;&quot;,&#92;&quot;reason&#92;&quot;:&#92;&quot;macro-F1 and question behavior worse than fallback&#92;&quot;},{&#92;&quot;item&#92;&quot;:&#92;&quot;cleaned splits&#92;&quot;,&#92;&quot;decision&#92;&quot;:&#92;&quot;rejected / archived&#92;&quot;,&#92;&quot;reason&#92;&quot;:&#92;&quot;no improvement over fallback&#92;&quot;},{&#92;&quot;item&#92;&quot;:&#92;&quot;strict text preprocessing&#92;&quot;,&#92;&quot;decision&#92;&quot;:&#92;&quot;rejected / archived&#92;&quot;,&#92;&quot;reason&#92;&quot;:&#92;&quot;worse macro-F1&#92;&quot;}]&quot;' data-total-rows='6' data-total-columns='3' data-max-columns='50' data-banner-text='&quot;&quot;' data-pagination='false' data-page-size='10' data-field-types='[[&quot;item&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;decision&quot;,[&quot;string&quot;,&quot;str&quot;]],[&quot;reason&quot;,[&quot;string&quot;,&quot;str&quot;]]]' data-show-filters='true' data-show-download='true' data-show-column-summaries='false' data-show-data-types='true' data-show-page-size-selector='true' data-show-column-explorer='true' data-show-chart-builder='true' data-row-headers='[]' data-has-stable-row-id='false' data-lazy='false' data-preload='false'></marimo-table></marimo-ui-element>"
+          }
+        }
+      ],
+      "console": []
+    }
+  ]
+}

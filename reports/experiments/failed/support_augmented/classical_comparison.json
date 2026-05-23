@@ -1,0 +1,234 @@
+{
+  "best_model_name": "LogisticRegression",
+  "data_hash": "4ab7d0be5de81a3ae40282832229723e6b46979307e834b935a43980dc393eb0",
+  "generated_at": "2026-05-20T07:34:46.357561+00:00",
+  "labels": [
+    "bug",
+    "feature",
+    "docs",
+    "question"
+  ],
+  "selection_metric": "validation_macro_f1",
+  "split_counts": {
+    "test_count": 360,
+    "train_count": 1680,
+    "val_count": 360
+  },
+  "validation_results": [
+    {
+      "accuracy": 0.838889,
+      "fit_time_seconds": 1.077605,
+      "macro_f1": 0.840244,
+      "model_name": "LogisticRegression",
+      "per_class_precision_recall_f1": {
+        "bug": {
+          "f1": 0.777778,
+          "precision": 0.712963,
+          "recall": 0.855556,
+          "support": 90
+        },
+        "docs": {
+          "f1": 0.949153,
+          "precision": 0.965517,
+          "recall": 0.933333,
+          "support": 90
+        },
+        "feature": {
+          "f1": 0.826816,
+          "precision": 0.831461,
+          "recall": 0.822222,
+          "support": 90
+        },
+        "question": {
+          "f1": 0.807229,
+          "precision": 0.881579,
+          "recall": 0.744444,
+          "support": 90
+        }
+      },
+      "predict_time_seconds": 0.079878,
+      "weighted_f1": 0.840244
+    },
+    {
+      "accuracy": 0.836111,
+      "fit_time_seconds": 0.565972,
+      "macro_f1": 0.837861,
+      "model_name": "LinearSVC",
+      "per_class_precision_recall_f1": {
+        "bug": {
+          "f1": 0.778325,
+          "precision": 0.699115,
+          "recall": 0.877778,
+          "support": 90
+        },
+        "docs": {
+          "f1": 0.942529,
+          "precision": 0.97619,
+          "recall": 0.911111,
+          "support": 90
+        },
+        "feature": {
+          "f1": 0.847458,
+          "precision": 0.862069,
+          "recall": 0.833333,
+          "support": 90
+        },
+        "question": {
+          "f1": 0.783133,
+          "precision": 0.855263,
+          "recall": 0.722222,
+          "support": 90
+        }
+      },
+      "predict_time_seconds": 0.078756,
+      "weighted_f1": 0.837861
+    },
+    {
+      "accuracy": 0.830556,
+      "fit_time_seconds": 0.544597,
+      "macro_f1": 0.832253,
+      "model_name": "SGDClassifier",
+      "per_class_precision_recall_f1": {
+        "bug": {
+          "f1": 0.770732,
+          "precision": 0.686957,
+          "recall": 0.877778,
+          "support": 90
+        },
+        "docs": {
+          "f1": 0.942529,
+          "precision": 0.97619,
+          "recall": 0.911111,
+          "support": 90
+        },
+        "feature": {
+          "f1": 0.847458,
+          "precision": 0.862069,
+          "recall": 0.833333,
+          "support": 90
+        },
+        "question": {
+          "f1": 0.768293,
+          "precision": 0.851351,
+          "recall": 0.7,
+          "support": 90
+        }
+      },
+      "predict_time_seconds": 0.078545,
+      "weighted_f1": 0.832253
+    },
+    {
+      "accuracy": 0.763889,
+      "fit_time_seconds": 0.539274,
+      "macro_f1": 0.759899,
+      "model_name": "ComplementNB",
+      "per_class_precision_recall_f1": {
+        "bug": {
+          "f1": 0.725581,
+          "precision": 0.624,
+          "recall": 0.866667,
+          "support": 90
+        },
+        "docs": {
+          "f1": 0.918605,
+          "precision": 0.963415,
+          "recall": 0.877778,
+          "support": 90
+        },
+        "feature": {
+          "f1": 0.766839,
+          "precision": 0.718447,
+          "recall": 0.822222,
+          "support": 90
+        },
+        "question": {
+          "f1": 0.628571,
+          "precision": 0.88,
+          "recall": 0.488889,
+          "support": 90
+        }
+      },
+      "predict_time_seconds": 0.074792,
+      "weighted_f1": 0.759899
+    },
+    {
+      "accuracy": 0.733333,
+      "fit_time_seconds": 0.566326,
+      "macro_f1": 0.728617,
+      "model_name": "MultinomialNB",
+      "per_class_precision_recall_f1": {
+        "bug": {
+          "f1": 0.712329,
+          "precision": 0.604651,
+          "recall": 0.866667,
+          "support": 90
+        },
+        "docs": {
+          "f1": 0.865854,
+          "precision": 0.959459,
+          "recall": 0.788889,
+          "support": 90
+        },
+        "feature": {
+          "f1": 0.766839,
+          "precision": 0.718447,
+          "recall": 0.822222,
+          "support": 90
+        },
+        "question": {
+          "f1": 0.569444,
+          "precision": 0.759259,
+          "recall": 0.455556,
+          "support": 90
+        }
+      },
+      "predict_time_seconds": 0.086353,
+      "weighted_f1": 0.728617
+    },
+    {
+      "accuracy": 0.25,
+      "fit_time_seconds": 0.548676,
+      "macro_f1": 0.1,
+      "model_name": "DummyClassifier",
+      "per_class_precision_recall_f1": {
+        "bug": {
+          "f1": 0.4,
+          "precision": 0.25,
+          "recall": 1.0,
+          "support": 90
+        },
+        "docs": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 90
+        },
+        "feature": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 90
+        },
+        "question": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0,
+          "support": 90
+        }
+      },
+      "predict_time_seconds": 0.085305,
+      "weighted_f1": 0.1
+    }
+  ],
+  "vectorizer_settings": {
+    "lowercase": true,
+    "max_features": 50000,
+    "min_df": 2,
+    "ngram_range": [
+      1,
+      2
+    ],
+    "strip_accents": "unicode",
+    "sublinear_tf": true
+  }
+}

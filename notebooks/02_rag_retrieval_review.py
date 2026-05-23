@@ -37,15 +37,13 @@ def _():
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-        # Overview
+    mo.md("""
+    # Overview
 
-        The RAG pipeline uses a leakage-checked corpus from Kubernetes issues,
-        issue comments, and curated docs. The golden set has 25 examples with
-        docs, issue, and comment coverage.
-        """
-    )
+    The RAG pipeline uses a leakage-checked corpus from Kubernetes issues,
+    issue comments, and curated docs. The golden set has 25 examples with
+    docs, issue, and comment coverage.
+    """)
     return
 
 
@@ -71,12 +69,14 @@ def _(EVALS_DIR, REPORTS_DIR, pd, read_json):
         ]
     )
     overview
-    return corpus, golden, overview
+    return
 
 
 @app.cell
 def _(mo):
-    mo.md("## Chunking decision")
+    mo.md("""
+    ## Chunking decision
+    """)
     return
 
 
@@ -116,13 +116,11 @@ def _(chunking_table, plt):
 
 @app.cell
 def _(chunking, mo):
-    mo.md(
-        f"""
-        Section-aware chunking was chosen because it preserves headings, issue
-        template sections, and comment metadata. Chosen strategy:
-        **{chunking["chosen_for_next_phase"]}**.
-        """
-    )
+    mo.md(f"""
+    Section-aware chunking was chosen because it preserves headings, issue
+    template sections, and comment metadata. Chosen strategy:
+    **{chunking["chosen_for_next_phase"]}**.
+    """)
     return
 
 
@@ -133,7 +131,7 @@ def _(REPORTS_DIR, pd, read_json):
     )
     embedding_table = pd.DataFrame(embedding["models"]).sort_values("rank")
     embedding_table[["rank", "model", "hit_at_5", "mrr_at_10", "latency_seconds"]]
-    return embedding, embedding_table
+    return (embedding_table,)
 
 
 @app.cell
@@ -201,12 +199,10 @@ def _(hybrid_table, plt):
 
 @app.cell
 def _(hybrid, mo):
-    mo.md(
-        f"""
-        Final production retrieval decision: **{hybrid["best_model"]}** hybrid
-        with alpha **{hybrid["best_alpha"]}**.
-        """
-    )
+    mo.md(f"""
+    Final production retrieval decision: **{hybrid["best_model"]}** hybrid
+    with alpha **{hybrid["best_alpha"]}**.
+    """)
     return
 
 
@@ -215,7 +211,7 @@ def _(REPORTS_DIR, pd, read_json):
     rerank = read_json(REPORTS_DIR / "rag" / "retrieval" / "rerank_comparison.json")
     rerank_table = pd.DataFrame(rerank["runs"]).sort_values("rank")
     rerank_table[["rank", "model", "hit_at_5", "mrr_at_10", "latency_seconds"]]
-    return rerank_table
+    return (rerank_table,)
 
 
 @app.cell

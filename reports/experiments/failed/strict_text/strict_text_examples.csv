@@ -1,0 +1,119 @@
+issue_number,final_label,title,strict_text_length,raw_text_length,has_cjk,non_ascii_ratio,strict_model_text_preview
+127301,bug,"orphaned pod <uid> found, but failed to rmdir() volume at path ...",2078,3391,False,0.0,"TITLE: orphaned pod <uid> found, but failed to rmdir() volume at path ...
+TITLE: orphaned pod <uid> found, but failed to rmdir() volume at path ...
+After a k8s 1.28.9 node was rebooted the following errors started to be repeated in jounalctl:
+
+`kubelet[2135]: E0911 16:27:10.436330 2135 kubelet_volumes.go:263] ""There were many similar errors. Turn up verbosity to see them."" err=""orphaned pod \""0a002fc3-b8f5-4a36-a8d2-e7a9c7bbe8ac\"" found, but failed to rmdir() volume at path /var/lib/kubelet/po"
+127311,bug,windows node join to linux master kubelet failed,965,2233,True,0.029,"TITLE: windows node join to linux master kubelet failed
+TITLE: windows node join to linux master kubelet failed
+<IMAGE>
+join success
+**安装git**
+
+<URL>
+
+**安装containerd**
+
+```
+.\Install-Containerd.ps1
+```
+
+**加入集群**
+
+```
+自动初始化Windows 下 kubernetes 的脚本
+<URL>
+<URL>
+
+<URL>
+
+unzip kubernetes-node-windows-amd64.tar.gz
+mv bin files to k directory
+
+<URL>
+
+<URL>
+
+<URL>
+
+PrepareNode.ps1注释下面内容，自己下载
+<#
+DownloadFile $kubeletBinPath <URL>
+DownloadFile ""$global:KubernetesPath\kubeadm"
+127316,bug,kubelet fails to start pods after upgrade to 1.31.X,1937,3914,False,0.0,"TITLE: kubelet fails to start pods after upgrade to 1.31.X
+TITLE: kubelet fails to start pods after upgrade to 1.31.X
+After the first controller upgrade from 1.30.4 to 1.31.0 and later 1.31.1. The kubelet service fails to start the majority of pods running on the controller.
+All pods should start as before the upgrade.
+
+```
+$ kubectl get pod -o wide --all-namespaces -w | grep controller2
+calico-system calico-node-p4fzm 0/1 CreateContainerConfigError 0 153m 192.168.16.112 kubecontroller2 <non"
+22923,docs,Write a guide for new contributors,134,86,False,0.0,"TITLE: Write a guide for new contributors
+TITLE: Write a guide for new contributors
+docs/devel has a lot of stuff in it at this point."
+22986,docs,Cannot create pod with the same name as a pod that has already finished,577,506,False,0.0,"TITLE: Cannot create pod with the same name as a pod that has already finished
+TITLE: Cannot create pod with the same name as a pod that has already finished
+I created pod with the following command:
+
+```
+kubectl run load-generator --image=busybox --restart=Never
+```
+
+The pod has finished successfully. The pod is not displayed in pod list, although when I try to run a pod with the same name I've got an error:
+
+```
+Error from server: pods ""load-generator"" already exists
+```
+
+<USER> not sure if th"
+23026,docs,go template not rendered in user guide,297,256,False,0.0,"TITLE: go template not rendered in user guide
+TITLE: go template not rendered in user guide
+In the new github pages-based user doc, go templates are not rendered correctly. For example, in Kubernetes 101, the template is missing in the command:
+
+```
+$ curl <URL> get pod nginx -o go-template=)
+```"
+124892,feature,Kubelet: Add a metrics in kubelet to track how long it takes for pod to fully start,1448,1420,False,0.0,"TITLE: Kubelet: Add a metrics in kubelet to track how long it takes for pod to fully start
+TITLE: Kubelet: Add a metrics in kubelet to track how long it takes for pod to fully start
+Add a new metrics to record the end-to-end startup latency of the pod since pod created to pod ready **for the first time**. The metrics will include all stages of the pod life cycle like scheduling and image pulling.
+
+**Metrics Name**: `kubelet_pod_first_ready_latency_seconds {namespace=<namespace_name>, pod=<pod_"
+124907,feature,Ephemeral volume scheduling problems,495,707,False,0.0,"TITLE: Ephemeral volume scheduling problems
+TITLE: Ephemeral volume scheduling problems
+I have two ephemeral volumes, one that requires 100M of memory and one that requires 43G of memory.
+<IMAGE>
+
+After the 100 MB volume is successfully scheduled, only 42 GB memory is available on the node. As a result, the second volume fails to be created, and the pod fails to be scheduled.
+<IMAGE>
+
+However, other nodes in the cluster have sufficient space.
+Is there a good way to solve this problem?"
+124924,feature,Regarding adding an interface to retrieve the netns of a Pod object,1096,1084,False,0.0,"TITLE: Regarding adding an interface to retrieve the netns of a Pod object
+TITLE: Regarding adding an interface to retrieve the netns of a Pod object
+I want to extend the gRPC interface in kubelet that retrieves pod resources to include an interface for obtaining the pod netns using the pod UID. This way, it would be possible to retrieve a pod object and perform operations on its netns after querying it using the pod UID.
+
+Is this a good idea? Or are there perhaps better options?
+Here is the "
+127419,question,TLS Error with Karpenter Liveness and Readiness Probes: remote error: tls: unrecognized name,3066,4035,False,0.0003,"TITLE: TLS Error with Karpenter Liveness and Readiness Probes: remote error: tls: unrecognized name
+TITLE: TLS Error with Karpenter Liveness and Readiness Probes: remote error: tls: unrecognized name
+I am deploying Karpenter on my EKS cluster via ArgoCD, and I am encountering TLS errors on the liveness and readiness probes. The errors are as follows:
+
+Readiness probe failed: Get ""<URL> remote error: tls: unrecognized name
+Liveness probe failed: Get ""<URL> remote error: tls: unrecognized name"
+127530,question,/sig <API Machinery> The kubeadm init can't start a healthy API server,18495,19482,True,0.0044,"TITLE: /sig <API Machinery> The kubeadm init can't start a healthy API server
+TITLE: /sig <API Machinery> The kubeadm init can't start a healthy API server
+***Description:
+When I user kubeadm init, the API server is not healthy.
+
+***Steps to reproduce the behavior:
+1. Open the terminal
+2. su
+3. kubeadm init --pod-network-cidr=192.169.0.0/16 --image-repository=registry.aliyuncs.com/google_containers --apiserver-advertise-address=192.168.1.133
+
+***Details:
+1. ""kubeadm init"" print:
+I0922 "
+127557,question,kube-controller-manager and kube-scheduler Automatically restart after 8 o'clock every day,888,2532,False,0.0,"TITLE: kube-controller-manager and kube-scheduler Automatically restart after 8 o'clock every day
+TITLE: kube-controller-manager and kube-scheduler Automatically restart after 8 o'clock every day
+I built one main node and two node nodes. Recently, it has been discovered that two pods, pod/kube-controller-manager-192.168.50.10 and pod/kube-scheduler-192.168.50.11, restart after 8am every day. What could be the problem and how should it be resolved?
+How to investigate the cause of automatic restar"

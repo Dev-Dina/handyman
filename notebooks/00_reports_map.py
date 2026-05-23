@@ -26,20 +26,18 @@ def _():
         REPORTS_DIR = PROJECT_ROOT / "reports"
 
     inventory_path = REPORTS_DIR / "report_inventory.csv"
-    return PROJECT_ROOT, REPORTS_DIR, inventory_path, mo, pd, plt
+    return inventory_path, mo, pd, plt
 
 
 @app.cell
-def _(inventory_path, mo):
-    mo.md(
-        """
-        # Overview
+def _(mo):
+    mo.md("""
+    # Overview
 
-        This notebook maps the `reports/` directory into official reports,
-        CI/eval gates, failed experiments, archives, caches, and unknown files.
-        It reads the generated inventory only; it does not modify reports.
-        """
-    )
+    This notebook maps the `reports/` directory into official reports,
+    CI/eval gates, failed experiments, archives, caches, and unknown files.
+    It reads the generated inventory only; it does not modify reports.
+    """)
     return
 
 
@@ -52,13 +50,11 @@ def _(inventory_path, pd):
 
 @app.cell
 def _(inventory, mo):
-    mo.md(
-        f"""
-        ## Report status categories
+    mo.md(f"""
+    ## Report status categories
 
-        Inventory rows: **{len(inventory)}**
-        """
-    )
+    Inventory rows: **{len(inventory)}**
+    """)
     return
 
 
@@ -72,19 +68,6 @@ def _(inventory):
         .sort_values(["status"])
     )
     status_counts
-    return (status_counts,)
-
-
-@app.cell
-def _(plt, status_counts):
-    fig, ax = plt.subplots(figsize=(8, 4))
-    ax.bar(status_counts["status"], status_counts["count"])
-    ax.set_title("Reports By Status")
-    ax.set_xlabel("Status")
-    ax.set_ylabel("File count")
-    ax.tick_params(axis="x", rotation=45)
-    fig.tight_layout()
-    fig
     return
 
 
@@ -175,16 +158,14 @@ def _(inventory, mo):
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-        ## Final takeaway
+    mo.md("""
+    ## Final takeaway
 
-        The team should use official reports for presentation/model decisions,
-        CI/eval reports for deterministic gates, and failed experiment reports
-        only as evidence explaining rejected paths. Archives and caches are kept
-        for traceability, not as current sources of truth.
-        """
-    )
+    The team should use official reports for presentation/model decisions,
+    CI/eval reports for deterministic gates, and failed experiment reports
+    only as evidence explaining rejected paths. Archives and caches are kept
+    for traceability, not as current sources of truth.
+    """)
     return
 
 

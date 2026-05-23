@@ -1,0 +1,7 @@
+model_name,accuracy,macro_f1,weighted_f1,fit_time_seconds,predict_time_seconds
+LogisticRegression,0.719444,0.701875,0.701875,1.180858,0.07256
+LinearSVC,0.705556,0.687216,0.687216,0.684804,0.071944
+SGDClassifier,0.7,0.68093,0.68093,0.641222,0.074806
+ComplementNB,0.672222,0.632008,0.632008,0.619048,0.082499
+MultinomialNB,0.661111,0.626069,0.626069,0.687234,0.07446
+DummyClassifier,0.25,0.1,0.1,0.61724,0.070536

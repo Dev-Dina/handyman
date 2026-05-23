@@ -108,3 +108,44 @@ def test_build_loader_script_passes_api_base_to_iframe() -> None:
         "Loader must include api_base in the iframe src query string — "
         "widget reads it via URL params to call the correct API endpoint"
     )
+
+
+def test_build_loader_script_default_bottom_right() -> None:
+    """Loader must anchor the iframe bottom-right as a fixed-position bubble."""
+    from app.services.widgets.loader import build_loader_script
+
+    js = build_loader_script()
+    assert "position:fixed" in js
+    assert "bottom:20px" in js
+    assert "right:20px" in js
+
+
+def test_build_loader_script_supports_widget_id_fallback() -> None:
+    """Loader must accept a host-page global id when no data-widget-id is set."""
+    from app.services.widgets.loader import build_loader_script
+
+    js = build_loader_script()
+    assert "HANDYMAN_WIDGET_ID" in js
+    assert "widget_id" in js  # query-param fallback
+
+
+def test_build_loader_script_applies_theme_position() -> None:
+    """Loader must reposition the iframe based on the relayed theme position."""
+    from app.services.widgets.loader import build_loader_script
+
+    js = build_loader_script()
+    assert "applyCorner" in js
+    assert "position" in js
+
+
+def test_host_demo_embeds_widget_via_loader() -> None:
+    """Host demo must load the widget through /widget.js with the required data attrs."""
+    from app.core.paths import PROJECT_ROOT
+
+    html = (PROJECT_ROOT / "demo" / "host" / "index.html").read_text(encoding="utf-8")
+    assert "/widget.js" in html
+    assert "data-widget-url" in html
+    assert "data-api-base-url" in html
+    # demo resolves the widget id dynamically (query param / localStorage)
+    assert "HANDYMAN_WIDGET_ID" in html
+    assert "widget_id" in html

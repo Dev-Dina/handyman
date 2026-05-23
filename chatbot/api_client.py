@@ -110,6 +110,20 @@ def rag_query(
         return {"error": f"Unexpected error: {type(exc).__name__}"}
 
 
+def get_eval_summary() -> dict:
+    """Fetch the sanitized evaluation summary from the API (reports owned by API)."""
+    url = f"{API_BASE_URL}/api/v1/evals/summary"
+    try:
+        r = httpx.get(url, timeout=REQUEST_TIMEOUT)
+        if r.status_code == 200:
+            return r.json()
+        return {"error": f"HTTP {r.status_code}"}
+    except httpx.ConnectError:
+        return {"error": "Cannot connect to API."}
+    except Exception as exc:  # noqa: BLE001
+        return {"error": f"Unexpected error: {type(exc).__name__}"}
+
+
 def check_api_health() -> dict:
     url = f"{API_BASE_URL}/healthz"
     try:

@@ -1,0 +1,13 @@
+{
+  "train_count": 1680,
+  "val_count": 360,
+  "test_count": 360,
+  "classification_golden_count": 25,
+  "raw_issue_count": 3923,
+  "heldout_candidate_count": 1498,
+  "overlap_with_train": 0,
+  "overlap_with_val": 0,
+  "overlap_with_test": 0,
+  "overlap_with_classification_golden": 0,
+  "leakage_passed": true
+}

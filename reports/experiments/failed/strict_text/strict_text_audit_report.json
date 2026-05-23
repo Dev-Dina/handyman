@@ -1,0 +1,65 @@
+{
+  "generated_at": "2026-05-20T12:09:24.087353+00:00",
+  "input_paths": {
+    "test": "data\\processed\\test.csv",
+    "train": "data\\processed\\train.csv",
+    "val": "data\\processed\\val.csv"
+  },
+  "output_dir": "data\\processed_strict_text",
+  "splits": [
+    {
+      "avg_raw_text_length": 2510.2,
+      "avg_strict_text_length": 1896.1,
+      "compression_ratio": 0.7554,
+      "has_cjk_count": 18,
+      "high_non_ascii_count": 0,
+      "per_class": {
+        "bug": 420,
+        "docs": 420,
+        "feature": 420,
+        "question": 420
+      },
+      "split": "train",
+      "total_rows": 1680
+    },
+    {
+      "avg_raw_text_length": 2235.8,
+      "avg_strict_text_length": 1641.3,
+      "compression_ratio": 0.7341,
+      "has_cjk_count": 4,
+      "high_non_ascii_count": 1,
+      "per_class": {
+        "bug": 90,
+        "docs": 90,
+        "feature": 90,
+        "question": 90
+      },
+      "split": "val",
+      "total_rows": 360
+    },
+    {
+      "avg_raw_text_length": 2375.0,
+      "avg_strict_text_length": 1792.3,
+      "compression_ratio": 0.7547,
+      "has_cjk_count": 7,
+      "high_non_ascii_count": 0,
+      "per_class": {
+        "bug": 90,
+        "docs": 90,
+        "feature": 90,
+        "question": 90
+      },
+      "split": "test",
+      "total_rows": 360
+    }
+  ],
+  "strict_text_rules": [
+    "title weighted 2x (TITLE: prefix, repeated)",
+    "section filtering: skip environment/OS/runtime sections",
+    "normalize URLs -> <URL>",
+    "normalize markdown images -> <IMAGE>",
+    "normalize GitHub mentions -> <USER>",
+    "strip ### heading markers from content",
+    "preserve commands, YAML, errors, paths, versions"
+  ]
+}

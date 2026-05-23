@@ -1,0 +1,153 @@
+{
+  "best_val_macro_f1": 0.704,
+  "epochs": 5,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 1.2212,
+      "val_accuracy": 0.6583,
+      "val_loss": 0.9724,
+      "val_macro_f1": 0.5974,
+      "val_per_class": {
+        "bug": {
+          "f1": 0.634,
+          "precision": 0.48,
+          "recall": 0.9333
+        },
+        "docs": {
+          "f1": 0.8159,
+          "precision": 0.7387,
+          "recall": 0.9111
+        },
+        "feature": {
+          "f1": 0.8354,
+          "precision": 0.9706,
+          "recall": 0.7333
+        },
+        "question": {
+          "f1": 0.1042,
+          "precision": 0.8333,
+          "recall": 0.0556
+        }
+      }
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.8702,
+      "val_accuracy": 0.6972,
+      "val_loss": 0.7657,
+      "val_macro_f1": 0.6763,
+      "val_per_class": {
+        "bug": {
+          "f1": 0.6667,
+          "precision": 0.5333,
+          "recall": 0.8889
+        },
+        "docs": {
+          "f1": 0.8508,
+          "precision": 0.8462,
+          "recall": 0.8556
+        },
+        "feature": {
+          "f1": 0.8256,
+          "precision": 0.8659,
+          "recall": 0.7889
+        },
+        "question": {
+          "f1": 0.3622,
+          "precision": 0.6216,
+          "recall": 0.2556
+        }
+      }
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.6834,
+      "val_accuracy": 0.7194,
+      "val_loss": 0.6691,
+      "val_macro_f1": 0.6901,
+      "val_per_class": {
+        "bug": {
+          "f1": 0.6667,
+          "precision": 0.5374,
+          "recall": 0.8778
+        },
+        "docs": {
+          "f1": 0.8744,
+          "precision": 0.7982,
+          "recall": 0.9667
+        },
+        "feature": {
+          "f1": 0.8571,
+          "precision": 0.9231,
+          "recall": 0.8
+        },
+        "question": {
+          "f1": 0.3621,
+          "precision": 0.8077,
+          "recall": 0.2333
+        }
+      }
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.5663,
+      "val_accuracy": 0.7028,
+      "val_loss": 0.6377,
+      "val_macro_f1": 0.6809,
+      "val_per_class": {
+        "bug": {
+          "f1": 0.6278,
+          "precision": 0.5263,
+          "recall": 0.7778
+        },
+        "docs": {
+          "f1": 0.895,
+          "precision": 0.8901,
+          "recall": 0.9
+        },
+        "feature": {
+          "f1": 0.8168,
+          "precision": 0.7723,
+          "recall": 0.8667
+        },
+        "question": {
+          "f1": 0.384,
+          "precision": 0.6857,
+          "recall": 0.2667
+        }
+      }
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.508,
+      "val_accuracy": 0.7167,
+      "val_loss": 0.6392,
+      "val_macro_f1": 0.704,
+      "val_per_class": {
+        "bug": {
+          "f1": 0.6667,
+          "precision": 0.5417,
+          "recall": 0.8667
+        },
+        "docs": {
+          "f1": 0.8772,
+          "precision": 0.9259,
+          "recall": 0.8333
+        },
+        "feature": {
+          "f1": 0.8603,
+          "precision": 0.8652,
+          "recall": 0.8556
+        },
+        "question": {
+          "f1": 0.4118,
+          "precision": 0.6087,
+          "recall": 0.3111
+        }
+      }
+    }
+  ],
+  "model": "google/electra-small-discriminator",
+  "run_name": "electra_small_e5_len384"
+}

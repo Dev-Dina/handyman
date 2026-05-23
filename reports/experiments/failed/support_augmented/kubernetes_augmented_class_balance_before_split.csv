@@ -1,0 +1,5 @@
+class,count_after_resolution,count_before_resolution,oldest_created_at,newest_created_at
+bug,1397,1397,2015-04-15T00:55:18Z,2026-05-18T10:58:26Z
+docs,908,1000,2014-12-16T16:41:11Z,2026-05-09T07:23:12Z
+feature,999,1041,2021-03-12T07:52:03Z,2026-05-07T18:33:06Z
+question,1000,1405,2020-04-02T06:49:12Z,2026-03-19T06:27:23Z

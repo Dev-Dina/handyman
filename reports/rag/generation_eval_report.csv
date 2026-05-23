@@ -1,0 +1,6 @@
+gold_id,retrieval_mode,faithfulness_proxy,answer_relevancy_proxy,unsupported_claims_proxy,unsupported_claims_count,retrieved_context_overlap,ideal_answer_overlap,answer_token_count,question
+rag_gold_0000,tfidf,1.0,0.0149,0.0,0,0.9178,0.0116,67,What does the Kubernetes documentation say about Namespaces of Services?
+rag_gold_0001,tfidf,1.0,0.0448,0.0,0,0.9054,0.0361,67,What does the Kubernetes documentation say about Services in Kubernetes?
+rag_gold_0007,tfidf,1.0,0.1167,0.0,0,0.5128,0.0921,60,What problem was reported in issue #128162: Pod admission can fail due to webhooks + context deadline ex...?
+rag_gold_0016,tfidf,1.0,0.2333,0.0,0,0.5128,0.2333,60,What resolution or maintainer guidance was provided for issue #128162 (Pod admission can fail due to webhooks + context d...)?
+rag_gold_0017,tfidf,1.0,0.3485,0.0,0,0.7174,0.3485,66,What resolution or maintainer guidance was provided for issue #128684 (No overflow validation when using MilliValue())?

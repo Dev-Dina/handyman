@@ -1,0 +1,361 @@
+issue_number,true_label,predicted_label,confidence,reason,latency_seconds
+127301,bug,bug,0.9,"The issue reports a defect in the kubelet's handling of orphaned pods, resulting in errors and manual intervention being required to resolve.",42.415
+127311,bug,bug,0.8,"The issue description suggests a failure to join a Windows node to a Linux master kubelet, which is a defect or regression.",30.33
+127316,bug,bug,0.9,"The issue reports a failure to start pods after upgrading the kubelet, with a specific error message and reproduction steps.",47.433
+127330,bug,bug,0.9,"The issue reports that removing a pod affinity does not take effect until pods are rolled, which is unexpected behavior.",78.612
+127334,bug,bug,0.9,"The issue reports a corrupted Kubernetes cluster due to accidentally replaced etcd certificates, with a specific error message indicating a certificate-related problem.",34.453
+127342,bug,bug,0.9,The issue reports a regression where nodeAffinityPolicy is not effective in scheduling pods to specific nodes.,35.55
+127343,bug,bug,0.9,The issue reports a specific failure to download binaries for a particular Kubernetes release.,19.124
+127344,bug,bug,0.9,The issue reports a regression in the Cronjob controller's scheduling behavior.,22.866
+127350,bug,bug,0.9,The issue reports that `kubeadm config images list` does not provide the correct version of the images.,38.902
+127356,bug,bug,0.9,The issue reports a runtime error when updating a pod's image and resources in a cluster with InPlacePodVerticalScaling enabled.,39.302
+127362,bug,bug,1.0,The issue reports an error in the test-e2e-node prerequisites check calculation.,23.161
+127370,bug,bug,0.9,"The issue reports a regression in Endpoints reconciliation with EndpointSlices, causing stuck Endpoints and broken behavior.",75.049
+127390,bug,bug,0.8,"The issue reports that cadvisor metrics are not updating frequently, which is a defect in the Kubernetes system.",80.471
+127401,bug,docs,0.9,"The issue is about missing details in the API specification, specifically regarding nodeAffinity's constraints.",40.361
+127403,bug,bug,0.9,The issue reports a validation error when creating an event resource with an empty InvolvedObject field.,34.885
+127408,bug,bug,0.9,"The issue reports a flaky test with repeated failures and unhandled errors, indicating a potential defect or regression.",44.858
+127410,bug,bug,1.0,The issue reports a defect where setting externalIPs to the same IP as one node renders the node unavailable.,22.983
+127429,bug,bug,1.0,"The issue reports a defect in the Endpoints controller's reconciliation mechanism, causing incorrect endpoint subsets.",23.899
+127436,bug,bug,0.9,The issue reports a specific error message from CoreDNS and provides steps to reproduce the problem.,34.598
+127463,bug,bug,0.9,"The issue reports a DaemonSet pod environment variable not injecting service information, which is unexpected behavior.",90.17
+127465,bug,bug,0.8,"The issue reports unexpected behavior of topologySpreadConstraints in AWS, with a specific example of not spreading replicas across availability zones as expected.",21.288
+127474,bug,bug,0.9,The issue reports a regression where the API Server returns 200 OK but does not properly handle the request when using an HTTP endpoint instead of HTTPS.,59.385
+127502,bug,bug,0.9,"The issue reports an error when trying to set a custom pod logs directory, indicating a potential bug in the kubelet configuration.",53.506
+127505,bug,bug,0.8,The issue reports a failure to add additional args to kube-system StaticPods during upgrade process.,52.705
+127508,bug,bug,0.8,"The issue reports a missing entry in the `managedFields` for PodScheduled status conditions, which is unexpected behavior.",22.341
+127526,bug,bug,0.9,"The issue reports a regression in HPA scaling behavior, with the pods not scaling up despite CPU utilization exceeding the target.",24.364
+127531,bug,bug,0.9,"The issue reports unexpected behavior when terminationMessagePolicy is set to 'File', with a log message indicating the command terminated with exit code 137.",33.542
+127538,bug,bug,1.0,"The issue reports a mismatch between private and public keys, causing repeated reloads and temporary connection disruptions.",60.789
+127553,bug,bug,0.8,The issue reports an abnormal closure of the watchlist request due to a large amount of watchEvents in cacheInterval.,25.459
+127554,bug,bug,0.9,"The issue reports unexpected behavior when using 'allocationMode: All' and multiple ResourceClaims, with pods remaining pending forever.",68.406
+127576,bug,bug,0.9,"The issue reports a regression in the apt package dependencies between two Kubernetes versions, which is unexpected and should be investigated.",56.354
+127588,bug,bug,1.0,"The issue reports a failure when creating a service with MultiCIDRServiceAllocator enabled, which is then resolved by disabling the feature.",84.962
+127593,bug,bug,0.9,"The issue reports a regression in kubeadm's behavior, where an important check was removed, causing network issues.",23.84
+127595,bug,bug,0.9,The issue reports a missing release from the official Kubernetes release storage.,16.966
+127596,bug,bug,0.9,The issue reports a specific error when calling run_remote.go with duplicate flags.,14.73
+127610,bug,bug,0.8,"The issue reports a failed test due to a websocket connection timeout, suggesting a defect or regression in the Kubernetes e2e suite.",34.461
+127618,bug,bug,0.8,The issue reports a regression in completed Job removal after EKS v1.29 update.,38.227
+127623,bug,bug,0.9,The issue reports a broken script (`update-vendor.sh`) with a specific GOPROXY setting.,27.923
+127639,bug,bug,1.0,The issue reports a specific problem with the emulation version in integration tests.,8.53
+127653,bug,bug,0.8,Error message 'failed to get checkpoint dra_manager_state: checkpoint is corrupted' suggests a defect in the Kubernetes upgrade process.,21.715
+127657,bug,bug,0.9,The issue reports a regression in ingress behavior when installing an application without cluster-level permissions.,37.061
+127666,bug,bug,0.9,The issue reports inaccurate cloud provider detection functions that could lead to undefined behavior or panics.,30.694
+127676,bug,bug,0.9,"The kube-flannel pod on the worker node stays in CrashLoopBackOff status, indicating a potential issue with the container runtime or network configuration.",64.52
+127678,bug,bug,0.9,"The issue reports unexpected execution of a CronJob before its scheduled time, with no apparent reason or reproduction steps.",28.127
+127702,bug,bug,0.9,"The issue reports a regression where all external domains are resolved to localhost, which is unexpected behavior.",49.79
+127716,bug,bug,0.8,"The issue reports inconsistent DNS resolution for pod's IP when using headless and headful services, which is a clear indication of a bug.",65.407
+127720,bug,bug,0.9,"The issue is likely a bug because the kube-apiserver error message indicates that the JSON response was not decodable, which suggests a problem with the webhook's response format.",134.027
+127729,bug,bug,0.9,The issue reports unexpected behavior of the InternalIP field in the master node's description.,82.546
+127732,bug,bug,0.9,"The issue reports a forbidden error when listing resources in the default namespace, indicating a potential permissions or configuration problem.",41.983
+127748,bug,bug,0.9,"The issue reports a regression in the KMS V2 API, where the Status() message is sent every 20s instead of the expected 1m, which is contrary to the documented behavior.",38.305
+127840,bug,bug,0.9,Incorrect PVC capacity bytes returned by `/proxy/stats/summary` endpoint,24.363
+127772,bug,bug,0.9,The issue reports a failure to notify the user of data transformation errors in List() queries.,21.538
+127792,bug,bug,0.9,"The issue reports a rare but reproducible problem where `kube-controller-manager` allocates the same PodCIDR to multiple nodes, causing networking issues.",79.234
+127793,bug,bug,0.9,The issue reports a regression in the sidecar container's phase after a node reboot.,19.347
+127813,bug,bug,0.8,The issue reports a regression in the Deployment update process when multiple port mappings with the same port number but different protocols are used.,64.643
+127817,bug,bug,0.8,The issue reports a defect in the kubelet's behavior when applying FsGroupPolicy to ReadWriteOncePod access mode.,31.019
+127837,bug,bug,0.9,The issue reports a 404 error when downloading the kubectl binary from the official release URL.,11.833
+127841,bug,bug,0.9,"The issue reports a regression in the kubelet's GetBootTime() function, which can cause the node start time to drift backward by up to 1 second.",45.035
+127844,bug,bug,0.8,The issue reports a regression in memory usage behavior after upgrading to Kubernetes 1.30.,27.501
+127845,bug,question,0.9,"The issue is a user question about usage, seeking help and troubleshooting for an unexpected failure to access a Kubernetes service's ClusterIP from inside a pod.",51.162
+127853,bug,bug,0.9,"The issue reports a regression in NodeSwap behavior on 1.30+, where processes inside containers do not use the swap partition as expected.",39.006
+127859,bug,bug,0.8,The issue reports a regression in dynamic provisioning of PVCs with non-empty selectors.,21.5
+127860,bug,bug,0.9,"The issue reports a missing User.Uid info for x509 clients, which is expected to be populated by the authenticator.",23.346
+127864,bug,bug,1.0,"The issue reports a race condition between kubelet's eviction manager and containerd's garbage collection, causing flaky test failures.",24.937
+127868,bug,bug,0.9,The issue reports a discrepancy between the expected and actual scheduler logic for calculating resource requests.,22.3
+127883,bug,bug,0.9,The issue reports an unknown field 'anonymous' in the Kubernetes API server configuration.,26.887
+127886,bug,bug,0.9,"The issue reports an error in the code, specifically with the use of `range` for iterating integers.",16.136
+127890,bug,bug,1.0,"The issue reports a potential goroutine leak in kubernetes/test/utils/ktesting/signals.go, with a clear description of the problem and reproduction steps.",73.368
+127900,bug,bug,0.9,The issue reports a failure to create resources with GenerateName multiple times using fakeclient.,34.514
+127911,bug,docs,0.8,The issue reports a documentation error in the structured authorization example.,44.467
+127912,bug,bug,0.9,Regression in Scheduler Performance in Large Scale Clusters indicates a defect or broken behavior.,76.681
+127914,bug,feature,0.9,"The issue is about adding a new default type in kubectl create secret, which suggests an enhancement or feature request.",18.028
+127917,bug,bug,0.9,The issue reports a stuck pod in terminating status due to a finalizer preventing deletion.,16.031
+127937,bug,bug,0.8,The issue reports a TCP connection timeout after some time when using external traffic policy local and MetalB controller.,44.808
+127938,bug,bug,0.9,The issue reports a regression where the 'time' field is missing when server-side-applying the same YAML as a second field manager.,54.228
+127948,bug,bug,0.9,"The issue reports a regression in PodSandbox creation when the system time is changed, resulting in an error message.",56.696
+127950,bug,bug,0.8,The issue reports an unexpected error during the migration of KMS plugin from v1 to v2.,24.627
+127957,bug,bug,0.9,"The issue reports a sudden failure to start pyroscope-server with a probe error, indicating a potential defect or regression.",18.674
+127958,bug,bug,0.8,"The issue reports a regression in the handling of named ports in sidecar containers, which is not expected behavior.",59.965
+127977,bug,bug,1.0,The issue reports a discrepancy between the expected behavior of namespace existence and the actual ability to retrieve a CR resource.,44.587
+127991,bug,bug,0.9,The issue reports a regression in CoreDNS's handling of /etc/resolv.conf settings.,28.774
+127992,bug,bug,0.9,"The issue reports that components hang forever due to a bug in parsing allow metric labels manifest, and provides detailed reproduction steps and code snippets.",72.992
+128001,bug,bug,0.9,The issue reports a regression in the kube-api proxy not working when the kubelet is running on `127.0.0.1`.,40.854
+128002,bug,bug,0.8,"The issue reports a regression in the plugin's behavior, as it should not schedule to any node when simulating an unschedulable state.",47.304
+128006,bug,bug,1.0,The issue is a security vulnerability where default credentials are enabled during the image build process and can be used to gain root access.,33.807
+128007,bug,bug,1.0,The issue is a known vulnerability in Kubernetes Image Builder that allows default credentials to be used during image builds.,33.521
+128017,bug,bug,0.9,"The issue reports a panic error with concurrent map iteration and write, which is a clear indication of a bug.",48.027
+128036,bug,bug,0.9,"The issue reports a discrepancy in feature gate values between HEAD and a specific release version, which suggests a regression or defect.",70.817
+128057,bug,bug,0.8,"The issue reports a failure to pull an image from a private registry deployed with ClusterIP, which suggests a problem with the Kubernetes networking or DNS resolution.",49.031
+128059,bug,bug,0.9,The issue describes a regression where the FC/iSCSI volume plugin in Kubernetes incorrectly resolves the multipath device to a partition.,72.762
+124892,feature,feature,0.9,The issue proposes adding a new metrics to track the end-to-end startup latency of pods since creation to readiness.,15.151
+124907,feature,bug,0.9,The issue reports unexpected failure and regression in ephemeral volume scheduling.,10.657
+124924,feature,feature,0.9,"The issue proposes adding an interface to retrieve pod netns using the pod UID, indicating a new capability or behavior request.",13.669
+124949,feature,feature,0.9,"The issue proposes adding a feasible nodes cache for same type of pods in the same workload, which would improve scheduling efficiency.",10.833
+124995,feature,feature,1.0,The issue title and body clearly indicate that this is a feature request to add a new builder function to events.,9.26
+125031,feature,feature,1.0,The issue title and body describe a new capability or enhancement to the feature gate system.,12.624
+125032,feature,feature,1.0,The issue title and description suggest adding new functionality to verify compatibility versions.,9.139
+125092,feature,feature,0.8,"The issue is about adding a new feature to the Windows container, specifically a -v flag.",14.413
+125149,feature,feature,0.9,"The issue is about moving a feature from alpha to beta, indicating an enhancement or new capability.",10.626
+125234,feature,feature,0.9,The issue is requesting a new capability to allow configuring sysctls for each Pod/Application.,13.358
+125262,feature,feature,1.0,The issue title and body describe a new capability request for CPUManagerPolicy on Windows.,9.77
+125330,feature,feature,1.0,The issue is requesting a new capability or behavior in the scheduler.,11.366
+125338,feature,bug,0.8,The issue reports a scheduling failure due to PVC/PV conflicts and proposes a retry mechanism.,22.5
+125345,feature,bug,0.8,"The issue mentions performance regressions and the need to improve handling of node status, indicating a defect or broken behavior.",29.509
+125355,feature,feature,0.9,The issue is about adding a feature to enhance security by enforcing the usage of the node filter.,9.899
+126178,feature,feature,1.0,The issue title and body suggest a request to add new functionality to display extended resources.,11.124
+125375,feature,feature,0.9,The issue proposes adding a new metric to track kubelet admission failures and provides specific suggestions for the metric's name and labels.,9.406
+125463,feature,feature,0.9,"The issue is tracking a proof of concept implementation for the OCI VolumeSource KEP, which suggests it's an enhancement or new capability.",56.256
+125493,feature,feature,0.9,The issue is requesting a new capability (maxJobCount) to limit the number of active jobs for a cronjob.,12.284
+125500,feature,bug,0.8,The issue is about distinguishing between different error types in the eviction API when violating a Pod Disruption Budget.,13.572
+125501,feature,bug,0.8,"The issue reports a regression where plugin resources change to 0 and cannot be updated, with evidence from logs and code analysis.",19.898
+125538,feature,bug,0.8,"The issue reports a regression in the scheduling queue, where gated pods do not go through backoffQ as expected.",19.977
+125542,feature,bug,0.8,The issue reports a problem with the current behavior of retrying permanent errors.,8.416
+125554,feature,feature,1.0,The issue is requesting a new capability in client-go.,9.45
+125569,feature,docs,0.9,The issue title and body suggest a documentation-focused discussion for the Kubernetes release notes.,7.688
+125590,feature,bug,0.9,"The issue reports a regression in the `client-go` library, specifically with the `fake.Clientset` not supporting custom logs.",29.889
+125595,feature,feature,0.9,The issue proposes a new policy on acceptable CLAs for Kubernetes' dependencies.,12.617
+125621,feature,feature,1.0,"The issue proposes adding a new configuration field for vTPM devices, which is an enhancement request.",16.05
+125665,feature,feature,1.0,The issue title and body suggest implementing a new capability (DRA API) for Kubernetes version 1.31.,10.711
+125677,feature,bug,0.8,"The issue reports a regression in the Job API's validation enforcing Pod Failure Policy, which is only compatible with pod restart policy of 'Never'.",24.145
+125685,feature,feature,0.9,"The issue description focuses on optimizing a method's performance when there is only one zone, indicating an enhancement or new capability.",9.79
+125697,feature,bug,0.8,"The issue reports a defect in the current behavior of Loadbalancer service when changing the selector, causing a brief connection break.",15.129
+125724,feature,question,1.0,The issue is asking a question about Kubernetes' support for namespace deployments.,13.063
+125728,feature,bug,0.8,The issue reports a missing cleanup mechanism for stale RBAC roles and rolebindings.,14.03
+125761,feature,bug,1.0,The issue describes a defect in the kube-scheduler's master election process that can cause split-brain scenarios.,11.363
+125764,feature,feature,0.9,"The issue proposes adding functionality to expose GPU specific requests and limits via Downward API, which is a new capability.",17.0
+125777,feature,bug,0.9,"The issue reports a specific error with ValidatingAdmissionPolicy, indicating a potential defect or regression.",6.873
+125785,feature,bug,0.8,The issue is about a missing piece of information in the log message that makes it harder to identify OOM kills by pod name.,13.341
+125987,feature,feature,1.0,The issue is requesting a new capability in the Horizontal Pod Autoscaler component.,13.913
+125844,feature,docs,0.9,"The issue is about adding information to release notes and documentation, rather than changing the behavior of Kubernetes.",10.799
+125861,feature,feature,0.9,The issue proposes changing the default value of a configuration parameter.,12.685
+125876,feature,bug,0.9,The issue reports a potential security risk due to incorrect permissions on mounted directories.,13.847
+125924,feature,docs,0.8,"The issue is about renaming files for code clarity, which suggests a documentation-related concern.",9.3
+125972,feature,feature,1.0,The issue title explicitly requests a new feature in Kubernetes.,13.525
+125980,feature,feature,0.9,"The issue title and body suggest a change to the kube emulation version validation, which is typically associated with new capabilities or enhancements.",9.62
+125983,feature,bug,0.9,"The issue reports a security vulnerability in the gitRepo volume type, which has been deprecated for 6 years.",8.943
+126049,feature,feature,0.9,The issue proposes optimizing volumemanager run loop by making it configurable or using a more efficient scheduling approach.,14.328
+126085,feature,feature,0.9,The issue title and body suggest adding a new configuration option to adjust the kubelet's behavior.,8.622
+126097,feature,feature,1.0,The issue requests the implementation of a new kubectl command option to output data in gron format.,11.297
+126103,feature,feature,0.9,"The issue requests the addition of technology for controlled cluster shutdown and startup, indicating a new capability or behavior.",17.849
+126119,feature,bug,0.9,The issue reports a visible overhead and proposes an alternative solution to remove the need for cadvisor.,10.693
+126148,feature,bug,0.9,The issue reports a missing parameter that prevents correct functionality.,6.653
+126189,feature,feature,0.9,The issue proposes introducing a new field in the Tolerations API to improve disruption handling guarantees.,15.214
+126218,feature,feature,0.9,The issue proposes exposing an API for kubeadm commands to handle responses easily.,15.287
+126219,feature,bug,1.0,"The issue is tracking follow-ups for PRs that introduced new locks to the scheduling queue, indicating a need to improve or fix existing behavior.",16.009
+126239,feature,bug,0.9,The issue reports a defect in CEL cost calculation that overestimates the cost of sum in CRD validation.,25.794
+126261,feature,feature,0.8,The issue is requesting a new capability in the go.mod file to improve importability.,16.633
+126276,feature,feature,0.9,The issue title and body suggest a request for adding or changing functionality.,7.162
+126283,feature,feature,1.0,The issue title explicitly mentions 'Feature requests' and the body describes an enhancement request for adding label-based indexes to the apiserver cache.,30.913
+126311,feature,bug,0.9,The issue reports a potential problem with hardcoded reserved symbols in the `celReservedSymbols` list.,10.346
+126372,feature,feature,0.8,The issue requests a new capability in the node status API to record remaining capacity.,44.581
+126394,feature,feature,0.9,The issue proposes adding a new capability to provide a `/run/user/<UID>/` tmpfs volume mount for containers.,45.0
+126436,feature,feature,0.9,"The issue is focused on adding new test cases for Pod lifecycle events, which suggests a feature request rather than a bug or documentation issue.",19.962
+126437,feature,docs,1.0,The issue title and body clearly describe a request to update Kubernetes documentation with details about Pod lifecycle tests.,19.643
+126438,feature,docs,0.9,"The issue proposes implementing auto-generation of documentation from test cases, which is a clear documentation-related task.",15.776
+126464,feature,feature,1.0,Adding a context parameter to PodEligibleToPreemptOthers is an enhancement request.,14.489
+126471,feature,feature,0.9,"The issue is requesting the ability to start sidecar and main containers in parallel, which suggests a new capability or behavior.",16.235
+126487,feature,feature,1.0,The issue is requesting a new capability or behavior.,11.762
+126501,feature,feature,0.9,The issue requests a new capability for VAP to resolve conflicts between policies based on an ordering mechanism.,8.853
+126548,feature,feature,1.0,"The issue is about adding end-to-end tests for a new feature, non-graceful node shutdown handling with csi-mock driver.",12.616
+126549,feature,feature,0.9,"The issue is about adding test cases to the e2e testing framework, which suggests a new capability or enhancement.",11.852
+126555,feature,bug,0.9,"The issue reports a regression in Kubernetes's validation of label values, which is not allowing the same values as Prometheus.",19.827
+126559,feature,bug,0.9,The issue reports a bug found in KEP-4191 when writable and readonly layers are on the same disk but different locations.,9.623
+126617,feature,bug,0.9,"The issue reports a regression in the memory-backed EmptyDir feature, where the size is capped at the node's RAM size instead of the specified SizeLimit.",30.798
+126788,feature,feature,1.0,The issue is requesting the addition of a new capability to the local-up-cluster.sh script.,9.555
+126804,feature,feature,0.9,The issue proposes adding a new metric to the API server to accurately track etcd database usage.,30.188
+126819,feature,bug,0.8,"The issue mentions avoiding DOS attacks and blocking the beta release, indicating a potential security vulnerability or performance regression.",8.043
+126837,feature,feature,1.0,"The issue title and body describe enhancements to the ResourceSlice controller, which is a clear indication of a feature request.",9.155
+126858,feature,feature,0.8,The issue proposes a change to improve the scheduler's throughput by running PostFilters asynchronously.,13.457
+126876,feature,feature,1.0,The issue requests a new capability or behavior.,7.209
+126890,feature,feature,1.0,Introduction of a new CPU Manager static policy option to group CPUs by last level cache.,7.715
+126893,feature,feature,1.0,"The issue is about migrating a script to use golangci-lint plugin architecture, indicating an enhancement or new capability.",16.54
+126936,feature,docs,0.8,"The issue is about a legacy public image with no updates for years, which suggests a documentation problem rather than a code or feature issue.",11.887
+126942,feature,feature,0.8,"The issue requests support for resource configuration at the pod level, which is a new capability.",17.972
+126944,feature,feature,0.9,The issue is requesting a new capability in the API static Pod to simplify configuration and exemption of namespaces from webhook policies.,13.139
+126993,feature,feature,0.9,Request to configure the output directory of a generated file,11.195
+127000,feature,feature,1.0,"The issue requests a new capability in kubectl, specifically adding configuration APIs to explain.",8.828
+127013,feature,feature,1.0,The issue proposes a new feature for reusable network port grouping.,12.626
+127032,feature,bug,0.8,"The issue mentions golangci lint errors and a script that finds many issues, suggesting a defect or regression.",8.67
+127051,feature,feature,0.9,The issue proposes adding a new capability to pass trace information to device-plugin server.,8.421
+22923,docs,docs,1.0,The issue title and description suggest a documentation request to improve the contributor experience.,6.025
+22986,docs,bug,0.9,The issue reports an unexpected error when trying to create a pod with the same name as one that has already finished.,9.689
+23026,docs,bug,0.9,The issue reports a specific problem with rendering Go templates in user documentation.,6.857
+23033,docs,docs,0.8,The issue title mentions documentation and the body discusses the need for on-boarding and component conventions documentation.,26.083
+23046,docs,docs,0.9,"The issue is about missing documentation, specifically asking for guidance on enabling monitoring in Kubernetes.",5.823
+23081,docs,docs,0.9,Request to generate an index for operations.html in API reference documentation,8.021
+23085,docs,docs,0.9,The issue is about documenting common questions and answers for adopting K8s/Docker/Rkt.,12.242
+23092,docs,bug,0.8,"The issue reports a failure in the 'Running Kubernetes Locally via Docker' guide, specifically with the API server port not being published.",17.088
+23098,docs,docs,1.0,The issue title explicitly mentions documentation and the body requests adding documentation for a new feature.,8.175
+23106,docs,docs,1.0,The issue is about updating documentation examples to match the description.,14.328
+23159,docs,docs,0.9,The issue is about updating documentation links in the release docs.,8.427
+23166,docs,feature,0.9,The issue title and body suggest a change to the default behavior of Kubernetes components.,7.358
+23188,docs,bug,0.8,"The issue description mentions that the AWS Multiple-AZ fails to start up and register nodes on the second AZ, which suggests a defect or regression in the Kubernetes cluster creation process.",75.056
+23301,docs,docs,0.9,The issue is about improving documentation format.,6.08
+23303,docs,docs,0.9,The issue title and description suggest a documentation-related problem.,6.141
+23396,docs,bug,0.8,"The issue mentions 'Upstream' and 'Authz', indicating a potential regression or defect in the authorization mechanism.",6.464
+23402,docs,docs,0.8,"The issue is about improving the usability of kubectl's help output, which suggests a documentation-related problem.",8.358
+23404,docs,bug,0.9,The issue reports unexpected new line characters in environment variables retrieved from a Secret.,23.19
+23465,docs,bug,0.8,The issue title suggests that the load balancer commands do not work as expected.,60.11
+23511,docs,docs,0.9,The issue title and description suggest a documentation-related change.,5.832
+23604,docs,bug,0.9,"The issue reports a non-deletable pod created by kubectl run, which is unexpected behavior.",12.602
+23651,docs,feature,0.8,The issue is requesting a new capability in kubectl expose to modify existing services.,18.067
+23702,docs,feature,1.0,"The issue is requesting a new capability or behavior, specifically mentioning a new Slack channel for novice users.",8.9
+23778,docs,docs,0.8,The issue reports incorrect documentation links and content.,9.753
+23803,docs,docs,1.0,The issue title explicitly mentions writing documentation for a specific feature.,6.959
+23805,docs,docs,1.0,The issue is about updating documentation for DNS testing.,8.357
+23816,docs,bug,0.9,The issue reports a regression in k8s 1.2 that affects node registration.,7.523
+23855,docs,docs,0.9,The issue is about improving documentation for a specific topic.,8.849
+23981,docs,docs,1.0,The issue is about adding documentation for troubleshooting DNS addon issues.,10.986
+24055,docs,docs,0.9,The issue is about clarifying a misunderstanding in the API documentation.,6.682
+24130,docs,docs,0.9,"The issue is about adding a diagram to the documentation, not fixing a bug or implementing new functionality.",10.136
+24160,docs,docs,0.9,Request for documentation generation for specific Kubernetes versions,7.941
+24228,docs,docs,1.0,The issue is about adding or updating documentation for the development workflow.,11.116
+24229,docs,question,1.0,"The issue is asking about backup and migration procedures for a Kubernetes cluster, seeking guidance on existing solutions or best practices.",9.925
+24255,docs,bug,0.9,"The issue reports a regression in using gcePersistentDisk with MySQL on GKE, which is not working as expected.",30.258
+24259,docs,docs,0.9,The issue is about documentation inconsistencies and suggesting resolutions for outdated links.,16.489
+24314,docs,feature,1.0,The issue title and body suggest a request for an enhancement or new capability.,6.599
+24327,docs,docs,1.0,The issue title and body indicate a documentation problem.,6.278
+24364,docs,feature,0.9,The issue is requesting an enhancement to the documentation to clarify a common misunderstanding.,14.05
+24373,docs,docs,0.9,"Dead links mentioned in issue title and body, indicating a documentation problem",7.37
+24383,docs,docs,0.9,The issue reports a broken link in the README.md file.,6.885
+24643,docs,docs,1.0,The issue is about incorrect documentation rather than a bug in the Kubernetes system itself.,7.525
+24669,docs,docs,0.8,"The issue is about clarifying the usage of intermediate certs and Ingress, indicating a documentation problem.",11.442
+24687,docs,bug,0.9,"The issue description and logs suggest a problem with the NFS example on Google Container Engine, which is likely a bug.",70.572
+24691,docs,docs,0.9,The issue is about updating Wikipedia with information from a Kubernetes release.,8.534
+24714,docs,bug,0.9,The issue reports an error message and provides a detailed analysis of the problem.,13.503
+24735,docs,docs,0.8,The issue is primarily about improving the documentation process and ensuring that it stays up-to-date with code changes.,15.005
+24778,docs,docs,1.0,The issue reports a documentation bug with a specific tag format.,13.842
+24865,docs,bug,0.95,"The issue description and logs suggest a problem with node registration or lifecycle, which is a common bug in Kubernetes.",90.443
+24866,docs,docs,1.0,The issue is about updating documentation links and deleting an empty shell file.,17.7
+24888,docs,bug,0.9,The issue reports a regression in kubectl's deployment replacement functionality.,13.864
+24925,docs,docs,0.9,The issue is about documenting accepted formats for CPU limits.,8.319
+24928,docs,question,1.0,The issue is asking for an explanation of the life cycle and behavior of automatically created secrets in ServiceAccount.,13.633
+24973,docs,bug,1.0,The issue is caused by a validation error when creating an HPA using the provided YAML file.,13.285
+25023,docs,question,0.8,The issue appears to be a user seeking support or troubleshooting guidance rather than reporting a defect or requesting a new feature.,15.26
+25150,docs,docs,0.9,"The issue is about creating a guide for placing resources in API groups, which suggests a documentation-related problem.",9.327
+25236,docs,bug,1.0,The issue reports a regression in the Deployment's undo functionality.,7.69
+25248,docs,invalid,0.0,,23.315
+25290,docs,docs,1.0,The issue is about updating documentation and examples in `kubectl help`.,10.738
+25367,docs,docs,0.8,The issue is about missing or incorrect documentation in the getting-started guide.,9.879
+25388,docs,docs,0.9,"The issue is about creating and documenting conventions for users, indicating a documentation-related problem.",7.552
+25406,docs,docs,1.0,The issue reports a documentation problem with an outdated image.,6.608
+25529,docs,docs,0.9,"The issue is about missing or incorrect documentation, specifically referencing a flag in an example YAML file.",7.25
+25618,docs,bug,1.0,"The issue reports that PetSet is not launching more than one pod, which suggests a defect or regression in the Kubernetes behavior.",38.767
+25620,docs,docs,1.0,"The issue is about incorrect or missing documentation, specifically an example not working as expected.",9.846
+25675,docs,docs,0.8,The issue is about minor documentation comment and example clarity.,14.335
+25697,docs,bug,0.9,"The issue reports a defect in the RBD plugin, which is looking for secrets in the wrong namespace.",19.834
+25803,docs,docs,0.9,The issue title explicitly asks for documentation on a specific Kubernetes option.,7.079
+25854,docs,feature,0.9,The issue proposes changes to support local file installation for Kubernetes components.,10.398
+25893,docs,docs,0.9,The issue is about documenting the validated Docker versions for Kubernetes 1.3 release.,10.315
+26093,docs,docs,0.8,The issue is primarily focused on documenting and potentially removing dependencies of the kubelet.,32.605
+26201,docs,docs,1.0,The issue title and body suggest a documentation request to add known issues for rkt in the Kubernetes 1.3 release.,7.966
+26205,docs,docs,1.0,The issue title and body suggest a documentation-related problem.,7.195
+26357,docs,docs,0.9,The issue mentions documentation files and a warning about broken links.,5.709
+26447,docs,docs,1.0,The issue title and body suggest a documentation update request.,5.638
+26513,docs,question,0.9,The issue is asking for help or support on how the Webhook feature works and where to find more information.,6.96
+26545,docs,docs,0.8,The issue description mentions documentation links and their broken behavior.,9.247
+26659,docs,docs,1.0,The issue is about documentation and its content.,6.256
+26764,docs,feature,0.8,The issue proposes an enhancement to the Kubernetes examples by providing a more modern and relatable implementation of the guestbook application.,12.403
+26844,docs,docs,1.0,The issue is about a missing or incorrect documentation file.,7.534
+26941,docs,docs,0.8,"The issue is about configuring environment variables in the Zeppelin image, which suggests a documentation or usage question.",11.808
+27050,docs,docs,0.9,"The issue is about the help output of kubectl create command, which suggests it's a documentation-related problem.",11.406
+27073,docs,bug,0.8,The issue reports a regression in replicationcontrollers not being found when setting up a local cluster with vagrant.,16.207
+27076,docs,docs,0.9,"The issue is about collecting known issues for a Kubernetes release, indicating documentation or tracking purposes.",9.195
+27116,docs,docs,0.9,The issue is about unclear documentation regarding AWS EBS persistent volumes on a Multi AZ cluster.,9.657
+27363,docs,bug,0.9,Error message and failure to adopt existing ELBs indicate a defect or regression in the AWS restore/upgrade process.,12.635
+27442,docs,bug,0.8,"The issue reports an error when following the documentation for OpenSSL, indicating a potential defect or regression.",16.4
+27476,docs,bug,0.9,Permission errors during Cassandra startup suggest a defect or regression in the sample image.,9.58
+27653,docs,bug,0.9,The issue reports a defect in the volume manager's behavior across restarts.,9.378
+27723,docs,feature,0.9,"The issue proposes a new capability, enabling multiple handlers per probe type.",7.806
+127419,question,bug,0.9,"The issue reports a TLS error with Karpenter liveness and readiness probes, which is a clear indication of a defect or regression.",43.031
+127530,question,bug,0.9,"The issue description and logs suggest that the kubeadm init command is failing to start a healthy API server, which is likely due to a defect or regression in the Kubernetes code.",74.111
+127557,question,bug,0.8,The issue reports unexpected automatic restarts of kube-controller-manager and kube-scheduler after a specific time every day.,30.047
+127563,question,bug,0.95,"The issue reports a node staying in NotReady status after joining the cluster, with error messages indicating issues with container runtime network and CNI plugin.",80.212
+127617,question,bug,0.8,The issue reports unexpected behavior of the controller-manager monitoring customized resources.,13.283
+127694,question,bug,0.8,The issue reports an unexpected error when trying to connect to the Kubernetes server using Kerberos authentication.,55.518
+127747,question,bug,0.9,"The issue description suggests that the load balancer is not working as expected, and the user has tried various troubleshooting steps without success.",78.581
+127755,question,bug,0.8,"The issue reports a control-plane node failure after transferring pods from one control-plane to another, with symptoms of incremental delay and eventual unresponsiveness.",30.361
+127770,question,question,1.0,The issue title and body describe a user seeking help and clarification on the usage of a specific configuration option.,11.842
+127884,question,bug,0.9,"The issue reports a forbidden error when listing pods in the kube-system namespace as anonymous user, which is unexpected behavior.",22.221
+127925,question,question,0.9,"The issue is seeking guidance and best practices for freezing a namespace in Kubernetes, indicating a support request.",9.704
+127980,question,bug,0.9,"High pod churn causes APIServer OOM, with profiling data provided to support the claim.",21.44
+128146,question,bug,0.8,"The issue reports a large number of requests from kubelets creating tokens, which may be causing resource pressure on the cluster.",22.926
+128161,question,bug,0.9,"The issue reports unstable behavior of multiple critical containers, including the api-server, kube-proxy, and kube-scheduler, which is a clear indication of a bug.",27.548
+128176,question,bug,0.8,"The issue is about a failed deployment of cAdvisor due to an error in finding the manifest, which suggests a bug or defect.",19.611
+128224,question,feature,1.0,The issue is requesting a new capability for pods to request resources for each container at runtime.,17.11
+128301,question,feature,0.8,The issue requests a new capability or behavior to balance existing pod distribution without restarting them.,9.293
+128312,question,bug,0.8,"The issue reports an unexpected error when using `kubectl drain` with `--ignore-daemonsets=false`, which suggests a defect or regression in the command's behavior.",28.903
+128325,question,bug,0.8,The issue reports unexpected DNS failure after initial successful responses.,68.826
+128389,question,bug,0.8,"The issue description suggests unexpected and unexplained memory consumption in pods, which is a classic symptom of a bug or defect.",20.218
+128561,question,bug,0.8,The issue reports a specific scenario where stopping and restarting the kubelet causes a pod to become unready.,16.464
+128587,question,bug,0.9,The issue describes a regression in kubelet's log rotation behavior that causes loss of logs.,13.059
+128822,question,bug,0.8,The issue reports a discrepancy in the timing of pod scheduling between the scheduler and kubelet.,18.552
+128843,question,bug,0.9,The issue reports unexpected behavior when passing the first argument to a bash script in a Kubernetes YAML file.,33.467
+128901,question,bug,0.8,"The issue reports a delay in kubelet starting ADD after the kube-scheduler is scheduled, which suggests a potential bug or regression.",105.052
+128910,question,bug,0.8,"The issue reports a delay in updating the graph by the node authorizer, resulting in unauthorized requests.",23.545
+128975,question,bug,0.9,"The issue description suggests a regression in the kubelet's behavior after upgrading to v1.30.4, with symptoms like failed cgroup removal and static pods not being started.",81.655
+128994,question,feature,0.9,The issue requests adding disk I/O support to the pod device mount part.,14.658
+133547,question,docs,1.0,The issue title and body mention documentation and a specific URL.,6.422
+129076,question,bug,0.8,The issue reports a warning when creating secrets exceeding the maximum message size limit.,17.025
+129135,question,bug,0.8,The issue reports an inconsistency in the timestamps of scheduled events.,48.814
+129167,question,feature,0.9,The issue reports a missing feature gate for MutatingAdmissionPolicy in kubeadm init --help output.,21.38
+129318,question,feature,0.8,The issue requests a new capability to detect node drains and potentially update node status or raise events.,11.911
+129372,question,bug,0.8,"The issue reports a failure to initialize a pod due to a file name being too long, which suggests a bug in the Kubernetes or JupyterHub component.",18.848
+129383,question,bug,0.8,The issue reports a connection refused error while transferring files using the AKS cluster.,11.76
+129409,question,docs,0.8,The issue is about documentation and recommendations for enabling/disabling Transparent Huge Pages in Kubernetes.,11.529
+129436,question,bug,0.9,The issue reports a specific failure to use kubectl version 1.30.5 and higher in an Alpine Linux environment.,16.16
+129511,question,bug,0.9,"The issue reports a regression in the AppArmor field handling when upgrading from 1.29 to 1.30, causing fields to be dropped from higher-level workload specs.",65.291
+129558,question,bug,0.9,The issue reports a regression in yum autoremove behavior after upgrading to Kubernetes 1.30.,25.646
+129597,question,bug,0.9,The issue reports a specific error message indicating that the email validation is too restrictive.,21.493
+129659,question,bug,0.9,"The issue reports unexpected behavior during an upgrade, with containers being restarted without a drain.",16.255
+129846,question,docs,0.8,The issue is about documentation and the lack of a recommended way to shut down and restart an entire cluster.,10.245
+129869,question,bug,1.0,The issue reports an error and a specific version incompatibility between k8s.io/apiserver and cel-go.,12.745
+129882,question,bug,0.8,The issue description suggests a regression in RKE2 Calico behavior after OS security patches are applied.,22.92
+129924,question,feature,0.9,The issue is requesting a new capability or enhancement to Kubernetes.,9.651
+129958,question,bug,0.9,"The issue reports a resource creation error with a specific configuration, indicating a potential defect or regression in the Kubernetes API.",32.037
+133550,question,bug,0.9,The issue reports a defect in the leader election acquisition loops.,8.096
+130029,question,bug,1.0,"The issue reports a defect in the kubelet's behavior when communicating to the API server, despite CIDRs being specified in NO_PROXY.",44.179
+130043,question,question,1.0,The issue is a user inquiry about the behavior of DeviceAllocationModeExactCount and its relationship with pool.inComplete.,14.092
+130057,question,bug,0.8,"The issue reports a failure to route traffic without a default route, which is unexpected behavior.",13.877
+130089,question,question,1.0,The issue is asking for information about resource usage of Kubernetes components.,6.626
+130192,question,docs,0.8,"The issue appears to be a question about optimizing permission changes in Kubernetes, which is more related to documentation or best practices rather than a bug or feature request.",15.113
+130205,question,bug,0.9,The error message indicates a permission issue when listing pods in the reliability namespace after a master node restart.,16.385
+130234,question,bug,0.9,"The issue reports a problem with pod-to-pod communication on the same node, which is a known bug in Kubernetes.",73.107
+130552,question,feature,0.8,"The issue is about maintaining CRD version for resources with multiple active branches, which suggests a feature request or enhancement rather than a bug or documentation issue.",26.029
+130610,question,bug,0.8,The issue mentions unexpected behavior with two versions of OpenAPI being used.,6.362
+130611,question,bug,0.8,The presence of stuck pods in a Terminating state suggests a potential bug or unexpected behavior.,7.253
+130631,question,bug,0.8,The issue is about failing to join a cluster and getting an error message indicating a connection refused error.,17.822
+130740,question,question,1.0,The issue is asking for help or guidance on a specific usage scenario.,9.238
+130769,question,bug,0.9,"The issue reports a regression in the rollout restart of a Deployment, where environment variables from a secret are not updated as expected.",31.6
+130845,question,question,1.0,The issue title and body suggest a user seeking help or guidance on how to achieve a specific behavior in Kubernetes.,11.375
+133548,question,question,0.9,The issue is a user asking for help on how to test code that interacts with leaderelection.RunOrDie(),19.701
+131025,question,question,1.0,The issue is a support request for troubleshooting a kubectl command failure.,8.777
+131047,question,feature,0.9,The issue is requesting a new capability to reserve bandwidth for control plane networks.,6.63
+131062,question,bug,0.8,The issue reports a potential security vulnerability and asks for assessment and mitigation strategies.,12.143
+131080,question,bug,0.9,"The issue description and steps to reproduce suggest a regression or unexpected failure in the kubeadm update process, specifically with adding new nodes after updating the CA certificate.",80.873
+131131,question,bug,0.9,"The issue reports an internal error with a 404 Not Found error when running kubectl exec on a pod, which suggests a bug in the Kubernetes or CNI components.",89.546
+131164,question,bug,1.0,The issue reports an unimplemented service error when trying to validate the CRI v1 runtime API.,22.286
+131230,question,bug,0.9,"The issue reports a Pod's status changing to NotReady after one container exits successfully, causing a Service to fail to bind.",37.302
+131231,question,bug,0.7,The issue reports a regression where a taint is lost when patching a node with non-latest data.,13.208
+131254,question,question,1.0,The issue is asking for usage guidance and seeking suggestions.,7.952
+131291,question,bug,0.9,"The issue is about a defect in the kubernetes API, specifically with PVC expansion.",43.028
+131396,question,bug,0.9,The issue description and provided logs indicate a regression in DNS query behavior after upgrading to Kubernetes version 1.31.,78.148
+131543,question,bug,0.8,"The issue reports a discrepancy between the expected and actual behavior of `kubtctl auth can-i get pods/exec`, indicating a potential defect or regression.",21.754
+133545,question,feature,0.9,The issue proposes adding a new metric to track latency and delay duration in rate-limiting queues.,14.478
+131604,question,question,1.0,The issue is asking for guidance on how to implement multiple probes (http and gRPC) in a single Pod.,10.98
+131667,question,bug,0.9,The issue is that the kubelet is unable to restart due to SELinux denials when spawning hundreds of thousands of files in an emptyDir.,60.381
+131669,question,bug,0.9,The issue reports a specific problem with management plane components being killed due to OOM in large model inference scenarios.,15.729
+131734,question,bug,0.8,The issue highlights a potential security vulnerability in the encryption mechanism.,9.546
+131833,question,bug,0.8,The issue reports a regression in pod vertical scaling behavior between Kubernetes versions 1.32.x-1.33.x.,54.822
+131977,question,bug,0.9,"The issue reports a failure to start pods on a node when an additional kubelet process is run, with errors indicating connection refused to the kubelet socket.",24.654
+132041,question,bug,0.9,"The issue reports a crash of the kube-controller-manager and kube-scheduler components during kubeadm init, which is unexpected behavior.",56.458
+132437,question,bug,0.9,The issue reports a regression in kubectl's behavior when creating CRs with changed CRD scope.,42.234
+132575,question,bug,0.9,"The issue description indicates a defect or regression in the CNI's behavior, specifically that it is not injecting routes to nodes.",58.37
+132643,question,question,0.9,The issue is asking for usage guidance on a specific feature.,6.734
+132705,question,question,0.9,The issue is a support request about moving pods from multiple nodes to a single node and terminating others.,9.956
+132793,question,bug,0.8,The issue reports unexpected behavior where the startup probe only starts after periodSeconds when initialDelaySeconds is lower than periodSeconds.,24.317
+133049,question,question,0.9,The issue is asking about optimizing pod rescheduling latency after a node power outage and seeking guidance on how to modify settings.,13.923
+133064,question,bug,0.8,The issue reports a discrepancy between the expected and actual Kube-Proxy Version output when using `kubectl describe nodes`.,18.913
+133169,question,bug,0.8,The issue reports unexpected behavior where coredumps appear on the host path instead of the expected container path.,24.4

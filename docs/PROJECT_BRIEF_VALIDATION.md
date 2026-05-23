@@ -40,8 +40,8 @@ Status key: **COMPLETE** | **PARTIAL** | **TODO** | **BLOCKED** | **NOT_REQUIRED
 | Metadata filtering | Over corpus | `source_type`, `maintainer_only` filters in retrieval service | **COMPLETE** | none | â€” |
 | RAG golden set (25 examples) | question/ideal-answer/ground-truth-chunks triples | `evals/golden/rag/rag_golden.jsonl` (25 rows, 5 hand-labeled) | **COMPLETE** | none | â€” |
 | Retrieval eval with thresholds | Retrieval metrics; CI gate | `pipelines/rag/eval_api.py`; `eval_thresholds.yaml`; `reports/rag/api_eval_report.json` | **COMPLETE** | none | â€” |
-| Generation eval (faithfulness/answer_relevancy) | RAGAS or frozen judge; report agreement with hand labels | `DEFERRED` â€” noted in RAG_TRACK_REPORT; `build_extractive_answer` gives extractive text but no LLM judge wired | **PARTIAL** | No faithfulness/answer_relevancy score; no judge agreement report; required for submission block | Write generation eval harness after CHAT is functional |
-| RAG API endpoint | Runtime retrieval service | `POST /api/v1/rag/query` live; TF-IDF fallback; tracing spans | **COMPLETE** | none | â€” |
+| Generation eval (faithfulness/answer_relevancy) | RAGAS or frozen judge; report agreement with hand labels | Deterministic token-overlap proxy `pipelines/rag/eval_generation.py` → `reports/rag/generation_eval_report.json`; **optional Vault-gated LLM-as-judge** `--judge groq` → `reports/rag/generation_judge_report.json` with faithfulness/relevancy agreement rates vs the proxy | **COMPLETE** | LLM-judge is manual (never CI); run it to populate the agreement report | Run `--judge groq` once for the submission artifact |
+| RAG API endpoint | Runtime retrieval service | `POST /api/v1/rag/query` live; **E5 hybrid α=0.7 served** via model_server `/embed` + shipped chunk embeddings (`retriever_used=hybrid`); TF-IDF fallback; tracing spans | **COMPLETE** | none | â€” |
 
 ---
 
@@ -146,7 +146,7 @@ Status key: **COMPLETE** | **PARTIAL** | **TODO** | **BLOCKED** | **NOT_REQUIRED
 | Tag `v0.1.0-week7` | Public repo, tagged | Not yet created | **TODO** | — | tag at submission |
 | DECISIONS.md — tracing backend | “Pick a tracing backend and defend the choice” | `DECISIONS.md` — Jaeger chosen; rationale: local Docker, no API key, OTLP-native, browser UI for demo | **COMPLETE** | none | — |
 | DECISIONS.md — widget bundle target | Bundle size target | `DECISIONS.md` — 145,290 bytes raw / ~47.05 kB gzip; Vite build; dist not committed | **COMPLETE** | none | — |
-| Submission block filled in | Name/repo/tag/dataset/F1/RAG/mem-type/tracing/bundle-size | All fields present | **PARTIAL** | faithfulness score missing; git tag missing | fill after generation eval |
+| Submission block filled in | Name/repo/tag/dataset/F1/RAG/mem-type/tracing/bundle-size | All fields present; faithfulness_proxy now available from generation eval | **PARTIAL** | git tag missing | create git tag `v0.1.0-week7` |
 
 ---
 

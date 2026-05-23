@@ -21,6 +21,12 @@ from app.infra.redaction import redact
 from app.infra.tracing import get_tracer
 from app.services.memory.long_term import store_long_term_memory_with_db
 from app.services.memory.short_term import store_memory
+from app.services.rag.config import (
+    SOURCE_TYPE_COMMENT,
+    SOURCE_TYPE_DOCS,
+    SOURCE_TYPE_ISSUE,
+)
+from app.services.rag.query_transform import VALID_TRANSFORMS
 from app.services.rag.retrieval import retrieve
 from app.services.tools import extract_entities_service, summarize_service
 
@@ -28,6 +34,19 @@ _MAX_TOOL_OUTPUT_CHARS: int = 4000
 _MAX_TOOL_INPUT_TRACE_CHARS: int = 200
 
 DEFAULT_RAG_TOP_K: int = 5
+_VALID_SOURCE_TYPES: frozenset[str] = frozenset(
+    {SOURCE_TYPE_DOCS, SOURCE_TYPE_ISSUE, SOURCE_TYPE_COMMENT}
+)
+
+
+def _coerce_source_type(value: object) -> str | None:
+    """Return a valid source_type or None (no filter) for any invalid input."""
+    return value if value in _VALID_SOURCE_TYPES else None
+
+
+def _coerce_query_transform(value: object) -> str:
+    """Return a valid query_transform, defaulting to 'none' for invalid input."""
+    return value if value in VALID_TRANSFORMS else "none"
 
 TOOL_DEFINITIONS: list[dict] = [
     {
@@ -37,7 +56,10 @@ TOOL_DEFINITIONS: list[dict] = [
             "description": (
                 "Search the Kubernetes knowledge base for relevant documentation "
                 "and issue history. Call this before answering questions about "
-                "Kubernetes behavior, errors, or past issues."
+                "Kubernetes behavior, errors, or past issues. For documentation "
+                "questions set source_type='docs'; for issue-history or maintainer "
+                "answers use 'issue' or 'comment'; for technical debugging set "
+                "query_transform='technical_terms'."
             ),
             "parameters": {
                 "type": "object",
@@ -49,6 +71,22 @@ TOOL_DEFINITIONS: list[dict] = [
                     "top_k": {
                         "type": "integer",
                         "description": "Number of results to return (default 5)",
+                    },
+                    "source_type": {
+                        "type": "string",
+                        "enum": ["docs", "issue", "comment"],
+                        "description": (
+                            "Optional filter: restrict to documentation, issue "
+                            "bodies, or issue comments. Omit to search everything."
+                        ),
+                    },
+                    "query_transform": {
+                        "type": "string",
+                        "enum": ["none", "technical_terms"],
+                        "description": (
+                            "Optional query expansion. Use 'technical_terms' to "
+                            "boost Kubernetes/code tokens for debugging questions."
+                        ),
                     },
                 },
                 "required": ["query"],
@@ -174,12 +212,25 @@ async def dispatch_tool(
     if name == "rag_query":
         with tracer.start_span("tool.rag_query") as span:
             query = str(arguments.get("query", ""))
-            top_k = int(arguments.get("top_k", DEFAULT_RAG_TOP_K))
+            try:
+                top_k = int(arguments.get("top_k", DEFAULT_RAG_TOP_K))
+            except (TypeError, ValueError):
+                top_k = DEFAULT_RAG_TOP_K
+            source_type = _coerce_source_type(arguments.get("source_type"))
+            query_transform = _coerce_query_transform(arguments.get("query_transform"))
             span.set_attribute(
                 "query", _truncate(redact(query), _MAX_TOOL_INPUT_TRACE_CHARS)
             )
+            span.set_attribute("query_transform", query_transform)
+            if source_type:
+                span.set_attribute("source_type", source_type)
             try:
-                chunks, mode = await retrieve(query, top_k=top_k)
+                chunks, mode = await retrieve(
+                    query,
+                    top_k=top_k,
+                    source_type=source_type,
+                    query_transform=query_transform,
+                )
                 results = [
                     {
                         "text": _truncate(c.get("text", ""), 800),
@@ -187,7 +238,14 @@ async def dispatch_tool(
                     }
                     for c in chunks
                 ]
-                out = json.dumps({"retriever": mode, "results": results})
+                out = json.dumps(
+                    {
+                        "retriever": mode,
+                        "source_type": source_type,
+                        "query_transform": query_transform,
+                        "results": results,
+                    }
+                )
                 span.set_attribute("result_count", str(len(results)))
                 return _truncate(out)
             except Exception as exc:

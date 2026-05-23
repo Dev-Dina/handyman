@@ -16,6 +16,47 @@ def status_badge(ok: bool | None) -> str:
     return "⚠️"
 
 
+_LIFECYCLE_BADGES = {
+    "deployed": "🟢 Deployed",
+    "offline": "🟠 Offline",
+    "experimental": "🔵 Experimental",
+    "gap": "🔴 Gap",
+}
+
+
+def lifecycle_badge(status: str) -> str:
+    """Map a lifecycle word to a coloured badge: deployed/offline/experimental/gap."""
+    return _LIFECYCLE_BADGES.get(status.lower(), status)
+
+
+def page_proves(text: str) -> None:
+    """Render a one-line 'what this page proves' note under a page title."""
+    st.caption(f"🎯 **What this page proves:** {text}")
+
+
+def widget_preview_url(widget_id: str | None, host_demo_url: str) -> str:
+    """Build the host-demo URL that loads the production widget for a given id."""
+    base = host_demo_url.rstrip("/")
+    return f"{base}/?widget_id={widget_id}" if widget_id else f"{base}/"
+
+
+def render_widget_preview(
+    widget_id: str | None, host_demo_url: str, height: int = 720
+) -> None:
+    """Embed the external host demo (which loads /widget.js → the React widget).
+
+    Uses the real production flow: this iframe frames the host page, which injects
+    the widget loader and renders the bottom-right bubble. Falls back to a link if
+    the iframe is blocked by the browser.
+    """
+    url = widget_preview_url(widget_id, host_demo_url)
+    st.components.v1.iframe(url, height=height, scrolling=True)
+    st.caption(
+        f"Live production React widget embedded via the host demo. "
+        f"[Open full host demo]({url})"
+    )
+
+
 def parse_json_if_possible(value: Any) -> Any:
     """Return a parsed object if value looks like JSON, else the original value."""
     if isinstance(value, (dict, list)):

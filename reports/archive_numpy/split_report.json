@@ -1,0 +1,57 @@
+{
+  "conflict_priority": [
+    "bug",
+    "feature",
+    "docs",
+    "question"
+  ],
+  "dropped_unmapped": 0,
+  "generated_at": "2026-05-19T12:02:47.749551+00:00",
+  "label_mapping": {
+    "00 - bug": "bug",
+    "bug": "bug",
+    "crash": "bug",
+    "defect": "bug",
+    "doc": "docs",
+    "docs": "docs",
+    "documentation": "docs",
+    "enhancement": "feature",
+    "feature": "feature",
+    "feature request": "feature",
+    "new feature": "feature",
+    "question": "question",
+    "regression": "bug",
+    "support": "question",
+    "usage": "question"
+  },
+  "labeled_total": 100,
+  "multi_label_conflicts_resolved": 0,
+  "newest_train_date": "2022-07-05T00:00:00Z",
+  "oldest_test_date": "2022-08-08T00:00:00Z",
+  "raw_issues": 100,
+  "source_hash": "398b714e450cccb3",
+  "temporal_order_ok": true,
+  "test_class_counts": {
+    "bug": 4,
+    "docs": 4,
+    "feature": 4,
+    "question": 4
+  },
+  "test_count": 16,
+  "test_frac": 0.15,
+  "train_class_counts": {
+    "bug": 17,
+    "docs": 17,
+    "feature": 17,
+    "question": 17
+  },
+  "train_count": 68,
+  "val_class_counts": {
+    "bug": 4,
+    "docs": 4,
+    "feature": 4,
+    "question": 4
+  },
+  "val_count": 16,
+  "val_frac": 0.15
+}

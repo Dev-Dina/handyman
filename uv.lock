@@ -970,6 +970,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "redis", extra = ["hiredis"] },
+    { name = "scikit-learn" },
     { name = "sqlalchemy", extra = ["asyncio"] },
     { name = "structlog" },
     { name = "uvicorn", extra = ["standard"] },
@@ -987,7 +988,6 @@ dev = [
 ]
 ml = [
     { name = "datasets" },
-    { name = "scikit-learn" },
     { name = "transformers" },
 ]
 
@@ -1017,7 +1017,7 @@ requires-dist = [
     { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.23.0" },
     { name = "redis", extras = ["hiredis"], specifier = ">=5.0.0" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.15.13" },
-    { name = "scikit-learn", marker = "extra == 'ml'", specifier = ">=1.5.0" },
+    { name = "scikit-learn", specifier = ">=1.5.0" },
     { name = "sqlalchemy", extras = ["asyncio"], specifier = ">=2.0.0" },
     { name = "streamlit", marker = "extra == 'chatbot'", specifier = ">=1.35.0" },
     { name = "structlog", specifier = ">=24.1.0" },

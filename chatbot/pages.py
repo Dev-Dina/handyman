@@ -8,10 +8,18 @@ from pathlib import Path
 import streamlit as st
 
 import chatbot.api_client as client
-from chatbot.components import render_rag_chunks, render_tool_call, status_badge
+from chatbot.components import (
+    lifecycle_badge,
+    page_proves,
+    render_rag_chunks,
+    render_tool_call,
+    render_widget_preview,
+    status_badge,
+)
 from chatbot.config import (
-    API_BASE_URL,
     API_DOCS_URL,
+    API_PUBLIC_URL,
+    DEFAULT_WIDGET_ID,
     HOST_DEMO_URL,
     JAEGER_URL,
     MINIO_URL,
@@ -31,8 +39,8 @@ _CLASSIFIER_METRICS = [
 ]
 
 _RAG_METRICS = [
-    ("E5 hybrid alpha=0.7 (deployed)", "0.68", "0.329"),
-    ("TF-IDF CI baseline", "0.40", "0.196"),
+    ("E5 hybrid alpha=0.7 (served via /embed)", "0.68", "0.329"),
+    ("TF-IDF (CI gate / fallback)", "0.40", "0.196"),
 ]
 
 _JAEGER_SPANS = {
@@ -59,6 +67,8 @@ _QUERY_TRANSFORM_OPTIONS = ["none", "technical_terms"]
 _SOURCE_TYPE_OPTIONS = ["(any)", "doc", "issue", "comment"]
 
 _ARTIFACT_MANIFEST = Path("reports/artifact_manifest.json")
+_RAG_API_EVAL_REPORT = Path("reports/rag/api_eval_report.json")
+_GENERATION_EVAL_REPORT = Path("reports/rag/generation_eval_report.json")
 
 _EMBED_SNIPPET_TEMPLATE = (
     '<script src="{api_base}/widget.js"\n'
@@ -73,10 +83,29 @@ _EMBED_SNIPPET_TEMPLATE = (
 
 def page_overview() -> None:
     st.title("Maintainer's Copilot — AI Ops Control Center")
+    page_proves(
+        "What the system is — an internal maintainer console over one FastAPI backend "
+        "(the production chat surface is the embeddable React widget)."
+    )
     st.caption(
         "Unified operations dashboard for the Handyman project: "
         "classifier, RAG, chat, memory, widget, and observability in one place."
     )
+
+    st.subheader("Try the production widget")
+    st.markdown(
+        "Streamlit is the internal AI Ops Control Center. The panel below embeds the "
+        "external **host demo** page, which loads `/widget.js` and renders the production "
+        "**React widget** as a bottom-right bubble — the same widget a real website would "
+        "embed with the generated script tag. Click the bubble and send a message."
+    )
+    st.caption(
+        "Both surfaces call the same FastAPI backend. Streamlit is for maintainers/admins; "
+        "the widget is for end users / host-site visitors."
+    )
+    render_widget_preview(DEFAULT_WIDGET_ID, HOST_DEMO_URL, height=540)
+
+    st.divider()
 
     st.subheader("What was built")
     st.markdown(
@@ -93,10 +122,10 @@ def page_overview() -> None:
     with col1:
         st.markdown(
             "**Inference**\n"
-            "- CodeBERT classifier (model_server)\n"
-            "- LR TF-IDF fallback (API)\n"
+            "- LogisticRegression TF-IDF — **served** (model_server)\n"
+            "- CodeBERT — best by eval, **not served** (needs GPU)\n"
             "- Groq llama-3.3-70b (chat LLM)\n"
-            "- E5 hybrid RAG (model_server + API)"
+            "- E5 hybrid retrieval **served** (model_server /embed); TF-IDF fallback"
         )
     with col2:
         st.markdown(
@@ -155,7 +184,10 @@ def page_overview() -> None:
     st.divider()
 
     st.subheader("RAG retrieval metrics")
-    st.caption("Evaluated on 25-example golden set. Deployed: E5 hybrid, alpha=0.7.")
+    st.caption(
+        "Evaluated on 25-example golden set. Docker serves E5 hybrid (alpha=0.7) when "
+        "model_server /embed is up; TF-IDF is the fallback (and CI gate). See Evaluation Defense."
+    )
     cols = st.columns([3, 1, 1])
     cols[0].markdown("**Pipeline**")
     cols[1].markdown("**Hit@5**")
@@ -178,7 +210,7 @@ def page_overview() -> None:
         "| Secrets | HashiCorp Vault | Central secret management, production-grade |\n"
         "| Tracing | Jaeger (OpenTelemetry) | Distributed trace per request |\n"
         "| Artifact storage | MinIO | S3-compatible, self-hosted |\n"
-        "| RAG retrieval | E5 hybrid (alpha=0.7) | Best hit@5=0.68 vs TF-IDF 0.40 |"
+        "| RAG retrieval | E5 hybrid α=0.7 served (TF-IDF fallback) | hit@5=0.68 (E5 hybrid) vs 0.40 (TF-IDF); UI shows retriever_used |"
     )
 
 
@@ -187,6 +219,9 @@ def page_overview() -> None:
 
 def page_system_health() -> None:
     st.title("System Health")
+    page_proves(
+        "The services are alive — live API + model_server checks, links for the rest."
+    )
     st.caption(
         "Live checks for API and model_server. Other services validated by Docker healthcheck."
     )
@@ -260,6 +295,14 @@ def page_system_health() -> None:
 
 def page_chat() -> None:
     st.title("Chat Copilot")
+    page_proves(
+        "The internal maintainer tool-calling chat — Groq LLM orchestrating "
+        "rag_query / classify_issue / write_memory, with structured tool-call cards."
+    )
+    st.info(
+        "This is the **internal authenticated maintainer console**, not the production "
+        "widget. The customer-facing surface is the embeddable React widget (see Widget Manager)."
+    )
 
     token: str | None = st.session_state.access_token
     user: dict | None = st.session_state.user
@@ -290,6 +333,29 @@ def page_chat() -> None:
 
     enabled = [t for t, on in tool_enabled.items() if on]
 
+    # One-click demo prompts (use a fixed tool set so the demo always exercises tools)
+    demo_prompt: str | None = None
+    with st.expander("Demo prompts (one-click)", expanded=False):
+        dcol1, dcol2 = st.columns(2)
+        if dcol1.button("🔍 Use RAG to explain Kubernetes Services"):
+            demo_prompt = (
+                "Use the knowledge base to explain what Kubernetes Services are "
+                "and how they expose Pods."
+            )
+        if dcol2.button("🏷️ Classify a CrashLoopBackOff issue"):
+            demo_prompt = (
+                "Classify this GitHub issue — Title: Pod stuck in CrashLoopBackOff. "
+                "Body: kubelet reports back-off restarting failed container."
+            )
+        if dcol1.button("🧠 Remember a maintainer preference"):
+            demo_prompt = (
+                "Remember that this maintainer prefers concise, evidence-first "
+                "issue triage answers."
+            )
+        if dcol2.button("⚠️ Ask a weak-retrieval question (honest answer)"):
+            demo_prompt = "Why is kubernetes not loading?"
+    _DEMO_TOOLS = ["rag_query", "classify_issue", "write_memory"]
+
     # Chat history
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
@@ -307,8 +373,10 @@ def page_chat() -> None:
         tcol1.caption(f"Trace: `{st.session_state.trace_id}`")
         tcol2.markdown(f"[Open in Jaeger]({JAEGER_URL})")
 
-    # Input
-    if prompt := st.chat_input("Ask about Kubernetes issues..."):
+    # Input — chat box or a one-click demo prompt
+    prompt = st.chat_input("Ask about Kubernetes issues...") or demo_prompt
+    if prompt:
+        call_tools = _DEMO_TOOLS if demo_prompt else (enabled if enabled else None)
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.write(prompt)
@@ -320,7 +388,7 @@ def page_chat() -> None:
                     conversation_id=conv_id,
                     user_id=str(user["id"]) if user else None,
                     token=token,
-                    enabled_tools=enabled if enabled else None,
+                    enabled_tools=call_tools,
                 )
 
             if "error" in result:
@@ -360,6 +428,9 @@ def page_chat() -> None:
 
 def page_rag_explorer() -> None:
     st.title("RAG Explorer")
+    page_proves(
+        "Retrieval in isolation from the LLM — see exactly which chunks rank and why."
+    )
     st.caption(
         "Run retrieval independently from LLM generation. "
         "Uses POST /api/v1/rag/query — same pipeline as the chat rag_query tool."
@@ -426,6 +497,10 @@ def page_rag_explorer() -> None:
 
 def page_classifier() -> None:
     st.title("Classifier Playground")
+    page_proves(
+        "The runtime classifier path — chat → classify_issue tool → model_server "
+        "(LogisticRegression TF-IDF), with the official model comparison."
+    )
     st.caption(
         "Classify a GitHub issue into bug / feature / docs / question. "
         "Uses the chat API with classify_issue tool (runtime: LogisticRegression TF-IDF fallback)."
@@ -548,6 +623,9 @@ def _show_classifier_metrics() -> None:
 
 def page_memory() -> None:
     st.title("Memory Inspector")
+    page_proves(
+        "Memory is real — short-term in Redis (24h TTL) and long-term in Postgres."
+    )
 
     conv_id: str | None = st.session_state.conversation_id
     token: str | None = st.session_state.access_token
@@ -613,6 +691,25 @@ def page_memory() -> None:
 
 def page_widget_manager() -> None:
     st.title("Widget Manager")
+    page_proves(
+        "Configure the production embed — the React widget is the customer-facing surface; "
+        "Streamlit only manages its config."
+    )
+    st.caption(
+        "This Streamlit app is the internal AI Ops Control Center. The production "
+        "chat surface is the embeddable React widget configured here — it renders as a "
+        "bottom-right bubble on any host page via the `/widget.js` loader."
+    )
+    st.info(
+        "**Allowed origins** must include `http://localhost:3000` (the widget iframe "
+        "fetches its config from this origin) and `http://localhost:8080` (the host demo "
+        "page, allowed to frame the widget). The host page loads the widget through the "
+        "generated `<script>` snippet — not by opening the widget app directly."
+    )
+    st.markdown(
+        f"{lifecycle_badge('deployed')} **React widget** = production embedded chat "
+        "(bottom-right bubble on the host demo). This page only configures it."
+    )
 
     token: str | None = st.session_state.access_token
     user: dict | None = st.session_state.user
@@ -651,13 +748,18 @@ def page_widget_manager() -> None:
                     st.write(f"**Allowed origins**: {w.get('allowed_origins', [])}")
                     st.write(f"**Enabled tools**: {w.get('enabled_tools', [])}")
                     snippet = _EMBED_SNIPPET_TEMPLATE.format(
-                        api_base=API_BASE_URL,
+                        api_base=API_PUBLIC_URL,
                         widget_id=pub_id,
                         widget_app_url=WIDGET_APP_URL,
                     )
                     st.subheader("Embed snippet")
                     st.code(snippet, language="html")
                     st.caption(f"[Open host demo]({HOST_DEMO_URL})")
+                    # Preview this widget here (button-gated so only one iframe loads).
+                    if st.checkbox(
+                        "Preview this widget here", key=f"preview_{pub_id}"
+                    ):
+                        render_widget_preview(pub_id, HOST_DEMO_URL, height=520)
 
     st.divider()
 
@@ -712,17 +814,21 @@ def page_widget_manager() -> None:
     st.success(f"Widget created! `public_widget_id = {pub_id}`")
 
     snippet = _EMBED_SNIPPET_TEMPLATE.format(
-        api_base=API_BASE_URL,
+        api_base=API_PUBLIC_URL,
         widget_id=pub_id,
         widget_app_url=WIDGET_APP_URL,
     )
     st.subheader("Your embed snippet")
     st.code(snippet, language="html")
     st.caption(
-        f"Replace `YOUR-PUBLIC-WIDGET-ID` in `demo/host/index.html` with `{pub_id}`, "
-        f"then rebuild the host image: `docker compose build host && docker compose up -d host`"
+        f"For the bundled demo, just open the host page with this id — no rebuild needed: "
+        f"`{HOST_DEMO_URL}/?widget_id={pub_id}` (the id is remembered in the browser). "
+        f"Ensure this widget's allowed origins include `http://localhost:3000` and "
+        f"`http://localhost:8080`."
     )
-    st.markdown(f"[Open host demo]({HOST_DEMO_URL})")
+    st.markdown(
+        f"[Open host demo with this widget]({HOST_DEMO_URL}/?widget_id={pub_id})"
+    )
 
 
 # ── 8. Observability ─────────────────────────────────────────────────────────
@@ -730,6 +836,9 @@ def page_widget_manager() -> None:
 
 def page_observability() -> None:
     st.title("Observability")
+    page_proves(
+        "Real chat/tool calls are traced — span waterfall per request in Jaeger."
+    )
     st.caption(
         "Distributed tracing via Jaeger (OpenTelemetry). Every chat request produces a trace."
     )
@@ -791,6 +900,9 @@ def page_observability() -> None:
 
 def page_artifacts() -> None:
     st.title("Artifacts / MinIO")
+    page_proves(
+        "The artifact/blob story — S3-compatible MinIO for models, eval reports, snapshots."
+    )
     st.caption(
         "MinIO is the S3-compatible artifact store. Eval reports, retrieval snapshots, and model artifacts are uploaded here."
     )
@@ -841,11 +953,167 @@ def page_artifacts() -> None:
     )
 
 
+# ── 11. Evaluation Defense ───────────────────────────────────────────────────
+
+
+def page_eval_defense() -> None:
+    st.title("Evaluation Defense")
+    page_proves(
+        "The deployed-vs-offline truth — what is actually served, the real metrics, "
+        "and the honest eval gaps."
+    )
+    st.caption(
+        "Honest account of what is evaluated vs what is served. No metric here is "
+        "invented; unimplemented evals are shown as gaps, not numbers."
+    )
+
+    gen_present = _GENERATION_EVAL_REPORT.exists()
+    bcol1, bcol2, bcol3, bcol4 = st.columns(4)
+    bcol1.metric("Classifier", lifecycle_badge("deployed"), "LR TF-IDF")
+    bcol2.metric("CodeBERT", lifecycle_badge("offline"), "primary by eval")
+    bcol3.metric("RAG hybrid (E5)", lifecycle_badge("deployed"), "served via /embed")
+    bcol4.metric(
+        "Generation eval",
+        lifecycle_badge("deployed" if gen_present else "gap"),
+        "deterministic proxy" if gen_present else "not implemented",
+    )
+
+    with st.expander("Live eval summary (served by the API — no chatbot rebuild needed)"):
+        summary = client.get_eval_summary()
+        if "error" in summary:
+            st.caption(f"API eval summary unavailable: {summary['error']}")
+        else:
+            rag_sum = summary.get("rag_retrieval", {})
+            st.caption(
+                f"hybrid artifact present: `{rag_sum.get('hybrid_artifact_present')}` · "
+                f"offline E5 hybrid: hit@5=`{rag_sum.get('offline_best_e5_hybrid', {}).get('hit_at_5')}`"
+            )
+            st.json(summary)
+
+    st.subheader("Served vs evaluated")
+    st.markdown(
+        "| Capability | Best by evaluation | Served at runtime (Docker) |\n"
+        "|---|---|---|\n"
+        "| Issue classifier | CodeBERT (macro-F1 0.7061) | **LogisticRegression TF-IDF** (GPU-free, CI-safe) |\n"
+        "| RAG retrieval | E5 hybrid α=0.7 (hit@5 0.68) | **E5 hybrid served** via model_server /embed; TF-IDF fallback (hit@5 ≈ 0.40) |"
+    )
+    st.info(
+        "CodeBERT is **primary by evaluation, not Docker-served** (it needs torch/GPU). "
+        "**E5 hybrid retrieval is now served in Docker**: model_server exposes a CPU "
+        "`/embed` endpoint (transformers, mean-pool + L2) and the E5 chunk embeddings ship "
+        "in the API image (`artifacts/rag/`). Live `/api/v1/rag/query` returns "
+        "`retriever_used=hybrid`; it falls back to TF-IDF if `/embed` or the artifact is "
+        "unavailable. Torch lives only in the model_server image."
+    )
+
+    st.divider()
+    st.subheader("Classifier metrics (official)")
+    cols = st.columns([3, 1, 1, 1])
+    cols[0].markdown("**Model**")
+    cols[1].markdown("**Accuracy**")
+    cols[2].markdown("**Macro-F1**")
+    cols[3].markdown("**Role**")
+    for model, acc, f1, role in _CLASSIFIER_METRICS:
+        cols = st.columns([3, 1, 1, 1])
+        cols[0].write(model)
+        cols[1].write(acc)
+        cols[2].write(f1)
+        cols[3].write(role)
+
+    st.divider()
+    st.subheader("RAG retrieval metrics")
+    cols = st.columns([3, 1, 1])
+    cols[0].markdown("**Pipeline**")
+    cols[1].markdown("**Hit@5**")
+    cols[2].markdown("**MRR@10**")
+    for pipeline, h5, mrr in _RAG_METRICS:
+        cols = st.columns([3, 1, 1])
+        cols[0].write(pipeline)
+        cols[1].write(h5)
+        cols[2].write(mrr)
+    st.caption(
+        "Deployed runtime serves **E5 hybrid** (`retriever_used=hybrid`, verified live) "
+        "when model_server `/embed` + the shipped E5 chunk embeddings are present; "
+        "otherwise it transparently falls back to `tfidf_fallback`."
+    )
+    if _RAG_API_EVAL_REPORT.exists():
+        try:
+            rep = json.loads(_RAG_API_EVAL_REPORT.read_text())
+            st.caption(
+                f"Latest CI eval ({_RAG_API_EVAL_REPORT}): "
+                f"mode=`{rep.get('retrieval_mode', '?')}` · "
+                f"hit@5=`{rep.get('hit_at_5', '?')}` · "
+                f"mrr@10=`{rep.get('mrr_at_10', '?')}` · "
+                f"n=`{rep.get('n_questions', '?')}`"
+            )
+        except Exception as exc:  # noqa: BLE001
+            st.caption(f"Could not parse RAG eval report: {exc}")
+
+    st.divider()
+    st.subheader("Generation eval (faithfulness / answer relevancy)")
+    gen = None
+    if _GENERATION_EVAL_REPORT.exists():
+        try:
+            gen = json.loads(_GENERATION_EVAL_REPORT.read_text())
+        except Exception as exc:  # noqa: BLE001
+            st.warning(f"Could not parse generation eval report: {exc}")
+    if gen:
+        st.caption(
+            f"Deterministic CI-safe proxy ({lifecycle_badge('deployed')}) · "
+            f"judge=`{gen.get('judge', 'none')}` · "
+            f"rows={gen.get('rows_evaluated', '?')} · "
+            f"scope=`{gen.get('scope', '?')}`"
+        )
+        g1, g2, g3 = st.columns(3)
+        g1.metric("Faithfulness (proxy)", gen.get("faithfulness_proxy_mean", "—"))
+        g2.metric("Answer relevancy (proxy)", gen.get("answer_relevancy_proxy_mean", "—"))
+        g3.metric("Unsupported claims (proxy)", gen.get("unsupported_claims_proxy_mean", "—"))
+        h1, h2 = st.columns(2)
+        h1.metric("Retrieved-context overlap", gen.get("retrieved_context_overlap_mean", "—"))
+        h2.metric("Ideal-answer overlap", gen.get("ideal_answer_overlap_mean", "—"))
+        with st.expander("Limitations of this proxy"):
+            for lim in gen.get("limitations", []):
+                st.markdown(f"- {lim}")
+        with st.expander("Per-row detail"):
+            st.json(gen.get("items", []))
+    else:
+        st.warning(
+            f"{lifecycle_badge('gap')} **Generation eval report not found in this "
+            "container.** Generate it with `python -m pipelines.rag.eval_generation` "
+            "and rebuild the chatbot image. The golden set carries `ideal_answer` and "
+            "`hand_labeled_for_judge_check` for a deterministic (token-overlap) proxy, "
+            "with an opt-in LLM judge. Retrieval eval (hit@5 / mrr@10) above is gated in CI."
+        )
+
+    st.divider()
+    st.subheader("How to defend this")
+    st.markdown(
+        "- **Deployment is a deliberate trade-off, not a shortcut.** CodeBERT wins on "
+        "macro-F1 (0.7061) but needs GPU/torch; we serve LogisticRegression TF-IDF "
+        "(0.6938) so the demo is GPU-free, fast, and CI-safe — a −0.012 macro-F1 cost.\n"
+        "- **RAG serves E5 hybrid live, and is honest about it.** `retriever_used` reads "
+        "`hybrid` when model_server `/embed` + the shipped E5 chunk embeddings are present "
+        "(hit@5 0.68 offline-measured), and transparently falls back to `tfidf_fallback` "
+        "otherwise — the field always reflects what actually ran.\n"
+        "- **Metrics are reproducible.** `pipelines.classifier.eval_golden` and "
+        "`pipelines.rag.eval_api` regenerate the gated numbers; thresholds live in "
+        "`eval_thresholds.yaml`.\n"
+        "- **Generation quality has a deterministic proxy.** Faithfulness / answer "
+        "relevancy are scored by reproducible token-overlap over the 5 hand-labeled "
+        "golden rows (`pipelines.rag.eval_generation`) — CI-safe, no API key. It is a "
+        "proxy, not a semantic LLM judge; an LLM-as-judge remains optional/manual. We "
+        "never fabricate scores."
+    )
+
+
 # ── 10. Demo Runbook ──────────────────────────────────────────────────────────
 
 
 def page_demo_runbook() -> None:
     st.title("Demo Runbook")
+    page_proves(
+        "The final walkthrough — exact steps to present the whole system end-to-end."
+    )
     st.caption(
         "Step-by-step guide for a live presentation or walkthrough of the full system."
     )

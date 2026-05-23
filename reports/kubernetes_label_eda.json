@@ -1,0 +1,458 @@
+{
+  "total_raw_rows": 3923,
+  "unique_issue_count": 3923,
+  "duplicate_count": 0,
+  "unlabeled_count": 0,
+  "single_class_count": 3387,
+  "multi_class_conflict_count": 536,
+  "usable_for_supervised_learning": 3923,
+  "class_counts_before_resolution": {
+    "bug": 1397,
+    "docs": 1000,
+    "feature": 1041,
+    "question": 1024
+  },
+  "class_counts_after_resolution": {
+    "bug": 1397,
+    "docs": 908,
+    "feature": 999,
+    "question": 619
+  },
+  "date_range_per_class": {
+    "bug": {
+      "oldest": "2015-04-15T00:55:18Z",
+      "newest": "2026-05-18T10:58:26Z",
+      "count": 1397
+    },
+    "docs": {
+      "oldest": "2014-12-16T16:41:11Z",
+      "newest": "2026-05-09T07:23:12Z",
+      "count": 908
+    },
+    "feature": {
+      "oldest": "2021-03-12T07:52:03Z",
+      "newest": "2026-05-07T18:33:06Z",
+      "count": 999
+    },
+    "question": {
+      "oldest": "2021-03-10T12:27:14Z",
+      "newest": "2026-03-19T06:27:23Z",
+      "count": 619
+    }
+  },
+  "support_question_stats": {
+    "support_raw_count": 1024,
+    "support_with_target_conflict_count": 405,
+    "support_final_question_count": 619,
+    "support_lost_to_higher_priority": 405,
+    "supplement_recommended": true,
+    "supplement_suggestion": "--supplement-label kind/support --supplement-count 405"
+  },
+  "unique_raw_labels": 134,
+  "top30_raw_labels": [
+    {
+      "label": "needs-triage",
+      "count": 2385
+    },
+    {
+      "label": "kind/bug",
+      "count": 1397
+    },
+    {
+      "label": "kind/feature",
+      "count": 1041
+    },
+    {
+      "label": "kind/support",
+      "count": 1024
+    },
+    {
+      "label": "kind/documentation",
+      "count": 1000
+    },
+    {
+      "label": "lifecycle/rotten",
+      "count": 906
+    },
+    {
+      "label": "sig/node",
+      "count": 791
+    },
+    {
+      "label": "needs-sig",
+      "count": 651
+    },
+    {
+      "label": "triage/accepted",
+      "count": 643
+    },
+    {
+      "label": "sig/api-machinery",
+      "count": 575
+    },
+    {
+      "label": "priority/backlog",
+      "count": 386
+    },
+    {
+      "label": "sig/network",
+      "count": 325
+    },
+    {
+      "label": "sig/scheduling",
+      "count": 287
+    },
+    {
+      "label": "priority/important-soon",
+      "count": 264
+    },
+    {
+      "label": "sig/storage",
+      "count": 181
+    },
+    {
+      "label": "sig/apps",
+      "count": 172
+    },
+    {
+      "label": "sig/auth",
+      "count": 162
+    },
+    {
+      "label": "sig/cli",
+      "count": 151
+    },
+    {
+      "label": "sig/docs",
+      "count": 151
+    },
+    {
+      "label": "sig/cluster-lifecycle",
+      "count": 148
+    },
+    {
+      "label": "triage/needs-information",
+      "count": 136
+    },
+    {
+      "label": "lifecycle/stale",
+      "count": 101
+    },
+    {
+      "label": "sig/release",
+      "count": 96
+    },
+    {
+      "label": "priority/important-longterm",
+      "count": 83
+    },
+    {
+      "label": "wg/device-management",
+      "count": 82
+    },
+    {
+      "label": "help wanted",
+      "count": 81
+    },
+    {
+      "label": "priority/awaiting-more-evidence",
+      "count": 73
+    },
+    {
+      "label": "sig/instrumentation",
+      "count": 71
+    },
+    {
+      "label": "sig/architecture",
+      "count": 61
+    },
+    {
+      "label": "area/kubectl",
+      "count": 60
+    }
+  ],
+  "top20_cooccurrences": [
+    {
+      "label_a": "kind/bug",
+      "label_b": "needs-triage",
+      "count": 980
+    },
+    {
+      "label_a": "kind/support",
+      "label_b": "needs-triage",
+      "count": 923
+    },
+    {
+      "label_a": "kind/feature",
+      "label_b": "needs-triage",
+      "count": 793
+    },
+    {
+      "label_a": "lifecycle/rotten",
+      "label_b": "needs-triage",
+      "count": 693
+    },
+    {
+      "label_a": "needs-sig",
+      "label_b": "needs-triage",
+      "count": 633
+    },
+    {
+      "label_a": "needs-triage",
+      "label_b": "sig/node",
+      "count": 528
+    },
+    {
+      "label_a": "kind/support",
+      "label_b": "needs-sig",
+      "count": 418
+    },
+    {
+      "label_a": "kind/feature",
+      "label_b": "lifecycle/rotten",
+      "count": 385
+    },
+    {
+      "label_a": "kind/documentation",
+      "label_b": "priority/backlog",
+      "count": 342
+    },
+    {
+      "label_a": "kind/bug",
+      "label_b": "kind/support",
+      "count": 341
+    },
+    {
+      "label_a": "kind/bug",
+      "label_b": "triage/accepted",
+      "count": 325
+    },
+    {
+      "label_a": "kind/bug",
+      "label_b": "needs-sig",
+      "count": 325
+    },
+    {
+      "label_a": "kind/feature",
+      "label_b": "sig/node",
+      "count": 316
+    },
+    {
+      "label_a": "kind/bug",
+      "label_b": "sig/node",
+      "count": 270
+    },
+    {
+      "label_a": "kind/bug",
+      "label_b": "lifecycle/rotten",
+      "count": 249
+    },
+    {
+      "label_a": "lifecycle/rotten",
+      "label_b": "sig/node",
+      "count": 239
+    },
+    {
+      "label_a": "needs-triage",
+      "label_b": "sig/scheduling",
+      "count": 231
+    },
+    {
+      "label_a": "kind/feature",
+      "label_b": "triage/accepted",
+      "count": 227
+    },
+    {
+      "label_a": "kind/documentation",
+      "label_b": "lifecycle/rotten",
+      "count": 216
+    },
+    {
+      "label_a": "kind/documentation",
+      "label_b": "sig/api-machinery",
+      "count": 208
+    }
+  ],
+  "conflict_combinations": [
+    {
+      "classes": [
+        "bug",
+        "question"
+      ],
+      "count": 338
+    },
+    {
+      "classes": [
+        "bug",
+        "docs"
+      ],
+      "count": 89
+    },
+    {
+      "classes": [
+        "feature",
+        "question"
+      ],
+      "count": 36
+    },
+    {
+      "classes": [
+        "docs",
+        "feature"
+      ],
+      "count": 31
+    },
+    {
+      "classes": [
+        "docs",
+        "question"
+      ],
+      "count": 28
+    },
+    {
+      "classes": [
+        "bug",
+        "feature"
+      ],
+      "count": 11
+    },
+    {
+      "classes": [
+        "bug",
+        "docs",
+        "question"
+      ],
+      "count": 3
+    }
+  ],
+  "conflict_examples": [
+    {
+      "issue_number": 138412,
+      "title": "statefulset repliocas mismatch for a rabbitmqcluster",
+      "raw_labels": [
+        "kind/bug",
+        "kind/support",
+        "needs-sig",
+        "needs-triage"
+      ],
+      "chosen": "bug"
+    },
+    {
+      "issue_number": 138251,
+      "title": "Kubelet restart triggers UnexpectedAdmissionError for pods using device plugins ",
+      "raw_labels": [
+        "kind/bug",
+        "kind/support",
+        "needs-sig",
+        "needs-triage"
+      ],
+      "chosen": "bug"
+    },
+    {
+      "issue_number": 135882,
+      "title": "kube-apiserver problem",
+      "raw_labels": [
+        "kind/bug",
+        "kind/support",
+        "sig/api-machinery",
+        "lifecycle/rotten",
+        "needs-triage"
+      ],
+      "chosen": "bug"
+    },
+    {
+      "issue_number": 135015,
+      "title": "Significant increase in network traffic with Kubernetes 1.34.1",
+      "raw_labels": [
+        "kind/bug",
+        "kind/support",
+        "needs-sig",
+        "needs-triage"
+      ],
+      "chosen": "bug"
+    },
+    {
+      "issue_number": 134075,
+      "title": "Orphaned pod \"0008e5b2-6008-45b9-89cd-1aa60f896e24\" found, but volume paths are ",
+      "raw_labels": [
+        "kind/bug",
+        "kind/support",
+        "needs-sig",
+        "needs-triage"
+      ],
+      "chosen": "bug"
+    },
+    {
+      "issue_number": 133884,
+      "title": "The PodAndContainerStatsFromCRI feature doesn’t expose metrics.",
+      "raw_labels": [
+        "kind/bug",
+        "kind/support",
+        "sig/node",
+        "needs-triage"
+      ],
+      "chosen": "bug"
+    },
+    {
+      "issue_number": 132116,
+      "title": "Incorrect kubectl logs error when node with pod has disappeared",
+      "raw_labels": [
+        "kind/bug",
+        "kind/support",
+        "sig/cli",
+        "needs-triage"
+      ],
+      "chosen": "bug"
+    },
+    {
+      "issue_number": 131347,
+      "title": "kubeadm init does not work",
+      "raw_labels": [
+        "kind/bug",
+        "kind/support",
+        "needs-sig",
+        "needs-triage"
+      ],
+      "chosen": "bug"
+    },
+    {
+      "issue_number": 130839,
+      "title": "NFS mount failed after GKE upgrade me to 1.32 from 1.31",
+      "raw_labels": [
+        "kind/bug",
+        "kind/support",
+        "sig/storage",
+        "needs-triage"
+      ],
+      "chosen": "bug"
+    },
+    {
+      "issue_number": 130683,
+      "title": "Job with no parellelism randomly creates 2 duplicate Pods instead of 1",
+      "raw_labels": [
+        "kind/bug",
+        "kind/support",
+        "sig/apps",
+        "lifecycle/rotten",
+        "needs-triage"
+      ],
+      "chosen": "bug"
+    }
+  ],
+  "date_range_start": "2014-12",
+  "date_range_end": "2026-05",
+  "months_covered": 135,
+  "target_label_mapping": {
+    "kind/bug": "bug",
+    "kind/feature": "feature",
+    "kind/documentation": "docs",
+    "kind/support": "question"
+  },
+  "conflict_priority": [
+    "bug",
+    "docs",
+    "feature",
+    "question"
+  ],
+  "proceed_to_split": true
+}

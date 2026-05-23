@@ -24,3 +24,16 @@ CLASSIFIER_ARTIFACT_PATH: Path = (
 CLASSIFIER_ALLOWED_LABELS: frozenset[str] = frozenset(
     {"bug", "feature", "docs", "question"}
 )
+
+# ── Embedding model (E5) for RAG dense/hybrid retrieval ──────────────────────
+# Default points at a model dir shipped into the image (offline-cached weights),
+# falling back to the HuggingFace hub id if the local dir is absent.
+EMBED_MODEL_NAME: str = os.getenv("EMBED_MODEL_NAME", "intfloat/e5-small-v2")
+_embed_local = os.getenv("EMBED_MODEL_PATH")
+EMBED_MODEL_PATH: str = (
+    _embed_local
+    if _embed_local
+    else str(Path(__file__).parent.parent / "artifacts" / "embeddings" / "e5-small-v2")
+)
+EMBED_DIMENSION: int = 384
+EMBED_MAX_LENGTH: int = 512

@@ -1,0 +1,16 @@
+{
+  "duplicate_vs_existing": 619,
+  "fetched_total": 1000,
+  "generated_at": "2026-05-20T07:21:48.392462+00:00",
+  "new_unique_vs_existing": 381,
+  "output_path": "data\\raw\\kubernetes_support_only_extra.jsonl",
+  "target_count": 1000,
+  "windows_queried": [
+    {
+      "before_created_at": null,
+      "items_seen": 1000,
+      "new_records": 1000,
+      "pages": 10
+    }
+  ]
+}

@@ -1,0 +1,249 @@
+{
+  "clean_counts": {
+    "bug": 956,
+    "docs": 849,
+    "feature": 963,
+    "question": 1000
+  },
+  "conflict_count": 536,
+  "examples_per_class": {
+    "bug": [
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/139135",
+        "issue_number": 139135,
+        "raw_labels": [
+          "kind/bug",
+          "sig/scheduling",
+          "needs-triage"
+        ],
+        "title": "DaemonSet pod stuck in Pending for ~5 minutes after deleting conflicting pod when using podAntiAffinity"
+      },
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/139134",
+        "issue_number": 139134,
+        "raw_labels": [
+          "kind/bug",
+          "sig/network",
+          "needs-triage"
+        ],
+        "title": "Metrics missing using MultiCIDRServiceAllocator"
+      },
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/138962",
+        "issue_number": 138962,
+        "raw_labels": [
+          "kind/bug",
+          "sig/architecture",
+          "needs-triage"
+        ],
+        "title": "After switching the Go version to 1.26.1, the binary package has become significantly larger."
+      },
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/138952",
+        "issue_number": 138952,
+        "raw_labels": [
+          "kind/bug",
+          "sig/scheduling",
+          "triage/accepted"
+        ],
+        "title": "ImageLocality counts ImageVolume images in raw score but not in max threshold"
+      },
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/138882",
+        "issue_number": 138882,
+        "raw_labels": [
+          "kind/bug",
+          "sig/scheduling",
+          "needs-triage"
+        ],
+        "title": "kube-scheduler panics for DRA `allocationMode: All` when a matching device consumes counters"
+      }
+    ],
+    "docs": [
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/138924",
+        "issue_number": 138924,
+        "raw_labels": [
+          "kind/documentation",
+          "sig/apps",
+          "needs-triage"
+        ],
+        "title": "Add real-world data pipeline example to CronJob documentation"
+      },
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/136698",
+        "issue_number": 136698,
+        "raw_labels": [
+          "sig/network",
+          "kind/documentation",
+          "sig/node",
+          "triage/accepted"
+        ],
+        "title": "HTTP probe documentation doesn't explain edge cases"
+      },
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/134705",
+        "issue_number": 134705,
+        "raw_labels": [
+          "kind/documentation",
+          "sig/cli",
+          "triage/accepted"
+        ],
+        "title": "PowerShell kubectl completion example should dot-source & quote completion script"
+      },
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/132966",
+        "issue_number": 132966,
+        "raw_labels": [
+          "kind/documentation",
+          "sig/node",
+          "triage/accepted"
+        ],
+        "title": "Following Docs for Configuring Kubelet for UserNamespace support in 1.33.2 Fails with \"id 62698912 is out of range\" crashing Kubelet"
+      },
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/131877",
+        "issue_number": 131877,
+        "raw_labels": [
+          "kind/documentation",
+          "sig/node",
+          "triage/accepted",
+          "wg/device-management"
+        ],
+        "title": "DRA:  failed to create pod: \"must specify one of: `resourceClaimName`, `resourceClaimTemplateName`\""
+      }
+    ],
+    "feature": [
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/138868",
+        "issue_number": 138868,
+        "raw_labels": [
+          "sig/scalability",
+          "sig/scheduling",
+          "sig/node",
+          "sig/api-machinery",
+          "kind/feature",
+          "sig/instrumentation",
+          "needs-triage"
+        ],
+        "title": "Created by mistake."
+      },
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/138869",
+        "issue_number": 138869,
+        "raw_labels": [
+          "sig/scalability",
+          "sig/api-machinery",
+          "kind/feature",
+          "sig/instrumentation",
+          "needs-triage"
+        ],
+        "title": "Created by mistake"
+      },
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/138866",
+        "issue_number": 138866,
+        "raw_labels": [
+          "sig/scalability",
+          "sig/scheduling",
+          "sig/node",
+          "sig/api-machinery",
+          "kind/feature",
+          "sig/instrumentation",
+          "needs-triage"
+        ],
+        "title": "Created by mistake"
+      },
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/138870",
+        "issue_number": 138870,
+        "raw_labels": [
+          "sig/scheduling",
+          "sig/node",
+          "kind/feature",
+          "sig/instrumentation",
+          "needs-triage"
+        ],
+        "title": "Created by mistake"
+      },
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/138867",
+        "issue_number": 138867,
+        "raw_labels": [
+          "sig/scheduling",
+          "sig/node",
+          "sig/api-machinery",
+          "kind/feature",
+          "sig/instrumentation",
+          "needs-triage"
+        ],
+        "title": "Created by mistake"
+      }
+    ],
+    "question": [
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/137874",
+        "issue_number": 137874,
+        "raw_labels": [
+          "kind/support",
+          "needs-sig",
+          "needs-triage"
+        ],
+        "title": "Consultation on Calico Version Compatibility with Kubernetes 1.28.15"
+      },
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/136188",
+        "issue_number": 136188,
+        "raw_labels": [
+          "sig/network",
+          "kind/support",
+          "triage/accepted"
+        ],
+        "title": "Why does the endpoint named kubernetes still exist in 1.34?"
+      },
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/135582",
+        "issue_number": 135582,
+        "raw_labels": [
+          "kind/support",
+          "sig/node",
+          "needs-triage"
+        ],
+        "title": "GKE Pod OOM Kills (Exit 137) - Next.js App Memory Leak Investigation"
+      },
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/135550",
+        "issue_number": 135550,
+        "raw_labels": [
+          "kind/support",
+          "sig/node",
+          "lifecycle/stale",
+          "needs-triage"
+        ],
+        "title": "Getting invalid limit.cpu for a container without limit defined in projected volume"
+      },
+      {
+        "html_url": "https://github.com/kubernetes/kubernetes/issues/135519",
+        "issue_number": 135519,
+        "raw_labels": [
+          "kind/support",
+          "sig/node",
+          "needs-triage"
+        ],
+        "title": "`EnvFiles` feature (KEP-3721): Unclear quote handling behavior"
+      }
+    ]
+  },
+  "generated_at": "2026-05-20T10:38:42.797857+00:00",
+  "input_path": "data\\raw\\kubernetes_issues_augmented.jsonl",
+  "no_target_count": 0,
+  "possible_600_per_class": true,
+  "recommended_class_cap": 849,
+  "target_labels": {
+    "kind/bug": "bug",
+    "kind/documentation": "docs",
+    "kind/feature": "feature",
+    "kind/support": "question"
+  },
+  "total_records": 4304
+}

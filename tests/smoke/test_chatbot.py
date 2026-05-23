@@ -145,6 +145,7 @@ def test_chatbot_pages_functions_exist():
         "page_widget_manager",
         "page_observability",
         "page_artifacts",
+        "page_eval_defense",
         "page_demo_runbook",
     ]:
         assert callable(getattr(pages, fn, None)), f"pages.{fn} not callable"
@@ -160,4 +161,49 @@ def test_chatbot_main_pages_map_complete():
     assert set(_PAGES) == set(_PAGE_FN.keys()), (
         "All pages in _PAGES must have a function in _PAGE_FN"
     )
-    assert len(_PAGES) == 10
+    assert len(_PAGES) == 11
+    assert "Evaluation Defense" in _PAGES
+
+
+def test_widget_preview_url_includes_widget_id():
+    from chatbot.components import widget_preview_url
+
+    url = widget_preview_url("abc-123", "http://localhost:8080")
+    assert url == "http://localhost:8080/?widget_id=abc-123"
+    # trailing slash on host is normalized
+    assert widget_preview_url("x", "http://localhost:8080/") == (
+        "http://localhost:8080/?widget_id=x"
+    )
+    # no id -> bare host (host page falls back to its default id)
+    assert widget_preview_url(None, "http://localhost:8080") == "http://localhost:8080/"
+
+
+def test_render_widget_preview_callable():
+    from chatbot.components import render_widget_preview
+
+    assert callable(render_widget_preview)
+
+
+def test_overview_has_production_widget_preview():
+    import inspect
+
+    from chatbot.pages import page_overview
+
+    src = inspect.getsource(page_overview)
+    assert "Try the production widget" in src
+    assert "render_widget_preview" in src
+
+
+def test_widget_manager_has_preview_copy():
+    import inspect
+
+    from chatbot.pages import page_widget_manager
+
+    src = inspect.getsource(page_widget_manager)
+    assert "Preview this widget here" in src
+
+
+def test_default_widget_id_configured():
+    from chatbot.config import DEFAULT_WIDGET_ID
+
+    assert isinstance(DEFAULT_WIDGET_ID, str) and len(DEFAULT_WIDGET_ID) > 0

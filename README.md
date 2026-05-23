@@ -24,7 +24,7 @@ Startup order is automatic via `depends_on`:
 |---|---|---|
 | API | http://localhost:8000 | FastAPI — auth, chat, RAG, memory, widget |
 | API docs | http://localhost:8000/docs | Interactive OpenAPI UI |
-| Model server | http://localhost:8001 | LR TF-IDF classifier (no GPU) |
+| Model server | http://localhost:8001 | LR TF-IDF classifier (`/classify`) + E5-small-v2 embeddings (`/embed`, CPU) for live hybrid RAG |
 | Chatbot | http://localhost:8501 | Streamlit authenticated UI |
 | Widget | http://localhost:3000 | Nginx serving the React widget bundle |
 | Host demo | http://localhost:8080 | Demo host page with embedded widget |

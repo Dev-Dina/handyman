@@ -1,0 +1,11 @@
+issue_number,true_label,predicted_label,confidence,reason,latency_seconds
+127301,bug,bug,0.9,"The issue reports a defect in the kubelet's handling of orphaned pods, resulting in errors and manual intervention being required to resolve.",57.799
+127311,bug,bug,0.8,"The issue description suggests a failure to join a Windows node to a Linux master kubelet, which is a defect or regression.",6.783
+127316,bug,bug,0.9,"The issue reports a failure to start pods after upgrading the kubelet, with a specific error message and reproduction steps.",44.598
+127330,bug,bug,0.9,"The issue reports that removing a pod affinity does not take effect until pods are rolled, which is unexpected behavior.",81.015
+127334,bug,bug,0.9,"The issue reports a corrupted Kubernetes cluster due to accidentally replaced etcd certificates, with a specific error message indicating a certificate-related problem.",36.322
+127342,bug,bug,0.9,The issue reports a regression where nodeAffinityPolicy is not effective in scheduling pods to specific nodes.,37.601
+127343,bug,bug,0.9,The issue reports a specific failure to download binaries for a particular Kubernetes release.,18.807
+127344,bug,bug,0.9,The issue reports a regression in the Cronjob controller's scheduling behavior.,25.398
+127350,bug,bug,0.9,The issue reports that `kubeadm config images list` does not provide the correct version of the images.,39.704
+127356,bug,bug,0.9,The issue reports a runtime error when updating a pod's image and resources in a cluster with InPlacePodVerticalScaling enabled.,39.165

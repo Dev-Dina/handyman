@@ -1,0 +1,33 @@
+{
+  "generated_at": "2026-05-21T08:49:36.369391+00:00",
+  "input_docs_count": 9,
+  "input_issues_count": 100,
+  "total_comments_seen": 821,
+  "min_chunk_chars": 40,
+  "tiny_chunk_policy": "Drop chunks where cleaned text length < 40 chars, unless the text contains at least one high-signal Kubernetes technical token (apiversion, deployment, dns, dra, endpointslice, error, exception, failed, kind:, kubectl, kubelet, pod, resourceclaim, service). Matched case-insensitively as substrings.",
+  "baseline_chunk_count": 2596,
+  "baseline_dropped_tiny_chunks": 185,
+  "baseline_counts_by_source_type": {
+    "docs": 502,
+    "issue": 780,
+    "comment": 1314
+  },
+  "baseline_avg_char_length": 435.0,
+  "baseline_min_char_length_after_filter": 24,
+  "baseline_max_char_length": 512,
+  "baseline_maintainer_like_comment_chunks": 252,
+  "section_aware_chunk_count": 2189,
+  "section_aware_dropped_tiny_chunks": 434,
+  "section_aware_counts_by_source_type": {
+    "docs": 356,
+    "issue": 968,
+    "comment": 865
+  },
+  "section_aware_avg_char_length": 457.6,
+  "section_aware_min_char_length_after_filter": 7,
+  "section_aware_max_char_length": 1024,
+  "section_aware_maintainer_like_comment_chunks": 196,
+  "examples_path": "C:\\Users\\LEGION\\Desktop\\AIE\\Assignments\\Week7\\Code\\handyman\\reports\\rag\\chunking_examples.csv",
+  "chosen_for_next_phase": "section_aware",
+  "rationale": "Section-aware preserves document headings, issue template sections, and comment/maintainer metadata better than naive fixed-size chunks. Each chunk corresponds to a semantically coherent unit (a doc section, an issue template field, or a single comment thread) rather than an arbitrary character boundary."
+}

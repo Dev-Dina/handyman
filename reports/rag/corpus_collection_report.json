@@ -1,0 +1,28 @@
+{
+  "docs_attempted_count": 16,
+  "docs_collected_count": 9,
+  "docs_repos_used": [
+    "kubernetes/kubernetes",
+    "kubernetes/website"
+  ],
+  "failed_doc_paths": [
+    "kubernetes/kubernetes/docs/README.md",
+    "kubernetes/kubernetes/docs/devel/README.md",
+    "kubernetes/kubernetes/docs/contributors/README.md",
+    "kubernetes/kubernetes/docs/contributors/devel/README.md",
+    "kubernetes/website/content/en/docs/concepts/overview/what-is-kubernetes.md",
+    "kubernetes/website/content/en/docs/concepts/configuration/overview.md",
+    "kubernetes/website/content/en/docs/reference/kubectl/overview.md"
+  ],
+  "heldout_issues_available": 1498,
+  "issues_selected_count": 100,
+  "issues_with_comments_count": 100,
+  "total_comments_collected": 821,
+  "maintainer_like_comments_count": 236,
+  "leakage_recheck_passed": true,
+  "overlap_with_train": 0,
+  "overlap_with_val": 0,
+  "overlap_with_test": 0,
+  "overlap_with_classification_golden": 0,
+  "elapsed_seconds": 127.6
+}

@@ -1,0 +1,303 @@
+split,issue_number,final_label,before,after
+train,6841,bug,"GCE, AWS and other Volume sources should be optional in the VolumeSource struct They are all required right now: https://github.com/GoogleCloudPlatform/kubernetes/blob/master/pkg/api/v1beta3/types.go#L203
+Need to add the omitempty tag.","GCE, AWS and other Volume sources should be optional in the VolumeSource struct They are all required right now: <URL>
+Need to add the omitempty tag."
+train,6842,bug,"Some struct fields missing in swagger-spec Some struct fields are missing in the properties field of models in our swagger-spec.
+For example, the model for VolumeSource does not have awsElasticBlockStore property: https://github.com/GoogleCloudPlatform/kubernetes/blob/master/api/swagger-spec/v1beta1.json#L9849
+ while the struct definition has that field: https://github.com/GoogleCloudPlatform/kubernetes/blob/master/pkg/api/v1beta1/types.go#L110
+
+This most likely is a bug in go-restful, but I ...","Some struct fields missing in swagger-spec Some struct fields are missing in the properties field of models in our swagger-spec.
+For example, the model for VolumeSource does not have awsElasticBlockStore property: <URL>
+ while the struct definition has that field: <URL>
+
+This most likely is a bug in go-restful, but I havent been able to produce a standalone example to reproduce.
+Filling this in the meantime to keep track."
+train,7100,bug,"Duplicate replacePod APIs defined in spec replacePod is defined twice in swagger-spec at
+https://github.com/GoogleCloudPlatform/kubernetes/blob/master/api/swagger-spec/v1beta3.json#L4026 and https://github.com/GoogleCloudPlatform/kubernetes/blob/master/api/swagger-spec/v1beta3.json#L4776 due to which replacePod fails with 404 on an existing pod.","Duplicate replacePod APIs defined in spec replacePod is defined twice in swagger-spec at
+<URL> and <URL> due to which replacePod fails with 404 on an existing pod."
+train,8943,bug,"'--api-prefix' option in 'kubectl proxy' documentation is wrong Without `--api-prefix`, `kubectl proxy` works just fine,
+
+```
+$ curl localhost:8001/api/
+{
+  ""versions"": [
+    ""v1beta1"",
+    ""v1beta2"",
+    ""v1beta3""
+  ]
+}
+```
+
+With '--api-prefix=xxx-api', it stops work:
+
+```
+$ curl localhost:8001/xxx-api/
+404 page not found
+```
+
+My `kubectl` version:
+
+```
+$ kubectl version
+Client Version: version.Info{Major:""0"", Minor:""17+"", GitVersion:""v0.17.1-878-g851f6b754241c0-dirty"", GitCommit:""851f6b7542...","'--api-prefix' option in 'kubectl proxy' documentation is wrong Without `--api-prefix`, `kubectl proxy` works just fine,
+
+```
+$ curl localhost:8001/api/
+{
+ ""versions"": [
+ ""v1beta1"",
+ ""v1beta2"",
+ ""v1beta3""
+ ]
+}
+```
+
+With '--api-prefix=xxx-api', it stops work:
+
+```
+$ curl localhost:8001/xxx-api/
+404 page not found
+```
+
+My `kubectl` version:
+
+```
+$ kubectl version
+Client Version: version.Info{Major:""0"", Minor:""17+"", GitVersion:""v0.17.1-878-g851f6b754241c0-dirty"", GitCommit:""851f6b754241c01f30c43..."
+train,11687,bug,"Service account is blocked by authorization. (DNS addon, kube2sky) I'm using v1.0.1 with authorization. When setting up DNS addon, kube2sky can reach https://kubernetes:443, thanks to the instructions in #10265. However kube2sky can't get data from the api server.
+
+```
+kube2sky logs:
+E0722 10:04:10.546193       1 reflector.go:136] Failed to list *api.Service: the server does not allow access to the requested resource (get services)
+E0722 10:04:10.547583       1 reflector.go:136] Failed to lis...","Service account is blocked by authorization. (DNS addon, kube2sky) I'm using v1.0.1 with authorization. When setting up DNS addon, kube2sky can reach <URL> thanks to the instructions in #10265. However kube2sky can't get data from the api server.
+
+```
+kube2sky logs:
+E0722 10:04:10.546193 1 reflector.go:136] Failed to list *api.Service: the server does not allow access to the requested resource (get services)
+E0722 10:04:10.547583 1 reflector.go:136] Failed to list *api.Endpoints: the server d..."
+train,11696,bug,"walkthrough/k8s201.html error in rendered text The source has the following:
+
+``` console
+$ export SERVICE_IP=$(kubectl get service nginx-service -o=template -t={{.spec.clusterIP}})
+$ export SERVICE_PORT=$(kubectl get service nginx-service -o=template '-t={{(index .spec.ports 0).port}}')
+$ curl http://${SERVICE_IP}:${SERVICE_PORT}
+```
+
+but on the support kubernetes.io site at :
+
+http://kubernetes.io/v1.0/docs/user-guide/walkthrough/k8s201.html
+
+The template has been omitted.
+
+```
+$ export SER...","walkthrough/k8s201.html error in rendered text The source has the following:
+
+``` console
+$ export SERVICE_IP=$(kubectl get service nginx-service -o=template -t={{.spec.clusterIP}})
+$ export SERVICE_PORT=$(kubectl get service nginx-service -o=template '-t={{(index .spec.ports 0).port}}')
+$ curl <URL>
+```
+
+but on the support kubernetes.io site at :
+
+<URL>
+
+The template has been omitted.
+
+```
+$ export SERVICE_IP=$(kubectl get service nginx-service -o=template -t=)
+$ export SERVICE_PORT=$(kubect..."
+train,12357,bug,"Broken link on kubernetes.io to http://kubernetes.io/v1.0/DESIGN.html  On the page http://kubernetes.io/v1.0/docs/user-guide/walkthrough/README.html the link http://kubernetes.io/v1.0/DESIGN.html is broken. Reported by @ivant
+
+@RichieEscarez","Broken link on kubernetes.io to <URL> On the page <URL> the link <URL> is broken. Reported by <USER>
+
+<USER>"
+train,15698,bug,"On kubernetes.io AWS link 404-s Going to ""Documentation > Turn-Key Cloud Solutions > AWS"" takes you to http://kubernetes.io/v1.0/docs/getting-started-guides/AWS.html which 404s and then redirects back to homepage.","On kubernetes.io AWS link 404-s Going to ""Documentation > Turn-Key Cloud Solutions > AWS"" takes you to <URL> which 404s and then redirects back to homepage."
+train,17155,bug,"API Reference: shows ""(VAR_NAME)"" instead of ""$$(VAR_NAME)"" In http://kubernetes.io/v1.1/docs/api-reference/v1/definitions.html#_v1_container it reads `The $(VAR_NAME) syntax can be escaped with a double , ie: (VAR_NAME).` but it should read `The $(VAR_NAME) syntax can be escaped with a double $$, i.e. $$(VAR_NAME).`","API Reference: shows ""(VAR_NAME)"" instead of ""$$(VAR_NAME)"" In <URL> it reads `The $(VAR_NAME) syntax can be escaped with a double , ie: (VAR_NAME).` but it should read `The $(VAR_NAME) syntax can be escaped with a double $$, i.e. $$(VAR_NAME).`"
+train,17448,bug,"Kubectl download links for 1.1.1 still point to 1.0.1 On the download link to the `kubectl` binary at http://kubernetes.io/v1.1/docs/getting-started-guides/docker.html it still points to the v1.0.1 kubectl binary.
+
+I'm not sure if this is intentional but it meant that things like `kubectl get jobs` didn't work for me.","Kubectl download links for 1.1.1 still point to 1.0.1 On the download link to the `kubectl` binary at <URL> it still points to the v1.0.1 kubectl binary.
+
+I'm not sure if this is intentional but it meant that things like `kubectl get jobs` didn't work for me."
+train,17677,bug,http://kubernetes.io/v1.1/gs-custom.html refers to http://kubernetes.io/v1.0/docs/getting-started-guides/README.html ... which is a problem because the referent is not the latest version.,<URL> refers to <URL> ... which is a problem because the referent is not the latest version.
+train,17887,bug,"getting started ubuntu guide is out of date http://kubernetes.io/v1.1/docs/getting-started-guides/ubuntu.html
+
+```
+$ cd kubernetes/cluster/ubuntu
+$ ./build.sh
+```
+
+Appears to be not super usable anymore -- cc @resouer (you're the only public member of @ZJU-SEL, the folks marked as the maintainer)","getting started ubuntu guide is out of date <URL>
+
+```
+$ cd kubernetes/cluster/ubuntu
+$ ./build.sh
+```
+
+Appears to be not super usable anymore -- cc <USER> (you're the only public member of <USER>, the folks marked as the maintainer)"
+train,19039,bug,"missing  sentinel.py in redis image creation Hello Team,
+
+https://github.com/kubernetes/kubernetes/blob/release-1.1/examples/redis/image/Dockerfile#L8
+
+COPY sentinel.py /sentinel.py file is missing in this latest version. 
+
+Thanks and Regards,
+Raj","missing sentinel.py in redis image creation Hello Team,
+
+<URL>
+
+COPY sentinel.py /sentinel.py file is missing in this latest version. 
+
+Thanks and Regards,
+Raj"
+train,19721,bug,"Broken link: Kubectl API Reference in kubernetes.io/docs 1. Open http://kubernetes.io/v1.0/docs/api-reference/definitions.html (or http://kubernetes.io/v1.0/docs/api-reference/operations.html)
+2. Click on ""View the latest version here.""
+3. It brings you to http://kubernetes.io/v1.1/docs/api-reference/definitions.html (404 not found). However the link should be http://kubernetes.io/v1.1/docs/api-reference/v1/definitions.html","Broken link: Kubectl API Reference in kubernetes.io/docs 1. Open <URL> (or <URL>
+2. Click on ""View the latest version here.""
+3. It brings you to <URL> (404 not found). However the link should be <URL>"
+train,19949,bug,"Markdown to HTML conversion excludes go template content inside double curly braces For example:
+https://github.com/kubernetes/kubernetes/blob/v1.1.4/docs/user-guide/images.md
+![markdown](https://cloud.githubusercontent.com/assets/4631304/12495587/c9293ed2-c090-11e5-9f67-db78c930326b.png)
+Compared to:
+http://kubernetes.io/v1.1/docs/user-guide/images.html
+![html](https://cloud.githubusercontent.com/assets/4631304/12495588/c92cd68c-c090-11e5-8cb3-51d914c8fae7.png)
+
+Needless to say, this makes t...","Markdown to HTML conversion excludes go template content inside double curly braces For example:
+<URL>
+<IMAGE>
+Compared to:
+<URL>
+<IMAGE>
+
+Needless to say, this makes the documentation a bit confusing. :)"
+train,22068,bug,broken link on troubleshooting/logging page The link to 'Collecting log files within containers with Fluentd' is broken on the page [Cluster Level Logging to Google Cloud Logging](http://kubernetes.io/v1.1/docs/getting-started-guides/logging.html) and also on this page [Logging](http://kubernetes.io/v1.1/docs/user-guide/logging.html),broken link on troubleshooting/logging page The link to 'Collecting log files within containers with Fluentd' is broken on the page [Cluster Level Logging to Google Cloud Logging](<URL> and also on this page [Logging](<URL>
+train,22621,bug,"Kubectl overview web page not rendered properly   http://kubernetes.io/v1.1/docs/user-guide/kubectl-overview.html#operations the table is almost not readable. 
+
+@kubernetes/docs @caesarxuchao @nikhiljindal","Kubectl overview web page not rendered properly <URL> the table is almost not readable. 
+
+<USER>/docs <USER> <USER>"
+train,23875,bug,"docs/devel/automation.md: points to nonexistent blunderbuss.yml In section about [Github Mungers](https://github.com/kubernetes/kubernetes/blob/master/docs/devel/automation.md#github-munger):
+
+> blunderbuss - Tries to automatically find an owner for a PR without an owner, uses mapping file here: https://github.com/kubernetes/contrib/blob/master/mungegithub/blunderbuss.yml
+
+Link https://github.com/kubernetes/contrib/blob/master/mungegithub/blunderbuss.yml shows 404 page.","docs/devel/automation.md: points to nonexistent blunderbuss.yml In section about [Github Mungers](<URL>
+
+> blunderbuss - Tries to automatically find an owner for a PR without an owner, uses mapping file here: <URL>
+
+Link <URL> shows 404 page."
+train,26202,bug,`kubectl apply deployment -f` doesn't accept label/selector changes I got errors complaining about the selector and labels not matching even if I explicitly specified both. Showed @janetkuo.,`kubectl apply deployment -f` doesn't accept label/selector changes I got errors complaining about the selector and labels not matching even if I explicitly specified both. Showed <USER>.
+train,33193,bug,"ExecAction htmlpreview docs are misformatted at HEAD See:
+
+https://htmlpreview.github.io/?https://github.com/kubernetes/kubernetes/blob/HEAD/docs/api-reference/v1/definitions.html#_v1_execaction
+
+On Chrome, I'm seeing the following text under Description:
+
+```
+Command is the command line to execute inside the container, the working directory for the command is root (/) in the container’s filesystem. The command is simply exec’d, it is not run inside a shell, so traditional shell instructions ...","ExecAction htmlpreview docs are misformatted at HEAD See:
+
+<URL>
+
+On Chrome, I'm seeing the following text under Description:
+
+```
+Command is the command line to execute inside the container, the working directory for the command is root (/) in the container’s filesystem. The command is simply exec’d, it is not run inside a shell, so traditional shell instructions ('
+```
+
+And the following under Required:
+
+```
+', etc) won’t work. To use a shell, you need to explicitly call out to that shell. ..."
+train,47871,bug,"Generation and ObservedGeneration should not be optional These fields are marked optional on every type that uses them. This makes it impossible to _reliably_ use ObservedGeneration as a sanity check. It should always be populated so that it can be used to verify you are looking at a status for the correct version of the resource.
+
+In Kubernetes 1.5, the ObservedGeneration in StatefulSetStatus was never populated ([this appears to have been fixed in later versions](https://github.com/kubernet...","Generation and ObservedGeneration should not be optional These fields are marked optional on every type that uses them. This makes it impossible to _reliably_ use ObservedGeneration as a sanity check. It should always be populated so that it can be used to verify you are looking at a status for the correct version of the resource.
+
+In Kubernetes 1.5, the ObservedGeneration in StatefulSetStatus was never populated ([this appears to have been fixed in later versions](<URL> This made deleting a ..."
+train,49023,bug,"API changes devel doc is (very) outdated E.g. it still refers to `pkg/api/v1/...`
+Just take a look: https://github.com/kubernetes/community/blob/master/contributors/devel/api_changes.md#changing-versioned-apis
+
+@kubernetes/sig-api-machinery-bugs","API changes devel doc is (very) outdated E.g. it still refers to `pkg/api/v1/...`
+Just take a look: <URL>
+
+<USER>/sig-api-machinery-bugs"
+train,50270,bug,"minor HPA documentation fix **Is this a BUG REPORT or FEATURE REQUEST?**:
+/kind bug
+@kubernetes/sig-autoscaling
+
+**What happened**:
+Documented commend does not work.
+
+**What you expected to happen**:
+Change to documentation required
+
+**How to reproduce it (as minimally and precisely as possible)**:
+on following page
+https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/
+the command 
+`kubectl get hpa.autoscaling.v2alpha1 -o yaml > /tmp/hpa-v2.yaml`
+should instea...","minor HPA documentation fix **Is this a BUG REPORT or FEATURE REQUEST?**:
+/kind bug
+<USER>/sig-autoscaling
+
+**What happened**:
+Documented commend does not work.
+
+**What you expected to happen**:
+Change to documentation required
+
+**How to reproduce it (as minimally and precisely as possible)**:
+on following page
+<URL>
+the command 
+`kubectl get hpa.autoscaling.v2alpha1 -o yaml > /tmp/hpa-v2.yaml`
+should instead be
+`kubectl get hpa.v2alpha1.autoscaling -o yaml > /tmp/hpa-v2.yaml`
+
+**Anything els..."
+train,50880,bug,"auto-generated file cannot be updated when api types changed/updated <!-- This form is for bug reports and feature requests ONLY! 
+
+If you're looking for help check [Stack Overflow](https://stackoverflow.com/questions/tagged/kubernetes) and the [troubleshooting guide](https://kubernetes.io/docs/tasks/debug-application-cluster/troubleshooting/).
+-->
+
+**Is this a BUG REPORT or FEATURE REQUEST?**:
+
+/kind bug
+/sig testing
+/kind documentation
+/priority critical-urgent
+
+**What happened**:
+I've upda...","auto-generated file cannot be updated when api types changed/updated <!-- This form is for bug reports and feature requests ONLY! 
+
+If you're looking for help check [Stack Overflow](<URL> and the [troubleshooting guide](<URL>
+-->
+
+**Is this a BUG REPORT or FEATURE REQUEST?**:
+
+/kind bug
+/sig testing
+/kind documentation
+/priority critical-urgent
+
+**What happened**:
+I've updated the api in #50877. But no auto-generated files have be updated when running updating shell scripts. Unlike PR #49530...."
+train,52391,bug,"Kubernetes Extended Scheduler Json example incorrectly mentioned  **BUG REPORT**:
+
+@kubernetes/sig-scheduling
+@kubernetes/sig-docs
+ /kind bug
+
+K8S Extended scheduler example provides incorrect Key for configuring Extenders:
+https://github.com/kubernetes/kubernetes/blob/master/examples/scheduler-policy-config-with-extender.json mentions to configure extender by using ""extenders"" keyword however when configured this way the scheduler skips the extender configuration.
+
+Scheduler Extender configu...","Kubernetes Extended Scheduler Json example incorrectly mentioned **BUG REPORT**:
+
+<USER>/sig-scheduling
+<USER>/sig-docs
+ /kind bug
+
+K8S Extended scheduler example provides incorrect Key for configuring Extenders:
+<URL> mentions to configure extender by using ""extenders"" keyword however when configured this way the scheduler skips the extender configuration.
+
+Scheduler Extender configuration needs to be provided with keyword ""ExtenderConfigs"":
+
+Reproduce: Run scheduler using --policy-config-fi..."

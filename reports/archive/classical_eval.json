@@ -1,0 +1,50 @@
+{
+  "accuracy": 0.713889,
+  "data_hash": "4cb318afbe53b7410d5488953778318d2e2505ebbd4f5b61fa51761c79f7ff70",
+  "fit_time_seconds": 1.104711,
+  "generated_at": "2026-05-19T20:27:07.673463+00:00",
+  "macro_f1": 0.693839,
+  "model_name": "tfidf_logistic_regression",
+  "per_class_precision_recall_f1": {
+    "bug": {
+      "f1": 0.706977,
+      "precision": 0.608,
+      "recall": 0.844444,
+      "support": 90
+    },
+    "docs": {
+      "f1": 0.847458,
+      "precision": 0.862069,
+      "recall": 0.833333,
+      "support": 90
+    },
+    "feature": {
+      "f1": 0.86631,
+      "precision": 0.835052,
+      "recall": 0.9,
+      "support": 90
+    },
+    "question": {
+      "f1": 0.35461,
+      "precision": 0.490196,
+      "recall": 0.277778,
+      "support": 90
+    }
+  },
+  "predict_time_seconds": 0.076707,
+  "test_count": 360,
+  "train_count": 1680,
+  "val_count": 360,
+  "vectorizer_settings": {
+    "lowercase": true,
+    "max_features": 50000,
+    "min_df": 2,
+    "ngram_range": [
+      1,
+      2
+    ],
+    "strip_accents": "unicode",
+    "sublinear_tf": true
+  },
+  "weighted_f1": 0.693839
+}

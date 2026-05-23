@@ -133,3 +133,117 @@ def test_thin_chunks_excluded_from_answer():
     answer = build_extractive_answer([_THIN, _SUBSTANTIVE])
     assert answer is not None
     assert "## Services" not in answer
+
+
+# ---------------------------------------------------------------------------
+# Live hybrid wiring (mocked corpus + model_server /embed — no torch, no network)
+# ---------------------------------------------------------------------------
+
+_FAKE_CORPUS = [
+    {"chunk_id": "c1", "text": "pods run containers on nodes", "source_type": "docs"},
+    {"chunk_id": "c2", "text": "services expose pods over the network", "source_type": "docs"},
+]
+
+
+def test_runtime_chunk_embeddings_path_is_shipped_artifact():
+    from app.services.rag.config import RAG_CHUNK_EMBEDDINGS_PATH
+
+    p = str(RAG_CHUNK_EMBEDDINGS_PATH).replace("\\", "/")
+    assert p.endswith("artifacts/rag/intfloat_e5_small_v2_chunks.npy")
+
+
+def test_no_torch_import_in_retrieval():
+    import sys
+
+    import app.services.rag.retrieval  # noqa: F401
+
+    assert "torch" not in sys.modules, "torch must not be imported by the API retrieval path"
+
+
+def _reset_caches(monkeypatch, chunk_vecs):
+    import numpy as np
+
+    from app.services.rag import retrieval as r
+
+    monkeypatch.setattr(r, "_chunks", None)
+    monkeypatch.setattr(r, "_tfidf_vec", None)
+    monkeypatch.setattr(r, "_tfidf_mat", None)
+    monkeypatch.setattr(r, "_chunk_vecs", None)
+    monkeypatch.setattr(r, "_load_chunks", lambda: _FAKE_CORPUS)
+    monkeypatch.setattr(r, "_load_chunk_vecs", lambda: chunk_vecs)
+    return np
+
+
+async def test_hybrid_used_when_embeddings_and_embed_available(monkeypatch):
+    import numpy as np
+
+    _reset_caches(monkeypatch, np.eye(2, 384, dtype=np.float32))
+
+    class _FakeClient:
+        def __init__(self, *a, **k):
+            pass
+
+        async def embed(self, texts, model):
+            return [[1.0] + [0.0] * 383]
+
+    monkeypatch.setattr(
+        "app.infra.modelserver_client.ModelServerClient", _FakeClient
+    )
+    from app.services.rag.retrieval import retrieve
+
+    chunks, mode = await retrieve("what are services", top_k=2, alpha=0.7)
+    assert mode == "hybrid"
+    assert len(chunks) >= 1
+
+
+async def test_fallback_to_tfidf_when_embed_unavailable(monkeypatch):
+    import numpy as np
+
+    _reset_caches(monkeypatch, np.eye(2, 384, dtype=np.float32))
+    from app.domain.errors import ModelServerUnavailableError
+
+    class _DownClient:
+        def __init__(self, *a, **k):
+            pass
+
+        async def embed(self, texts, model):
+            raise ModelServerUnavailableError("model server down")
+
+    monkeypatch.setattr(
+        "app.infra.modelserver_client.ModelServerClient", _DownClient
+    )
+    from app.services.rag.retrieval import retrieve
+
+    chunks, mode = await retrieve("what are services", top_k=2, alpha=0.7)
+    assert mode == "tfidf_fallback"
+
+
+async def test_fallback_when_no_chunk_embeddings(monkeypatch):
+    _reset_caches(monkeypatch, None)
+    from app.services.rag.retrieval import retrieve
+
+    chunks, mode = await retrieve("what are services", top_k=2, alpha=0.7)
+    assert mode == "tfidf_fallback"
+
+
+async def test_source_type_filter_preserved_in_hybrid(monkeypatch):
+    import numpy as np
+
+    _reset_caches(monkeypatch, np.eye(2, 384, dtype=np.float32))
+
+    class _FakeClient:
+        def __init__(self, *a, **k):
+            pass
+
+        async def embed(self, texts, model):
+            return [[1.0] + [0.0] * 383]
+
+    monkeypatch.setattr(
+        "app.infra.modelserver_client.ModelServerClient", _FakeClient
+    )
+    from app.services.rag.retrieval import retrieve
+
+    chunks, mode = await retrieve(
+        "services", top_k=2, alpha=0.7, source_type="docs", query_transform="technical_terms"
+    )
+    assert all(c["source_type"] == "docs" for c in chunks)

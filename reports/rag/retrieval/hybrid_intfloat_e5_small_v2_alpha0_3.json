@@ -1,0 +1,866 @@
+{
+  "run_name": "hybrid_intfloat_e5_small_v2_alpha0_3",
+  "retriever": "hybrid",
+  "model": "intfloat/e5-small-v2",
+  "alpha": 0.3,
+  "query_transform": "none",
+  "chunk_count": 2189,
+  "question_count": 25,
+  "hit_at_5": 0.52,
+  "recall_at_5": 0.52,
+  "mrr_at_10": 0.2278,
+  "latency_seconds": 5.36,
+  "timestamp": "2026-05-21T14:59:15.336422+00:00",
+  "per_question": [
+    {
+      "golden_id": "rag_gold_0000",
+      "question": "What does the Kubernetes documentation say about Namespaces of Services?",
+      "ground_truth_chunk_ids": [
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_dns_pod_service___0001"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_dns_pod_service___0004",
+        "section_aware__issue__issue_135518__0001",
+        "section_aware__docs__kubernetes_kubernetes_readme_md__0003",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_dns_pod_service___0001",
+        "section_aware__issue__issue_135518__0002",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_workloads_pods_index_md__0002",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_dns_pod_service___0000",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_service_md__0065",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_service_md__0003",
+        "section_aware__comment__comment_1660590496__0000"
+      ],
+      "retrieved_scores_top_10": [
+        0.8968378305435181,
+        0.7030764818191528,
+        0.6555016040802002,
+        0.6485038995742798,
+        0.5998748540878296,
+        0.594269871711731,
+        0.5911773443222046,
+        0.5748833417892456,
+        0.5614367723464966,
+        0.556725800037384
+      ],
+      "hit_at_5": 1.0,
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 0.25
+    },
+    {
+      "golden_id": "rag_gold_0001",
+      "question": "What does the Kubernetes documentation say about Services in Kubernetes?",
+      "ground_truth_chunk_ids": [
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_service_md__0003"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_dns_pod_service___0004",
+        "section_aware__issue__issue_135518__0001",
+        "section_aware__docs__kubernetes_kubernetes_readme_md__0003",
+        "section_aware__issue__issue_135518__0002",
+        "section_aware__comment__comment_2568681073__0000",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_service_md__0065",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_dns_pod_service___0000",
+        "section_aware__comment__comment_1660590496__0000",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_service_md__0048",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_service_md__0003"
+      ],
+      "retrieved_scores_top_10": [
+        0.9128201603889465,
+        0.7386857271194458,
+        0.696039617061615,
+        0.6131272315979004,
+        0.6116592884063721,
+        0.6112410426139832,
+        0.5820116400718689,
+        0.5772203207015991,
+        0.561946451663971,
+        0.5535551309585571
+      ],
+      "hit_at_5": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.1
+    },
+    {
+      "golden_id": "rag_gold_0002",
+      "question": "What does the Kubernetes documentation say about Why volumes are important?",
+      "ground_truth_chunk_ids": [
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_storage_volumes_md__0002"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__docs__kubernetes_kubernetes_readme_md__0003",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_storage_volumes_md__0065",
+        "section_aware__issue__issue_135518__0002",
+        "section_aware__comment__comment_4171844587__0000",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_storage_volumes_md__0007",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_storage_volumes_md__0002",
+        "section_aware__comment__comment_4346025450__0000",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_storage_volumes_md__0003",
+        "section_aware__comment__comment_3780527126__0000",
+        "section_aware__issue__issue_138644__0001"
+      ],
+      "retrieved_scores_top_10": [
+        0.8900604248046875,
+        0.8610304594039917,
+        0.7795172929763794,
+        0.7759278416633606,
+        0.770098090171814,
+        0.7623789310455322,
+        0.7572733759880066,
+        0.7565070390701294,
+        0.7477932572364807,
+        0.728486180305481
+      ],
+      "hit_at_5": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.16666666666666666
+    },
+    {
+      "golden_id": "rag_gold_0003",
+      "question": "What does the Kubernetes documentation say about Use Case?",
+      "ground_truth_chunk_ids": [
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_workloads_controllers_deployment_md__0003"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_workloads_controllers_deployment_md__0002",
+        "section_aware__docs__kubernetes_kubernetes_readme_md__0003",
+        "section_aware__issue__issue_135518__0002",
+        "section_aware__docs__kubernetes_kubernetes_readme_md__0009",
+        "section_aware__issue__issue_135518__0001",
+        "section_aware__docs__kubernetes_kubernetes_readme_md__0002",
+        "section_aware__comment__comment_3898074346__0000",
+        "section_aware__comment__comment_1660590496__0000",
+        "section_aware__issue__issue_138924__0000",
+        "section_aware__comment__comment_4273676599__0000"
+      ],
+      "retrieved_scores_top_10": [
+        0.9457982182502747,
+        0.8074820637702942,
+        0.7466439604759216,
+        0.7265588045120239,
+        0.7098435163497925,
+        0.6926426887512207,
+        0.6795282363891602,
+        0.6788969039916992,
+        0.6677470207214355,
+        0.6663293838500977
+      ],
+      "hit_at_5": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0
+    },
+    {
+      "golden_id": "rag_gold_0004",
+      "question": "What does the Kubernetes documentation say about Listing your cluster?",
+      "ground_truth_chunk_ids": [
+        "section_aware__docs__kubernetes_website_content_en_docs_tasks_debug_debug_cluster_index_md__0001"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__docs__kubernetes_website_content_en_docs_tasks_debug_debug_cluster_index_md__0001",
+        "section_aware__docs__kubernetes_kubernetes_readme_md__0003",
+        "section_aware__issue__issue_135518__0002",
+        "section_aware__issue__issue_135518__0001",
+        "section_aware__comment__comment_1660590496__0000",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_architecture_index_md__0001",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_service_md__0004",
+        "section_aware__comment__comment_2568681073__0000",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_dns_pod_service___0000",
+        "section_aware__comment__comment_3898074346__0000"
+      ],
+      "retrieved_scores_top_10": [
+        0.9788562059402466,
+        0.7838119268417358,
+        0.7100582718849182,
+        0.6863155364990234,
+        0.6567227840423584,
+        0.6306241750717163,
+        0.6069709062576294,
+        0.6044980883598328,
+        0.6009423732757568,
+        0.5987581014633179
+      ],
+      "hit_at_5": 1.0,
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 1.0
+    },
+    {
+      "golden_id": "rag_gold_0005",
+      "question": "What was the reported issue in #119640: NCC-E003660-WV3: Privilege Escalation via `nodes/proxy` Perm...?",
+      "ground_truth_chunk_ids": [
+        "section_aware__issue__issue_119640__0002"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_119640__0000",
+        "section_aware__issue__issue_119640__0001",
+        "section_aware__issue__issue_119640__0003",
+        "section_aware__issue__issue_138315__0001",
+        "section_aware__issue__issue_138315__0002",
+        "section_aware__issue__issue_119640__0002",
+        "section_aware__issue__issue_137577__0001",
+        "section_aware__issue__issue_137085__0003",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_storage_volumes_md__0066",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_architecture_index_md__0010"
+      ],
+      "retrieved_scores_top_10": [
+        1.0,
+        0.9972409009933472,
+        0.35229939222335815,
+        0.3195399045944214,
+        0.31509560346603394,
+        0.30129674077033997,
+        0.2995947599411011,
+        0.2828517556190491,
+        0.2608332931995392,
+        0.2560824155807495
+      ],
+      "hit_at_5": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.16666666666666666
+    },
+    {
+      "golden_id": "rag_gold_0006",
+      "question": "What was the reported issue in #127803: Support takeover for devicemanager/device-plugin?",
+      "ground_truth_chunk_ids": [
+        "section_aware__issue__issue_127803__0002"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_127803__0000",
+        "section_aware__issue__issue_127803__0001",
+        "section_aware__issue__issue_127803__0002",
+        "section_aware__comment__comment_2388522433__0000",
+        "section_aware__comment__comment_2388512852__0000",
+        "section_aware__comment__comment_2389222458__0000",
+        "section_aware__comment__comment_3626447020__0000",
+        "section_aware__comment__comment_2533496033__0000",
+        "section_aware__comment__comment_2388484746__0000",
+        "section_aware__comment__comment_2549674655__0000"
+      ],
+      "retrieved_scores_top_10": [
+        1.0,
+        0.6426346302032471,
+        0.6156392097473145,
+        0.5358953475952148,
+        0.5063864588737488,
+        0.35772430896759033,
+        0.30837225914001465,
+        0.29703399538993835,
+        0.29625529050827026,
+        0.29302722215652466
+      ],
+      "hit_at_5": 1.0,
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 0.3333333333333333
+    },
+    {
+      "golden_id": "rag_gold_0007",
+      "question": "What problem was reported in issue #128162: Pod admission can fail due to webhooks + context deadline ex...?",
+      "ground_truth_chunk_ids": [
+        "section_aware__issue__issue_128162__0001"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_128162__0000",
+        "section_aware__issue__issue_128162__0004",
+        "section_aware__comment__comment_2430178458__0000",
+        "section_aware__issue__issue_128162__0003",
+        "section_aware__issue__issue_128162__0001",
+        "section_aware__comment__comment_2430181868__0000",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_dns_pod_service___0013",
+        "section_aware__issue__issue_138315__0010",
+        "section_aware__issue__issue_128162__0002",
+        "section_aware__comment__comment_3745209236__0003"
+      ],
+      "retrieved_scores_top_10": [
+        1.0,
+        0.7300868034362793,
+        0.6336643695831299,
+        0.5615543723106384,
+        0.5562517642974854,
+        0.5156404376029968,
+        0.46614837646484375,
+        0.4591696560382843,
+        0.4447355270385742,
+        0.38221031427383423
+      ],
+      "hit_at_5": 1.0,
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 0.2
+    },
+    {
+      "golden_id": "rag_gold_0008",
+      "question": "What problem was reported in issue #128413: response_sizes metrics for verb=WATCH is only present for bu...?",
+      "ground_truth_chunk_ids": [
+        "section_aware__issue__issue_128413__0002"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_128413__0000",
+        "section_aware__issue__issue_128413__0002",
+        "section_aware__issue__issue_128413__0003",
+        "section_aware__issue__issue_128413__0004",
+        "section_aware__issue__issue_128413__0005",
+        "section_aware__comment__comment_4488400890__0000",
+        "section_aware__comment__comment_3487993335__0000",
+        "section_aware__issue__issue_139134__0000",
+        "section_aware__comment__comment_2481701716__0000",
+        "section_aware__comment__comment_4031385649__0000"
+      ],
+      "retrieved_scores_top_10": [
+        0.976786732673645,
+        0.5968461036682129,
+        0.48839271068573,
+        0.4385448098182678,
+        0.3809435963630676,
+        0.3752903938293457,
+        0.34016677737236023,
+        0.33572518825531006,
+        0.3283699154853821,
+        0.3267907500267029
+      ],
+      "hit_at_5": 1.0,
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 0.5
+    },
+    {
+      "golden_id": "rag_gold_0009",
+      "question": "What problem was reported in issue #128684: No overflow validation when using MilliValue()?",
+      "ground_truth_chunk_ids": [
+        "section_aware__issue__issue_128684__0001"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_128684__0000",
+        "section_aware__issue__issue_128684__0012",
+        "section_aware__comment__comment_2501977360__0000",
+        "section_aware__issue__issue_128684__0001",
+        "section_aware__issue__issue_128684__0008",
+        "section_aware__comment__comment_2550117998__0000",
+        "section_aware__issue__issue_128684__0005",
+        "section_aware__issue__issue_128684__0011",
+        "section_aware__issue__issue_128684__0003",
+        "section_aware__comment__comment_2549674655__0000"
+      ],
+      "retrieved_scores_top_10": [
+        0.972027063369751,
+        0.5180455446243286,
+        0.48869961500167847,
+        0.4509618282318115,
+        0.4385800361633301,
+        0.40123674273490906,
+        0.37715429067611694,
+        0.36622631549835205,
+        0.3370695114135742,
+        0.31950393319129944
+      ],
+      "hit_at_5": 1.0,
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 0.25
+    },
+    {
+      "golden_id": "rag_gold_0010",
+      "question": "What problem was reported in issue #128798: Deployment controller: Inconsistency of deletePod pod update...?",
+      "ground_truth_chunk_ids": [
+        "section_aware__issue__issue_128798__0001"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_128798__0000",
+        "section_aware__issue__issue_128798__0001",
+        "section_aware__issue__issue_135483__0001",
+        "section_aware__comment__comment_4031385649__0000",
+        "section_aware__issue__issue_135483__0003",
+        "section_aware__issue__issue_137409__0001",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_workloads_controllers_deployment_md__0075",
+        "section_aware__issue__issue_128798__0004",
+        "section_aware__comment__comment_3162828087__0000",
+        "section_aware__comment__comment_4364257465__0000"
+      ],
+      "retrieved_scores_top_10": [
+        1.0,
+        0.47821101546287537,
+        0.3993842899799347,
+        0.3839145004749298,
+        0.38364529609680176,
+        0.3822594881057739,
+        0.3752948045730591,
+        0.37051641941070557,
+        0.36868107318878174,
+        0.36848267912864685
+      ],
+      "hit_at_5": 1.0,
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 0.5
+    },
+    {
+      "golden_id": "rag_gold_0011",
+      "question": "What problem was reported in issue #129357: [FG:InPlacePodVerticalScaling] Pod CPU limit is not configur...?",
+      "ground_truth_chunk_ids": [
+        "section_aware__issue__issue_129357__0002"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_129357__0000",
+        "section_aware__comment__comment_2607254216__0000",
+        "section_aware__comment__comment_2607170035__0000",
+        "section_aware__comment__comment_2607254538__0000",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_workloads_pods_index_md__0029",
+        "section_aware__comment__comment_4031385649__0000",
+        "section_aware__comment__comment_2564828278__0002",
+        "section_aware__issue__issue_128684__0002",
+        "section_aware__issue__issue_129357__0002",
+        "section_aware__comment__comment_2563388589__0000"
+      ],
+      "retrieved_scores_top_10": [
+        0.9928550124168396,
+        0.9585914015769958,
+        0.8637306094169617,
+        0.7545846104621887,
+        0.46712467074394226,
+        0.4606178104877472,
+        0.45733416080474854,
+        0.44315189123153687,
+        0.4352038502693176,
+        0.42193037271499634
+      ],
+      "hit_at_5": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.1111111111111111
+    },
+    {
+      "golden_id": "rag_gold_0012",
+      "question": "What problem was reported in issue #131134: Potential incorrect RealServer weight update logic in IPVS p...?",
+      "ground_truth_chunk_ids": [
+        "section_aware__issue__issue_131134__0001"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_131134__0000",
+        "section_aware__issue__issue_131134__0001",
+        "section_aware__issue__issue_131134__0004",
+        "section_aware__issue__issue_131134__0006",
+        "section_aware__issue__issue_131134__0002",
+        "section_aware__comment__comment_2802047343__0000",
+        "section_aware__comment__comment_4312595280__0000",
+        "section_aware__comment__comment_2802047343__0001",
+        "section_aware__issue__issue_131134__0007",
+        "section_aware__issue__issue_138352__0000"
+      ],
+      "retrieved_scores_top_10": [
+        1.0,
+        0.643471360206604,
+        0.46159178018569946,
+        0.4388198256492615,
+        0.42771413922309875,
+        0.4176987409591675,
+        0.3820827305316925,
+        0.38119661808013916,
+        0.3455645442008972,
+        0.3299790322780609
+      ],
+      "hit_at_5": 1.0,
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 0.5
+    },
+    {
+      "golden_id": "rag_gold_0013",
+      "question": "What was the reported issue in #131319: Default memory eviction-hard threshold in kubernetes should ...?",
+      "ground_truth_chunk_ids": [
+        "section_aware__issue__issue_131319__0001"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_131319__0000",
+        "section_aware__comment__comment_2817668815__0005",
+        "section_aware__comment__comment_2823873298__0000",
+        "section_aware__issue__issue_131319__0001",
+        "section_aware__comment__comment_2823873298__0001",
+        "section_aware__comment__comment_2812466473__0001",
+        "section_aware__comment__comment_2817668815__0004",
+        "section_aware__comment__comment_2817668815__0002",
+        "section_aware__comment__comment_4063219143__0000",
+        "section_aware__comment__comment_4245456352__0000"
+      ],
+      "retrieved_scores_top_10": [
+        1.0,
+        0.6151348948478699,
+        0.5378245115280151,
+        0.4639543294906616,
+        0.4636143445968628,
+        0.45742690563201904,
+        0.44905513525009155,
+        0.44510239362716675,
+        0.4263997972011566,
+        0.41513970494270325
+      ],
+      "hit_at_5": 1.0,
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 0.25
+    },
+    {
+      "golden_id": "rag_gold_0014",
+      "question": "What was the reported issue in #132964: [client-go] Optionally populate `EventTime` in event recorde...?",
+      "ground_truth_chunk_ids": [
+        "section_aware__issue__issue_132964__0001"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_132964__0000",
+        "section_aware__issue__issue_132964__0001",
+        "section_aware__comment__comment_3544065816__0000",
+        "section_aware__comment__comment_3544331457__0000",
+        "section_aware__comment__comment_3544309565__0000",
+        "section_aware__comment__comment_4298118712__0000",
+        "section_aware__comment__comment_3544000811__0000",
+        "section_aware__comment__comment_3548694100__0000",
+        "section_aware__issue__issue_132964__0002",
+        "section_aware__issue__issue_134565__0000"
+      ],
+      "retrieved_scores_top_10": [
+        1.0,
+        0.5704686641693115,
+        0.46702009439468384,
+        0.40985769033432007,
+        0.40081000328063965,
+        0.35886234045028687,
+        0.34798598289489746,
+        0.34398412704467773,
+        0.33566778898239136,
+        0.33450961112976074
+      ],
+      "hit_at_5": 1.0,
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 0.5
+    },
+    {
+      "golden_id": "rag_gold_0015",
+      "question": "What resolution or maintainer guidance was provided for issue #127803 (Support takeover for devicemanager/device-plugin)?",
+      "ground_truth_chunk_ids": [
+        "section_aware__comment__comment_2537604278__0000"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_127803__0000",
+        "section_aware__issue__issue_127803__0001",
+        "section_aware__issue__issue_127803__0002",
+        "section_aware__comment__comment_2388512852__0000",
+        "section_aware__comment__comment_2388522433__0000",
+        "section_aware__comment__comment_2389222458__0000",
+        "section_aware__comment__comment_3626447020__0000",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_dns_pod_service___0021",
+        "section_aware__issue__issue_135661__0001",
+        "section_aware__comment__comment_2388484746__0000"
+      ],
+      "retrieved_scores_top_10": [
+        1.0,
+        0.6330115795135498,
+        0.6051955223083496,
+        0.49760702252388,
+        0.47294002771377563,
+        0.32490432262420654,
+        0.3107592463493347,
+        0.29570508003234863,
+        0.2828214466571808,
+        0.2824317216873169
+      ],
+      "hit_at_5": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0
+    },
+    {
+      "golden_id": "rag_gold_0016",
+      "question": "What resolution or maintainer guidance was provided for issue #128162 (Pod admission can fail due to webhooks + context d...)?",
+      "ground_truth_chunk_ids": [
+        "section_aware__comment__comment_2430178458__0000"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_128162__0000",
+        "section_aware__issue__issue_128162__0004",
+        "section_aware__comment__comment_2430178458__0000",
+        "section_aware__issue__issue_128162__0003",
+        "section_aware__comment__comment_2430181868__0000",
+        "section_aware__issue__issue_128162__0001",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_dns_pod_service___0013",
+        "section_aware__issue__issue_138315__0010",
+        "section_aware__issue__issue_128162__0002",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_workloads_pods_index_md__0028"
+      ],
+      "retrieved_scores_top_10": [
+        0.9986554384231567,
+        0.7510236501693726,
+        0.7283704280853271,
+        0.5822391510009766,
+        0.5553873181343079,
+        0.5511168241500854,
+        0.5348230004310608,
+        0.514060378074646,
+        0.5085088014602661,
+        0.4022192060947418
+      ],
+      "hit_at_5": 1.0,
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 0.3333333333333333
+    },
+    {
+      "golden_id": "rag_gold_0017",
+      "question": "What resolution or maintainer guidance was provided for issue #128684 (No overflow validation when using MilliValue())?",
+      "ground_truth_chunk_ids": [
+        "section_aware__comment__comment_2501977360__0000"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_128684__0000",
+        "section_aware__issue__issue_128684__0012",
+        "section_aware__comment__comment_2501977360__0000",
+        "section_aware__issue__issue_128684__0008",
+        "section_aware__issue__issue_128684__0001",
+        "section_aware__comment__comment_2550117998__0000",
+        "section_aware__issue__issue_128684__0005",
+        "section_aware__issue__issue_128684__0011",
+        "section_aware__comment__comment_3496439836__0000",
+        "section_aware__issue__issue_128684__0003"
+      ],
+      "retrieved_scores_top_10": [
+        0.951029360294342,
+        0.5208176374435425,
+        0.5169664621353149,
+        0.43749022483825684,
+        0.4342135787010193,
+        0.41780006885528564,
+        0.41584312915802,
+        0.38429969549179077,
+        0.3348733186721802,
+        0.3226805031299591
+      ],
+      "hit_at_5": 1.0,
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 0.3333333333333333
+    },
+    {
+      "golden_id": "rag_gold_0018",
+      "question": "What resolution or maintainer guidance was provided for issue #128788 (Initiate websocket handshake to watch for events i...)?",
+      "ground_truth_chunk_ids": [
+        "section_aware__comment__comment_2504232755__0000"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_128788__0000",
+        "section_aware__comment__comment_2504223920__0000",
+        "section_aware__issue__issue_128788__0001",
+        "section_aware__comment__comment_2481701716__0000",
+        "section_aware__comment__comment_2504232755__0000",
+        "section_aware__comment__comment_3487993335__0000",
+        "section_aware__comment__comment_4413933365__0000",
+        "section_aware__comment__comment_3894777928__0000",
+        "section_aware__comment__comment_3488276810__0000",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_dns_pod_service___0021"
+      ],
+      "retrieved_scores_top_10": [
+        0.9920530319213867,
+        0.5976219177246094,
+        0.48797398805618286,
+        0.45958417654037476,
+        0.407389760017395,
+        0.36813822388648987,
+        0.34892594814300537,
+        0.34361279010772705,
+        0.3429545760154724,
+        0.3419121205806732
+      ],
+      "hit_at_5": 1.0,
+      "recall_at_5": 1.0,
+      "reciprocal_rank": 0.2
+    },
+    {
+      "golden_id": "rag_gold_0019",
+      "question": "What resolution or maintainer guidance was provided for issue #129357 ([FG:InPlacePodVerticalScaling] Pod CPU limit is no...)?",
+      "ground_truth_chunk_ids": [
+        "section_aware__comment__comment_2578771972__0000"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_129357__0000",
+        "section_aware__comment__comment_2607254216__0000",
+        "section_aware__comment__comment_2607170035__0000",
+        "section_aware__comment__comment_2607254538__0000",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_workloads_pods_index_md__0029",
+        "section_aware__comment__comment_2564828278__0002",
+        "section_aware__issue__issue_128684__0002",
+        "section_aware__issue__issue_129357__0002",
+        "section_aware__comment__comment_2563388589__0000",
+        "section_aware__comment__comment_3894777928__0000"
+      ],
+      "retrieved_scores_top_10": [
+        0.9816856384277344,
+        0.9473764300346375,
+        0.866449236869812,
+        0.7897204756736755,
+        0.5017268657684326,
+        0.46638748049736023,
+        0.4549463987350464,
+        0.4375499188899994,
+        0.43169859051704407,
+        0.42027974128723145
+      ],
+      "hit_at_5": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0
+    },
+    {
+      "golden_id": "rag_gold_0020",
+      "question": "What resolution or maintainer guidance was provided for issue #131319 (Default memory eviction-hard threshold in kubernet...)?",
+      "ground_truth_chunk_ids": [
+        "section_aware__comment__comment_2822446589__0000"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_131319__0000",
+        "section_aware__comment__comment_2817668815__0005",
+        "section_aware__comment__comment_2823873298__0000",
+        "section_aware__issue__issue_131319__0001",
+        "section_aware__comment__comment_4063219143__0000",
+        "section_aware__comment__comment_2812466473__0001",
+        "section_aware__comment__comment_2823873298__0001",
+        "section_aware__comment__comment_2817668815__0002",
+        "section_aware__comment__comment_2817668815__0004",
+        "section_aware__comment__comment_3689734255__0000"
+      ],
+      "retrieved_scores_top_10": [
+        0.9904946088790894,
+        0.6432300209999084,
+        0.5500606298446655,
+        0.5042930245399475,
+        0.46357202529907227,
+        0.45749348402023315,
+        0.442446231842041,
+        0.4372965693473816,
+        0.4372306764125824,
+        0.4291563630104065
+      ],
+      "hit_at_5": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0
+    },
+    {
+      "golden_id": "rag_gold_0021",
+      "question": "What resolution or maintainer guidance was provided for issue #132025 (scheduler handleSchedulingFailure: DATA RACE)?",
+      "ground_truth_chunk_ids": [
+        "section_aware__comment__comment_4449746493__0000"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_132025__0000",
+        "section_aware__comment__comment_4441786364__0001",
+        "section_aware__comment__comment_3242550503__0001",
+        "section_aware__comment__comment_4441785196__0001",
+        "section_aware__comment__comment_3242550242__0001",
+        "section_aware__issue__issue_132025__0002",
+        "section_aware__comment__comment_3242550503__0000",
+        "section_aware__comment__comment_4441786364__0000",
+        "section_aware__comment__comment_3265532320__0000",
+        "section_aware__comment__comment_4441785196__0000"
+      ],
+      "retrieved_scores_top_10": [
+        1.0,
+        0.5138610005378723,
+        0.503124475479126,
+        0.49749886989593506,
+        0.45761924982070923,
+        0.4574831426143646,
+        0.42642295360565186,
+        0.4259154796600342,
+        0.4222881495952606,
+        0.42014846205711365
+      ],
+      "hit_at_5": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0
+    },
+    {
+      "golden_id": "rag_gold_0022",
+      "question": "What resolution or maintainer guidance was provided for issue #132964 ([client-go] Optionally populate `EventTime` in eve...)?",
+      "ground_truth_chunk_ids": [
+        "section_aware__comment__comment_3548694100__0000"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_132964__0000",
+        "section_aware__issue__issue_132964__0001",
+        "section_aware__comment__comment_3544065816__0000",
+        "section_aware__comment__comment_4298118712__0000",
+        "section_aware__comment__comment_3544309565__0000",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_services_networking_dns_pod_service___0021",
+        "section_aware__comment__comment_4272798311__0000",
+        "section_aware__issue__issue_133788__0005",
+        "section_aware__comment__comment_3544331457__0000",
+        "section_aware__comment__comment_3745209236__0001"
+      ],
+      "retrieved_scores_top_10": [
+        0.9955707788467407,
+        0.5083662271499634,
+        0.500426709651947,
+        0.4179338812828064,
+        0.37869396805763245,
+        0.37202537059783936,
+        0.3629712760448456,
+        0.360704630613327,
+        0.35854682326316833,
+        0.3562576472759247
+      ],
+      "hit_at_5": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0
+    },
+    {
+      "golden_id": "rag_gold_0023",
+      "question": "What resolution or maintainer guidance was provided for issue #133388 (An object created through SSA with a non-nil delet...)?",
+      "ground_truth_chunk_ids": [
+        "section_aware__comment__comment_4402699981__0000"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_133388__0000",
+        "section_aware__comment__comment_4402568392__0000",
+        "section_aware__comment__comment_3499714435__0006",
+        "section_aware__issue__issue_134902__0000",
+        "section_aware__comment__comment_3474883591__0000",
+        "section_aware__comment__comment_3499714435__0009",
+        "section_aware__comment__comment_3496439836__0000",
+        "section_aware__comment__comment_3479675448__0000",
+        "section_aware__comment__comment_3499714435__0000",
+        "section_aware__issue__issue_136919__0001"
+      ],
+      "retrieved_scores_top_10": [
+        1.0,
+        0.6702454090118408,
+        0.5300914645195007,
+        0.5266945362091064,
+        0.47681695222854614,
+        0.4753047525882721,
+        0.4747534990310669,
+        0.4620596766471863,
+        0.4573589563369751,
+        0.4561324715614319
+      ],
+      "hit_at_5": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0
+    },
+    {
+      "golden_id": "rag_gold_0024",
+      "question": "What resolution or maintainer guidance was provided for issue #133892 (The kubelet process always recursively modifies th...)?",
+      "ground_truth_chunk_ids": [
+        "section_aware__comment__comment_3589860706__0000"
+      ],
+      "retrieved_chunk_ids_top_10": [
+        "section_aware__issue__issue_133892__0000",
+        "section_aware__docs__kubernetes_website_content_en_docs_concepts_storage_volumes_md__0034",
+        "section_aware__comment__comment_2822446589__0000",
+        "section_aware__comment__comment_4398109868__0000",
+        "section_aware__comment__comment_4202891300__0000",
+        "section_aware__comment__comment_3639079399__0000",
+        "section_aware__comment__comment_2414548228__0000",
+        "section_aware__comment__comment_4245116796__0000",
+        "section_aware__comment__comment_3667390045__0000",
+        "section_aware__comment__comment_3667390063__0000"
+      ],
+      "retrieved_scores_top_10": [
+        0.9415860176086426,
+        0.42747703194618225,
+        0.41282394528388977,
+        0.3939470946788788,
+        0.3914964199066162,
+        0.3914964199066162,
+        0.3914964199066162,
+        0.3914964199066162,
+        0.3914964199066162,
+        0.3914964199066162
+      ],
+      "hit_at_5": 0.0,
+      "recall_at_5": 0.0,
+      "reciprocal_rank": 0.0
+    }
+  ]
+}

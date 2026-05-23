@@ -1,0 +1,62 @@
+{
+  "cleaning_examples_path": "reports\\cleaning_examples.csv",
+  "generated_at": "2026-05-20T10:48:57.895489+00:00",
+  "input_dir": "data\\processed",
+  "original_processed_csvs_already_had_model_text": {
+    "test": false,
+    "train": false,
+    "val": false
+  },
+  "output_dir": "data\\processed_cleaned",
+  "raw_processed_splits_preserved": true,
+  "splits": [
+    {
+      "average_cleaned_model_text_length": 2174.82,
+      "average_raw_length": 2508.84,
+      "empty_model_text_count": 0,
+      "mostly_non_ascii_count": 0,
+      "non_ascii_count": 215,
+      "original_had_model_text": false,
+      "row_count": 1680,
+      "row_counts_by_class": {
+        "bug": 420,
+        "docs": 420,
+        "feature": 420,
+        "question": 420
+      },
+      "split": "train"
+    },
+    {
+      "average_cleaned_model_text_length": 1903.66,
+      "average_raw_length": 2234.52,
+      "empty_model_text_count": 0,
+      "mostly_non_ascii_count": 0,
+      "non_ascii_count": 33,
+      "original_had_model_text": false,
+      "row_count": 360,
+      "row_counts_by_class": {
+        "bug": 90,
+        "docs": 90,
+        "feature": 90,
+        "question": 90
+      },
+      "split": "val"
+    },
+    {
+      "average_cleaned_model_text_length": 2026.83,
+      "average_raw_length": 2373.89,
+      "empty_model_text_count": 0,
+      "mostly_non_ascii_count": 0,
+      "non_ascii_count": 42,
+      "original_had_model_text": false,
+      "row_count": 360,
+      "row_counts_by_class": {
+        "bug": 90,
+        "docs": 90,
+        "feature": 90,
+        "question": 90
+      },
+      "split": "test"
+    }
+  ]
+}

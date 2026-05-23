@@ -31,23 +31,21 @@ def _():
         with path.open("r", encoding="utf-8") as handle:
             return json.load(handle)
 
-    return PROJECT_ROOT, REPORTS_DIR, mo, pd, plt, read_json
+    return REPORTS_DIR, mo, pd, plt, read_json
 
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-        # Overview
+    mo.md("""
+    # Overview
 
-        Classifier work used the `kubernetes/kubernetes` issue dataset with
-        locked labels: `bug`, `feature`, `docs`, and `question`.
+    Classifier work used the `kubernetes/kubernetes` issue dataset with
+    locked labels: `bug`, `feature`, `docs`, and `question`.
 
-        The official dataset is `data/processed/` and remains locked. The final
-        deployment decision is CodeBERT primary with LogisticRegression TF-IDF
-        as the operational fallback.
-        """
-    )
+    The official dataset is `data/processed/` and remains locked. The final
+    deployment decision is CodeBERT primary with LogisticRegression TF-IDF
+    as the operational fallback.
+    """)
     return
 
 
@@ -70,11 +68,11 @@ def _(REPORTS_DIR, pd, read_json):
         )
     model_comparison = pd.DataFrame(model_rows).sort_values("macro_f1", ascending=False)
     model_comparison
-    return comparison, model_comparison
+    return (model_comparison,)
 
 
 @app.cell
-def _(model_comparison, mo):
+def _(mo, model_comparison):
     mo.vstack([mo.md("## Official model comparison"), model_comparison])
     return
 
@@ -170,20 +168,18 @@ def _(experiment_inventory, plt):
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-        ## Failed experiment review
+    mo.md("""
+    ## Failed experiment review
 
-        Support/question augmentation, cleaned splits, and strict text
-        preprocessing are preserved as evidence under
-        `reports/experiments/failed/`. They are not used for training or
-        deployment.
+    Support/question augmentation, cleaned splits, and strict text
+    preprocessing are preserved as evidence under
+    `reports/experiments/failed/`. They are not used for training or
+    deployment.
 
-        The support augmentation run is the most nuanced result: some behavior
-        improved, but macro-F1 and question-class balance were worse than the
-        official fallback, so it stayed rejected.
-        """
-    )
+    The support augmentation run is the most nuanced result: some behavior
+    improved, but macro-F1 and question-class balance were worse than the
+    official fallback, so it stayed rejected.
+    """)
     return
 
 
@@ -205,7 +201,9 @@ def _(REPORTS_DIR, pd):
 
 @app.cell
 def _(mo):
-    mo.md("## Confusion matrices")
+    mo.md("""
+    ## Confusion matrices
+    """)
     return
 
 
@@ -265,16 +263,14 @@ def _(augmented_cm, official_cm, pd):
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-        ## Prediction distribution
+    mo.md("""
+    ## Prediction distribution
 
-        Confusion matrices let us inspect whether a run improved only by
-        shifting predictions toward easier classes. In the augmentation run,
-        the project specifically checks for bug overprediction and question
-        underprediction instead of trusting accuracy alone.
-        """
-    )
+    Confusion matrices let us inspect whether a run improved only by
+    shifting predictions toward easier classes. In the augmentation run,
+    the project specifically checks for bug overprediction and question
+    underprediction instead of trusting accuracy alone.
+    """)
     return
 
 
@@ -334,19 +330,17 @@ def _(mo, per_class_delta):
 
 @app.cell
 def _(mo):
-    mo.md(
-        """
-        ## Decision rationale
+    mo.md("""
+    ## Decision rationale
 
-        Accuracy alone was not enough. The selected classifier needed strong
-        macro-F1 and acceptable per-class behavior across all four labels.
-        Augmentation was rejected because it hurt class balance and question
-        handling relative to the official fallback. CodeBERT remained primary
-        because it had the best held-out macro-F1 and accuracy, while
-        LogisticRegression remained the operational fallback because it is
-        deterministic, fast, and requires no GPU.
-        """
-    )
+    Accuracy alone was not enough. The selected classifier needed strong
+    macro-F1 and acceptable per-class behavior across all four labels.
+    Augmentation was rejected because it hurt class balance and question
+    handling relative to the official fallback. CodeBERT remained primary
+    because it had the best held-out macro-F1 and accuracy, while
+    LogisticRegression remained the operational fallback because it is
+    deterministic, fast, and requires no GPU.
+    """)
     return
 
 

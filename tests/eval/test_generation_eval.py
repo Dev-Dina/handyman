@@ -125,9 +125,7 @@ def test_main_writes_report_to_temp(tmp_path, monkeypatch):
         )
 
     monkeypatch.setattr(ge, "retrieve", _fake_retrieve)
-    monkeypatch.setattr(
-        ge, "build_extractive_answer", lambda chunks: chunks[0]["text"]
-    )
+    monkeypatch.setattr(ge, "build_extractive_answer", lambda chunks: chunks[0]["text"])
 
     report_path = tmp_path / "gen.json"
     csv_path = tmp_path / "gen.csv"
@@ -162,7 +160,9 @@ def test_parse_judge_json_plain():
 
 
 def test_parse_judge_json_code_fenced_and_prose():
-    content = 'Here is my verdict:\n```json\n{"faithfulness_score": 4, "grounded": true}\n```'
+    content = (
+        'Here is my verdict:\n```json\n{"faithfulness_score": 4, "grounded": true}\n```'
+    )
     d = ge.parse_judge_json(content)
     assert d["faithfulness_score"] == 4
     assert d["grounded"] is True
@@ -176,8 +176,18 @@ def test_parse_judge_json_unparseable_returns_defaults():
 
 def test_build_judge_report_agreement_fields():
     items = [
-        {"gold_id": "g1", "question": "q1", "faithfulness_proxy": 1.0, "answer_relevancy_proxy": 0.2},
-        {"gold_id": "g2", "question": "q2", "faithfulness_proxy": 0.5, "answer_relevancy_proxy": 0.05},
+        {
+            "gold_id": "g1",
+            "question": "q1",
+            "faithfulness_proxy": 1.0,
+            "answer_relevancy_proxy": 0.2,
+        },
+        {
+            "gold_id": "g2",
+            "question": "q2",
+            "faithfulness_proxy": 0.5,
+            "answer_relevancy_proxy": 0.05,
+        },
     ]
     verdicts = [
         {"faithfulness_score": 5, "answer_relevancy_score": 4, "grounded": True},
@@ -197,7 +207,14 @@ def test_build_judge_report_agreement_fields():
 
 
 def test_build_judge_report_disagreement():
-    items = [{"gold_id": "g", "question": "q", "faithfulness_proxy": 1.0, "answer_relevancy_proxy": 0.2}]
+    items = [
+        {
+            "gold_id": "g",
+            "question": "q",
+            "faithfulness_proxy": 1.0,
+            "answer_relevancy_proxy": 0.2,
+        }
+    ]
     verdicts = [{"faithfulness_score": 1, "answer_relevancy_score": 1}]
     rep = ge.build_judge_report(items, verdicts, model="fake", temperature=0.0)
     # proxy faithful True, judge faithful False -> disagree

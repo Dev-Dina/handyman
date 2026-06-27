@@ -38,7 +38,9 @@ def page_eval_defense() -> None:
         "deterministic proxy" if gen_present else "not implemented",
     )
 
-    with st.expander("Live eval summary (served by the API — no chatbot rebuild needed)"):
+    with st.expander(
+        "Live eval summary (served by the API — no chatbot rebuild needed)"
+    ):
         summary = client.get_eval_summary()
         if "error" in summary:
             st.caption(f"API eval summary unavailable: {summary['error']}")
@@ -108,10 +110,16 @@ def page_eval_defense() -> None:
         )
         g1, g2, g3 = st.columns(3)
         g1.metric("Faithfulness (proxy)", gen.get("faithfulness_proxy_mean", "—"))
-        g2.metric("Answer relevancy (proxy)", gen.get("answer_relevancy_proxy_mean", "—"))
-        g3.metric("Unsupported claims (proxy)", gen.get("unsupported_claims_proxy_mean", "—"))
+        g2.metric(
+            "Answer relevancy (proxy)", gen.get("answer_relevancy_proxy_mean", "—")
+        )
+        g3.metric(
+            "Unsupported claims (proxy)", gen.get("unsupported_claims_proxy_mean", "—")
+        )
         h1, h2 = st.columns(2)
-        h1.metric("Retrieved-context overlap", gen.get("retrieved_context_overlap_mean", "—"))
+        h1.metric(
+            "Retrieved-context overlap", gen.get("retrieved_context_overlap_mean", "—")
+        )
         h2.metric("Ideal-answer overlap", gen.get("ideal_answer_overlap_mean", "—"))
         with st.expander("Limitations of this proxy"):
             for lim in gen.get("limitations", []):

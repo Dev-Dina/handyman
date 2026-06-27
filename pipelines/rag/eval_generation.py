@@ -47,17 +47,99 @@ _JUDGE_RELEVANT_MIN = 4
 # Compact, explainable English stopword list (no external dependency).
 _STOPWORDS: frozenset[str] = frozenset(
     {
-        "the", "and", "for", "are", "but", "not", "you", "all", "any", "can",
-        "had", "her", "was", "one", "our", "out", "has", "his", "how", "its",
-        "may", "new", "now", "old", "see", "two", "way", "who", "did", "get",
-        "use", "this", "that", "with", "from", "they", "have", "will", "your",
-        "what", "when", "which", "their", "there", "would", "could", "should",
-        "about", "into", "than", "then", "them", "these", "those", "such",
-        "been", "were", "also", "only", "some", "more", "most", "other", "each",
-        "does", "doing", "done", "very", "just", "like", "over", "under",
-        "between", "because", "while", "where", "after", "before", "above",
-        "below", "again", "once", "here", "both", "being", "having", "make",
-        "made", "using", "used", "via", "per", "etc",
+        "the",
+        "and",
+        "for",
+        "are",
+        "but",
+        "not",
+        "you",
+        "all",
+        "any",
+        "can",
+        "had",
+        "her",
+        "was",
+        "one",
+        "our",
+        "out",
+        "has",
+        "his",
+        "how",
+        "its",
+        "may",
+        "new",
+        "now",
+        "old",
+        "see",
+        "two",
+        "way",
+        "who",
+        "did",
+        "get",
+        "use",
+        "this",
+        "that",
+        "with",
+        "from",
+        "they",
+        "have",
+        "will",
+        "your",
+        "what",
+        "when",
+        "which",
+        "their",
+        "there",
+        "would",
+        "could",
+        "should",
+        "about",
+        "into",
+        "than",
+        "then",
+        "them",
+        "these",
+        "those",
+        "such",
+        "been",
+        "were",
+        "also",
+        "only",
+        "some",
+        "more",
+        "most",
+        "other",
+        "each",
+        "does",
+        "doing",
+        "done",
+        "very",
+        "just",
+        "like",
+        "over",
+        "under",
+        "between",
+        "because",
+        "while",
+        "where",
+        "after",
+        "before",
+        "above",
+        "below",
+        "again",
+        "once",
+        "here",
+        "both",
+        "being",
+        "having",
+        "make",
+        "made",
+        "using",
+        "used",
+        "via",
+        "per",
+        "etc",
     }
 )
 
@@ -212,9 +294,7 @@ _JUDGE_SYSTEM_PROMPT = (
 
 
 def _judge_user_prompt(item: dict[str, Any]) -> str:
-    chunks = "\n---\n".join(
-        str(c) for c in item.get("retrieved_chunk_ids", [])
-    )
+    chunks = "\n---\n".join(str(c) for c in item.get("retrieved_chunk_ids", []))
     return (
         "Question:\n"
         f"{item.get('question', '')}\n\n"
@@ -268,7 +348,9 @@ def build_judge_report(
     for item, verdict in zip(items, verdicts, strict=True):
         det_faithful = item["faithfulness_proxy"] >= FAITHFULNESS_PROXY_THRESHOLD
         det_relevant = item["answer_relevancy_proxy"] >= RELEVANCY_PROXY_THRESHOLD
-        judge_faithful = float(verdict.get("faithfulness_score", 0)) >= _JUDGE_FAITHFUL_MIN
+        judge_faithful = (
+            float(verdict.get("faithfulness_score", 0)) >= _JUDGE_FAITHFUL_MIN
+        )
         judge_relevant = (
             float(verdict.get("answer_relevancy_score", 0)) >= _JUDGE_RELEVANT_MIN
         )
@@ -410,7 +492,10 @@ def main() -> None:
         help="Judge model id (when --judge groq).",
     )
     parser.add_argument(
-        "--judge-temperature", type=float, default=0.0, help="Judge sampling temperature."
+        "--judge-temperature",
+        type=float,
+        default=0.0,
+        help="Judge sampling temperature.",
     )
     parser.add_argument(
         "--judge-output",
@@ -426,9 +511,7 @@ def main() -> None:
     only_hand_labeled = not args.all
     rows = _load_golden(RAG_GOLDEN_PATH, only_hand_labeled=only_hand_labeled)
     items = asyncio.run(_run(rows))
-    report = build_report(
-        items, scope="hand_labeled" if only_hand_labeled else "all"
-    )
+    report = build_report(items, scope="hand_labeled" if only_hand_labeled else "all")
 
     args.report_path.parent.mkdir(parents=True, exist_ok=True)
     args.report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

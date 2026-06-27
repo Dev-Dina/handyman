@@ -61,7 +61,11 @@ async def evals_summary() -> dict[str, Any]:
         "rag_retrieval": {
             "hybrid_alpha": HYBRID_ALPHA,
             "hybrid_artifact_present": hybrid_artifact_present,
-            "offline_best_e5_hybrid": {"hit_at_5": 0.68, "mrr_at_10": 0.329, "alpha": 0.7},
+            "offline_best_e5_hybrid": {
+                "hit_at_5": 0.68,
+                "mrr_at_10": 0.329,
+                "alpha": 0.7,
+            },
             "ci": None
             if not rag
             else {
@@ -80,7 +84,9 @@ async def evals_summary() -> dict[str, Any]:
                 "rows_evaluated": gen.get("rows_evaluated"),
                 "faithfulness_proxy_mean": gen.get("faithfulness_proxy_mean"),
                 "answer_relevancy_proxy_mean": gen.get("answer_relevancy_proxy_mean"),
-                "unsupported_claims_proxy_mean": gen.get("unsupported_claims_proxy_mean"),
+                "unsupported_claims_proxy_mean": gen.get(
+                    "unsupported_claims_proxy_mean"
+                ),
                 "ideal_answer_overlap_mean": gen.get("ideal_answer_overlap_mean"),
             },
         },

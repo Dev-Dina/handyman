@@ -176,9 +176,7 @@ async def test_rag_query_tool_calls_retrieve():
 def test_rag_query_tool_schema_has_source_and_transform():
     from app.services.chat.tool_registry import TOOL_DEFINITIONS
 
-    rag = next(
-        t for t in TOOL_DEFINITIONS if t["function"]["name"] == "rag_query"
-    )
+    rag = next(t for t in TOOL_DEFINITIONS if t["function"]["name"] == "rag_query")
     props = rag["function"]["parameters"]["properties"]
     assert set(props["source_type"]["enum"]) == {"docs", "issue", "comment"}
     assert set(props["query_transform"]["enum"]) == {"none", "technical_terms"}

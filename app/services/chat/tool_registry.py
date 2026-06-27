@@ -48,6 +48,7 @@ def _coerce_query_transform(value: object) -> str:
     """Return a valid query_transform, defaulting to 'none' for invalid input."""
     return value if value in VALID_TRANSFORMS else "none"
 
+
 TOOL_DEFINITIONS: list[dict] = [
     {
         "type": "function",

@@ -77,9 +77,7 @@ def page_widget_manager() -> None:
                     st.code(snippet, language="html")
                     st.caption(f"[Open host demo]({HOST_DEMO_URL})")
                     # Preview this widget here (button-gated so only one iframe loads).
-                    if st.checkbox(
-                        "Preview this widget here", key=f"preview_{pub_id}"
-                    ):
+                    if st.checkbox("Preview this widget here", key=f"preview_{pub_id}"):
                         render_widget_preview(pub_id, HOST_DEMO_URL, height=520)
 
     st.divider()

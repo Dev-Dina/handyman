@@ -50,7 +50,9 @@ RAG_EMBEDDING_COMPARISON_PATH = (
 RAG_HYBRID_COMPARISON_PATH = RAG_RETRIEVAL_REPORTS_DIR / "hybrid_alpha_comparison.json"
 
 # Offline experiment cache (not shipped in the Docker image).
-RAG_EMBEDDINGS_CACHE_E5_PATH = RAG_EMBEDDINGS_CACHE_DIR / "intfloat_e5_small_v2_chunks.npy"
+RAG_EMBEDDINGS_CACHE_E5_PATH = (
+    RAG_EMBEDDINGS_CACHE_DIR / "intfloat_e5_small_v2_chunks.npy"
+)
 
 # Runtime artifact: shipped E5 chunk embeddings + manifest (under artifacts/rag/,
 # COPYed into the API image). This is what live hybrid retrieval loads.

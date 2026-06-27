@@ -141,7 +141,11 @@ def test_thin_chunks_excluded_from_answer():
 
 _FAKE_CORPUS = [
     {"chunk_id": "c1", "text": "pods run containers on nodes", "source_type": "docs"},
-    {"chunk_id": "c2", "text": "services expose pods over the network", "source_type": "docs"},
+    {
+        "chunk_id": "c2",
+        "text": "services expose pods over the network",
+        "source_type": "docs",
+    },
 ]
 
 
@@ -157,7 +161,9 @@ def test_no_torch_import_in_retrieval():
 
     import app.services.rag.retrieval  # noqa: F401
 
-    assert "torch" not in sys.modules, "torch must not be imported by the API retrieval path"
+    assert "torch" not in sys.modules, (
+        "torch must not be imported by the API retrieval path"
+    )
 
 
 def _reset_caches(monkeypatch, chunk_vecs):
@@ -186,9 +192,7 @@ async def test_hybrid_used_when_embeddings_and_embed_available(monkeypatch):
         async def embed(self, texts, model):
             return [[1.0] + [0.0] * 383]
 
-    monkeypatch.setattr(
-        "app.infra.modelserver_client.ModelServerClient", _FakeClient
-    )
+    monkeypatch.setattr("app.infra.modelserver_client.ModelServerClient", _FakeClient)
     from app.services.rag.retrieval import retrieve
 
     chunks, mode = await retrieve("what are services", top_k=2, alpha=0.7)
@@ -209,9 +213,7 @@ async def test_fallback_to_tfidf_when_embed_unavailable(monkeypatch):
         async def embed(self, texts, model):
             raise ModelServerUnavailableError("model server down")
 
-    monkeypatch.setattr(
-        "app.infra.modelserver_client.ModelServerClient", _DownClient
-    )
+    monkeypatch.setattr("app.infra.modelserver_client.ModelServerClient", _DownClient)
     from app.services.rag.retrieval import retrieve
 
     chunks, mode = await retrieve("what are services", top_k=2, alpha=0.7)
@@ -238,12 +240,14 @@ async def test_source_type_filter_preserved_in_hybrid(monkeypatch):
         async def embed(self, texts, model):
             return [[1.0] + [0.0] * 383]
 
-    monkeypatch.setattr(
-        "app.infra.modelserver_client.ModelServerClient", _FakeClient
-    )
+    monkeypatch.setattr("app.infra.modelserver_client.ModelServerClient", _FakeClient)
     from app.services.rag.retrieval import retrieve
 
     chunks, mode = await retrieve(
-        "services", top_k=2, alpha=0.7, source_type="docs", query_transform="technical_terms"
+        "services",
+        top_k=2,
+        alpha=0.7,
+        source_type="docs",
+        query_transform="technical_terms",
     )
     assert all(c["source_type"] == "docs" for c in chunks)

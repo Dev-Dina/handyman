@@ -158,6 +158,7 @@ services:
       dockerfile: docker/chatbot.Dockerfile
     environment:
       API_BASE_URL: http://api:8000
+      API_PUBLIC_URL: http://localhost:8000
       MODEL_SERVER_URL: http://model_server:8001
       MODEL_SERVER_PUBLIC_URL: http://localhost:8001
       API_DOCS_URL: http://localhost:8000/docs

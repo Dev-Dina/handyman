@@ -1,0 +1,117 @@
+{
+  "eval_name": "rag_generation_llm_judge",
+  "judge": "groq",
+  "judge_model": "llama-3.3-70b-versatile",
+  "judge_temperature": 0.0,
+  "generated_at": "2026-05-23T12:42:42.967040+00:00",
+  "rows_judged": 5,
+  "faithfulness_proxy_threshold": 0.8,
+  "relevancy_proxy_threshold": 0.15,
+  "judge_faithfulness_mean": 2.8,
+  "judge_answer_relevancy_mean": 3.2,
+  "faithfulness_agreement_rate": 0.4,
+  "relevancy_agreement_rate": 0.8,
+  "items": [
+    {
+      "gold_id": "rag_gold_0000",
+      "question": "What does the Kubernetes documentation say about Namespaces of Services?",
+      "faithfulness_proxy": 1.0,
+      "answer_relevancy_proxy": 0.0149,
+      "faithfulness_score": 1,
+      "answer_relevancy_score": 1,
+      "grounded": false,
+      "directly_answers_question": false,
+      "unsupported_claims": [
+        "The limitation has been fixed in Windows Server in both 2019 and 2022"
+      ],
+      "rationale": "Provided text does not address the question about Namespaces of Services",
+      "deterministic_faithful": true,
+      "judge_faithful": false,
+      "faithfulness_agreement": false,
+      "deterministic_relevant": false,
+      "judge_relevant": false,
+      "relevancy_agreement": true
+    },
+    {
+      "gold_id": "rag_gold_0001",
+      "question": "What does the Kubernetes documentation say about Services in Kubernetes?",
+      "faithfulness_proxy": 1.0,
+      "answer_relevancy_proxy": 0.0448,
+      "faithfulness_score": 1,
+      "answer_relevancy_score": 1,
+      "grounded": false,
+      "directly_answers_question": false,
+      "unsupported_claims": [
+        "The limitation has been fixed in Windows Server in both 2019 and 2022"
+      ],
+      "rationale": "The provided answer does not address the question about the Kubernetes documentation on Services",
+      "deterministic_faithful": true,
+      "judge_faithful": false,
+      "faithfulness_agreement": false,
+      "deterministic_relevant": false,
+      "judge_relevant": false,
+      "relevancy_agreement": true
+    },
+    {
+      "gold_id": "rag_gold_0007",
+      "question": "What problem was reported in issue #128162: Pod admission can fail due to webhooks + context deadline ex...?",
+      "faithfulness_proxy": 1.0,
+      "answer_relevancy_proxy": 0.1167,
+      "faithfulness_score": 3,
+      "answer_relevancy_score": 4,
+      "grounded": false,
+      "directly_answers_question": false,
+      "unsupported_claims": [
+        "pod admission should not be able to fail due to webhooks"
+      ],
+      "rationale": "answer does not directly address the question",
+      "deterministic_faithful": true,
+      "judge_faithful": false,
+      "faithfulness_agreement": false,
+      "deterministic_relevant": false,
+      "judge_relevant": true,
+      "relevancy_agreement": false
+    },
+    {
+      "gold_id": "rag_gold_0016",
+      "question": "What resolution or maintainer guidance was provided for issue #128162 (Pod admission can fail due to webhooks + context d...)?",
+      "faithfulness_proxy": 1.0,
+      "answer_relevancy_proxy": 0.2333,
+      "faithfulness_score": 4,
+      "answer_relevancy_score": 5,
+      "grounded": true,
+      "directly_answers_question": true,
+      "unsupported_claims": [],
+      "rationale": "Provided context explains webhook failure policy and timeout",
+      "deterministic_faithful": true,
+      "judge_faithful": true,
+      "faithfulness_agreement": true,
+      "deterministic_relevant": true,
+      "judge_relevant": true,
+      "relevancy_agreement": true
+    },
+    {
+      "gold_id": "rag_gold_0017",
+      "question": "What resolution or maintainer guidance was provided for issue #128684 (No overflow validation when using MilliValue())?",
+      "faithfulness_proxy": 1.0,
+      "answer_relevancy_proxy": 0.3485,
+      "faithfulness_score": 5,
+      "answer_relevancy_score": 5,
+      "grounded": true,
+      "directly_answers_question": true,
+      "unsupported_claims": [],
+      "rationale": "Provided resolution guidance for issue #128684",
+      "deterministic_faithful": true,
+      "judge_faithful": true,
+      "faithfulness_agreement": true,
+      "deterministic_relevant": true,
+      "judge_relevant": true,
+      "relevancy_agreement": true
+    }
+  ],
+  "limitations": [
+    "LLM-as-judge is non-deterministic and depends on the judge model.",
+    "Run manually only; never in CI. Requires a Groq key in Vault.",
+    "Agreement compares judge verdicts to the deterministic token-overlap proxy."
+  ]
+}

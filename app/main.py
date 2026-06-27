@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from app.api.middleware import RequestContextMiddleware
 from app.api.routes.auth import router as auth_router
 from app.api.routes.chat import router as chat_router
+from app.api.routes.evals import router as evals_router
 from app.api.routes.memory import router as memory_router
 from app.api.routes.rag import router as rag_router
 from app.api.routes.widget_loader import router as widget_loader_router
@@ -62,6 +63,7 @@ app.include_router(chat_router)
 app.include_router(memory_router)
 app.include_router(widgets_router)
 app.include_router(widget_loader_router)
+app.include_router(evals_router)
 
 _widget_dist = Path("widget/dist")
 if _widget_dist.exists():

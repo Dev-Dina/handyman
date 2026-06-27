@@ -52,13 +52,13 @@ These are decided, numbered, and not revisitable without explicit rationale.
 | Groq key location | Vault `secret/llm / groq_api_key` | `app/services/chat/orchestrator.py` |
 | Tool loop max rounds | MAX_TOOL_ROUNDS = 2 | `app/services/chat/orchestrator.py` |
 | RAG embedding model | intfloat/e5-small-v2 | mrr@10=0.3307, hit@5=0.60; `DECISIONS.md` |
-| RAG retrieval pipeline | E5 hybrid alpha=0.7 | hit@5=0.68, mrr@10=0.329; `DECISIONS.md` |
+| RAG retrieval pipeline | E5 hybrid alpha=0.7 (served live in Docker via model_server /embed; TF-IDF fallback) | hit@5=0.68, mrr@10=0.329; `DECISIONS.md`; live `/api/v1/rag/query` returns `retriever_used=hybrid` |
 | RAG reranker | Evaluated and rejected | hurts E5: hit@5 0.68→0.56; `DECISIONS.md` |
 | RAG chunk strategy | Section-aware, max 1024 chars | 2189 chunks; `DECISIONS.md` |
 | Long-term memory type | Episodic | `DECISIONS.md` |
 | Short-term memory TTL | 24 hours (Redis) | `DECISIONS.md` |
-| Tracing backend | **TODO — not chosen** | `DECISIONS.md` says "TODO"; NoOpTracer currently wired |
-| Widget bundle target | **TODO — not chosen** | `DECISIONS.md` says "TODO" |
+| Tracing backend | **OpenTelemetry → Jaeger** | OTLP-HTTP exporter in `app/infra/tracing.py` (`configure_tracing`) exports to Jaeger (`OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318/v1/traces` in docker-compose); NoOpTracer fallback when the endpoint/exporter is disabled. Spans: `chat.request → llm.groq.chat → tool.* → rag.retrieve`; Jaeger UI at :16686 |
+| Widget bundle target | **142.0 KB raw / 45.9 KB gzip JS** (measured) | `widget/dist/assets/widget-*.js` = 145,382 bytes raw / 47,032 bytes gzip. Demo budget: ≤160 KB raw / ≤55 KB gzip. `DECISIONS.md` |
 
 ---
 

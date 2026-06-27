@@ -19,8 +19,21 @@ data/processed/
 data/experiments/
 data/archive_numpy/
 
-# Analysis outputs (not runtime)
-reports/
+# Large model artifacts not needed in any image. Images COPY only:
+#   artifacts/classical/best_model.joblib, artifacts/rag/, artifacts/embeddings/e5-small-v2/
+artifacts/transformer/
+artifacts/full/
+artifacts/smoke/
+artifacts/classical_augmented/
+artifacts/classical_cleaned/
+artifacts/classical_strict/
+
+# Analysis outputs (not runtime) — except a few small, non-secret eval reports
+# that the Streamlit Evaluation Defense page renders (re-included below).
+reports/**
+!reports/rag/api_eval_report.json
+!reports/rag/generation_eval_report.json
+!reports/classification_eval_report.json
 notebooks/
 
 # Training + pipeline code (not runtime in containers)

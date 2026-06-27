@@ -1,0 +1,6 @@
+gold_id,faithfulness_proxy,faithfulness_score,faithfulness_agreement,answer_relevancy_proxy,answer_relevancy_score,relevancy_agreement,grounded,directly_answers_question
+rag_gold_0000,1.0,1,False,0.0149,1,True,False,False
+rag_gold_0001,1.0,1,False,0.0448,1,True,False,False
+rag_gold_0007,1.0,3,False,0.1167,4,False,False,False
+rag_gold_0016,1.0,4,True,0.2333,5,True,True,True
+rag_gold_0017,1.0,5,True,0.3485,5,True,True,True

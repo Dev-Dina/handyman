@@ -43,6 +43,7 @@ Key commands that CI runs (via `uv sync --extra dev --extra ml --extra chatbot`)
 uv run ruff check app model_server ml pipelines tests chatbot scripts notebooks
 uv run python -m pipelines.classifier.eval_golden
 uv run python -m pipelines.rag.eval_api
+uv run python -m pipelines.rag.eval_generation
 uv run pytest -m unit -q
 uv run pytest -m smoke -q
 uv run pytest -m integration -q
@@ -106,6 +107,61 @@ Current CI-safe result:
 
 Manual/non-CI retrieval experiments include E5 dense/hybrid and reranker sweeps. Those
 are documented in `docs/RAG_TRACK_REPORT.md` and `reports/rag/retrieval/`.
+
+**Live hybrid (Docker, manual):** with the stack up, hybrid retrieval is served end-to-end.
+Verify against the running API (returns `retriever_used=hybrid`):
+
+```bash
+# model_server embedding endpoint
+curl -s -X POST http://localhost:8001/embed \
+  -H "Content-Type: application/json" \
+  -d '{"texts":["query: what are kubernetes services"]}'
+
+# live hybrid retrieval through the API
+curl -s -X POST http://localhost:8000/api/v1/rag/query \
+  -H "Content-Type: application/json" \
+  -d '{"question":"What does the Kubernetes documentation say about Services?","retriever":"hybrid","top_k":5}'
+```
+
+CI retrieval stays TF-IDF-only (`alpha=0.0`, no modelserver) — thresholds unchanged.
+
+## RAG generation eval (deterministic proxy)
+
+Script:
+- `pipelines/rag/eval_generation.py`
+
+Inputs:
+- `evals/golden/rag/rag_golden.jsonl` (default: the 5 `hand_labeled_for_judge_check` rows; `--all` for every row)
+- `data/rag/chunks/chunks_section_aware.jsonl`
+- the deployed extractive answer (`build_extractive_answer` over TF-IDF-retrieved chunks)
+
+Output:
+- `reports/rag/generation_eval_report.json`, `reports/rag/generation_eval_report.csv`
+
+Generation quality is evaluated with a deterministic CI-safe proxy over the 5 hand-labeled
+RAG golden rows. It reports `faithfulness_proxy` and `answer_relevancy_proxy` (plus
+`unsupported_claims_proxy`, `retrieved_context_overlap`, `ideal_answer_overlap`) using
+explainable token-overlap after stopword filtering. **This is not a full semantic LLM judge;
+an optional LLM-as-judge remains future/manual work.** No Groq, no API key, no network.
+
+Current proxy result (5 hand-labeled rows, deployed TF-IDF path):
+- faithfulness_proxy_mean: 1.0000 (extractive answers are drawn from retrieved chunks)
+- answer_relevancy_proxy_mean: 0.1516
+- unsupported_claims_proxy_mean: 0.0000
+- ideal_answer_overlap_mean: 0.1443
+
+## Deployed vs offline (no overclaiming)
+
+- **RAG:** The current Docker runtime serves **E5-small-v2 hybrid retrieval with alpha=0.7**
+  when the E5 chunk-embedding artifact (`artifacts/rag/intfloat_e5_small_v2_chunks.npy`) and
+  the model_server `/embed` endpoint are available. Live `/api/v1/rag/query` returns
+  `retriever_used=hybrid`. **TF-IDF remains the deterministic fallback** (and the CI gate),
+  used automatically if `/embed` or the artifact is unavailable. The UI reports
+  `retriever_used` so the active path is always visible. Torch/transformers live only in the
+  model_server image; the API image stays torch-free.
+- **Classifier:** CodeBERT is primary by evaluation. LogisticRegression TF-IDF is the deployed
+  runtime fallback because it is CPU-safe, Docker-safe, and CI-safe.
+- **Generation eval:** deterministic proxy only (above); semantic LLM-as-judge is future/manual.
 
 ## Why LLMs and neural models are not in normal CI
 

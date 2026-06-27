@@ -1,0 +1,95 @@
+{
+  "best_val_macro_f1": 0.5622,
+  "epochs": 3,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 1.3773,
+      "val_accuracy": 0.375,
+      "val_loss": 1.3524,
+      "val_macro_f1": 0.3591,
+      "val_per_class": {
+        "bug": {
+          "f1": 0.361,
+          "precision": 0.3217,
+          "recall": 0.4111
+        },
+        "docs": {
+          "f1": 0.3423,
+          "precision": 0.9048,
+          "recall": 0.2111
+        },
+        "feature": {
+          "f1": 0.4453,
+          "precision": 0.3371,
+          "recall": 0.6556
+        },
+        "question": {
+          "f1": 0.2878,
+          "precision": 0.4082,
+          "recall": 0.2222
+        }
+      }
+    },
+    {
+      "epoch": 2,
+      "train_loss": 1.3213,
+      "val_accuracy": 0.4417,
+      "val_loss": 1.2806,
+      "val_macro_f1": 0.4283,
+      "val_per_class": {
+        "bug": {
+          "f1": 0.4071,
+          "precision": 0.3382,
+          "recall": 0.5111
+        },
+        "docs": {
+          "f1": 0.6806,
+          "precision": 0.9074,
+          "recall": 0.5444
+        },
+        "feature": {
+          "f1": 0.4701,
+          "precision": 0.3819,
+          "recall": 0.6111
+        },
+        "question": {
+          "f1": 0.1552,
+          "precision": 0.3462,
+          "recall": 0.1
+        }
+      }
+    },
+    {
+      "epoch": 3,
+      "train_loss": 1.2261,
+      "val_accuracy": 0.575,
+      "val_loss": 1.1659,
+      "val_macro_f1": 0.5622,
+      "val_per_class": {
+        "bug": {
+          "f1": 0.4242,
+          "precision": 0.4667,
+          "recall": 0.3889
+        },
+        "docs": {
+          "f1": 0.7836,
+          "precision": 0.8272,
+          "recall": 0.7444
+        },
+        "feature": {
+          "f1": 0.641,
+          "precision": 0.5208,
+          "recall": 0.8333
+        },
+        "question": {
+          "f1": 0.4,
+          "precision": 0.5,
+          "recall": 0.3333
+        }
+      }
+    }
+  ],
+  "model": "prajjwal1/bert-tiny",
+  "run_name": "bert-tiny"
+}

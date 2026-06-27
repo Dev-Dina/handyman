@@ -1,0 +1,54 @@
+{
+  "base_url": "http://localhost:11434",
+  "comparison_context": {
+    "classical_logreg_test_macro_f1": 0.693839,
+    "codebert_test_macro_f1": 0.7061
+  },
+  "cost": 0,
+  "evaluated_rows": 10,
+  "input_path": "data\\processed\\test.csv",
+  "input_rows": 10,
+  "invalid_count": 0,
+  "latency": {
+    "avg_seconds": 38.719,
+    "total_seconds": 387.192
+  },
+  "max_chars": 6000,
+  "metrics": {
+    "accuracy": 1.0,
+    "macro_f1": 0.25,
+    "per_class": {
+      "bug": {
+        "f1": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "support": 10
+      },
+      "docs": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 0
+      },
+      "feature": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 0
+      },
+      "question": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "support": 0
+      }
+    },
+    "weighted_f1": 1.0
+  },
+  "model": "llama3:latest",
+  "provider": "ollama_local",
+  "run_name": "smoke_10",
+  "temperature": 0.0,
+  "timestamp": "2026-05-20T15:14:21.380612+00:00",
+  "valid_predictions": 10
+}

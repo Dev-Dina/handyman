@@ -16,7 +16,14 @@ _LOADER_TEMPLATE: str = """\
   var script = document.currentScript;
   if (!script) return;
 
-  var widgetId = script.getAttribute('data-widget-id') || '';
+  // Widget id resolution order: explicit data-widget-id, then a host-page
+  // global (window.HANDYMAN_WIDGET_ID), then a ?widget_id= query param.
+  // This lets the demo host page swap ids without editing the script tag.
+  var qp = new URLSearchParams(window.location.search).get('widget_id');
+  var widgetId = script.getAttribute('data-widget-id')
+    || window.HANDYMAN_WIDGET_ID
+    || qp
+    || '';
   var apiBase = script.getAttribute('data-api-base-url') || window.location.origin;
   var widgetAppPath = script.getAttribute('data-widget-url') || (apiBase + '__WIDGET_APP_PATH__');
 
@@ -30,6 +37,8 @@ _LOADER_TEMPLATE: str = """\
   iframe.setAttribute('scrolling', 'no');
   iframe.setAttribute('allow', 'microphone');
   iframe.setAttribute('title', 'Chat widget');
+  // Default anchor: bottom-right collapsed bubble. The widget can override the
+  // corner via theme.position relayed in the resize postMessage below.
   iframe.style.cssText = [
     'position:fixed',
     'bottom:20px',
@@ -43,9 +52,20 @@ _LOADER_TEMPLATE: str = """\
     'background:transparent',
   ].join(';');
 
+  function applyCorner(pos) {
+    pos = pos || 'bottom-right';
+    var isTop = pos.indexOf('top') !== -1;
+    var isLeft = pos.indexOf('left') !== -1;
+    iframe.style.top = isTop ? '20px' : '';
+    iframe.style.bottom = isTop ? '' : '20px';
+    iframe.style.left = isLeft ? '20px' : '';
+    iframe.style.right = isLeft ? '' : '20px';
+  }
+
   window.addEventListener('message', function (event) {
     if (!event.data || event.data.type !== 'handyman-widget-resize') return;
     if (event.source !== iframe.contentWindow) return;
+    applyCorner(event.data.position);
     if (event.data.expanded) {
       iframe.style.width = '380px';
       iframe.style.height = '600px';

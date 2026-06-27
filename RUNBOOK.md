@@ -27,18 +27,23 @@ Future implementation must follow `docs/PROJECT_BRIEF_CANONICAL.md`.
 
 ### Streamlit pages
 
-| Page | What it does |
-|---|---|
-| Overview | Project purpose, architecture, metrics, service links |
-| System Health | Live HTTP checks for API + model_server; Docker healthcheck status for others |
-| Chat Copilot | Authenticated chat with tool toggles (rag_query, classify_issue, write_memory, etc.) + trace_id |
-| RAG Explorer | Run retrieval independently — form → chunks + extractive answer + latency |
-| Classifier Playground | Classify a GitHub issue via classify_issue tool; shows label, confidence, metrics |
-| Memory Inspector | Short-term Redis + long-term Postgres memory for current conversation |
-| Widget Manager | Admin: create/list widget configs, copy embed snippet |
-| Observability | Jaeger span reference, last trace_id, link to Jaeger |
-| Artifacts / MinIO | MinIO bucket info, artifact manifest if available |
-| Demo Runbook | Step-by-step guide for live presentation |
+Sidebar order follows the demo story: prove the system is real, then defend the metrics, then drill into each capability.
+
+| # | Page | What it proves / does |
+|---|---|---|
+| 1 | Overview | What the system is — architecture, metrics, service links |
+| 2 | System Health | Services are alive — live API + model_server checks |
+| 3 | Evaluation Defense | Served-vs-eval truth: LR TF-IDF served (CodeBERT primary-by-eval); **E5 hybrid RAG served live** via model_server `/embed` (TF-IDF fallback); retrieval metrics; deterministic generation proxy + optional LLM-judge; "how to defend this" |
+| 4 | Classifier Playground | Runtime classifier path → model_server (LR TF-IDF); label/confidence + comparison |
+| 5 | RAG Explorer | Retrieval in isolation — chunks + extractive answer + latency |
+| 6 | Chat Copilot | Internal maintainer tool-calling chat (one-click demo prompts) + structured tool-call cards |
+| 7 | Memory Inspector | Short-term Redis + long-term Postgres memory |
+| 8 | Widget Manager | Configure the production React embed; snippet uses public API URL + origins |
+| 9 | Observability | Trace real chat/tool calls in Jaeger |
+| 10 | Artifacts / MinIO | MinIO/blob artifact story |
+| 11 | Demo Runbook | Step-by-step live walkthrough |
+
+Streamlit is the **internal AI Ops Control Center**; the production chat surface is the **embeddable React widget** (bottom-right bubble on a host page).
 
 ## Local Docker setup
 
@@ -146,6 +151,11 @@ python scripts/check_ci_assets.py
 
 # rag-golden-eval (requires data/rag/chunks/chunks_section_aware.jsonl)
 .\.venv\Scripts\python.exe -m pipelines.rag.eval_api
+
+# rag generation eval — deterministic CI-safe proxy (no Groq); writes
+# reports/rag/generation_eval_report.json (+ .csv). Run before building chatbot
+# so the Evaluation Defense page can display it inside Docker.
+.\.venv\Scripts\python.exe -m pipelines.rag.eval_generation
 
 # widget-build (requires Node 20)
 cd widget && npm ci && npm run build && cd ..
@@ -297,21 +307,23 @@ npm run dev
 
 ### Open the host demo
 
+The bottom-right chat bubble appears on the host demo at http://localhost:8080
+(served by the `host` nginx image; the widget bundle is built inside the `widget` image).
+
 ```powershell
-# 1. Start the backend
+# 1. Start the stack (builds widget + host images)
 docker compose up -d
 
-# 2. Build the widget (see above)
-
-# 3. Create a widget config and note the public_widget_id UUID
-#    (via Streamlit admin page or POST /api/v1/admin/widgets)
-
-# 4. Edit demo/host/index.html — replace YOUR-PUBLIC-WIDGET-ID with the real UUID
-
-# 5. Open in a browser directly (no extra server needed)
-#    Windows: start demo\host\index.html
-#    Or drag the file into a browser tab
+# 2. Open the host page. A seeded widget id is used by default; to use your own,
+#    create one in Streamlit Widget Manager and pass it via query param:
+#    http://localhost:8080/?widget_id=<your-public-widget-id>
+#    The id is remembered in the browser (localStorage) for later visits.
 ```
+
+**Origins:** the widget iframe runs at `http://localhost:3000`, so a widget config's
+`allowed_origins` must include `http://localhost:3000` (the iframe fetches its config
+from there) **and** `http://localhost:8080` (the host page allowed to frame it).
+The bubble position follows `theme.position` (default `bottom-right`).
 
 ### Embed snippet
 
@@ -320,16 +332,21 @@ docker compose up -d
   src="http://localhost:8000/widget.js"
   data-widget-id="YOUR-PUBLIC-WIDGET-ID"
   data-api-base-url="http://localhost:8000"
+  data-widget-url="http://localhost:3000/widget-app/"
 ></script>
 ```
+
+Use public (browser-resolvable) URLs in the snippet — `http://localhost:8000`, not the
+internal Docker hostname `api`. The Streamlit Widget Manager generates this with `API_PUBLIC_URL`.
 
 ### Architecture
 
 ```
 GET /widget.js          → app/api/routes/widget_loader.py
                            → app/services/widgets/loader.py (JavaScript string)
-GET /widget-app/*       → FastAPI StaticFiles mount on widget/dist/ (requires npm run build)
-GET /api/v1/widgets/:id → widget fetches config (theme, greeting, enabled_tools)
+                           → injects fixed bottom-right iframe; resize + position via postMessage
+GET /widget-app/*       → widget nginx (Docker, :3000); FastAPI StaticFiles only in local dev
+GET /api/v1/widgets/:id → widget fetches config (theme.position, greeting, enabled_tools); Origin-gated
 POST /api/v1/chat       → widget sends chat messages
 ```
 

@@ -1,0 +1,195 @@
+{
+  "class_cap": 600,
+  "class_counts_after_cap": {
+    "bug": 600,
+    "docs": 600,
+    "feature": 600,
+    "question": 600
+  },
+  "class_counts_before_cap": {
+    "bug": 1397,
+    "docs": 908,
+    "feature": 999,
+    "question": 619
+  },
+  "conflict_combinations": [
+    {
+      "classes": [
+        "bug",
+        "question"
+      ],
+      "count": 338
+    },
+    {
+      "classes": [
+        "bug",
+        "docs"
+      ],
+      "count": 89
+    },
+    {
+      "classes": [
+        "feature",
+        "question"
+      ],
+      "count": 36
+    },
+    {
+      "classes": [
+        "docs",
+        "feature"
+      ],
+      "count": 31
+    },
+    {
+      "classes": [
+        "docs",
+        "question"
+      ],
+      "count": 28
+    },
+    {
+      "classes": [
+        "bug",
+        "feature"
+      ],
+      "count": 11
+    },
+    {
+      "classes": [
+        "bug",
+        "docs",
+        "question"
+      ],
+      "count": 3
+    }
+  ],
+  "conflict_examples": [
+    {
+      "chosen_final_label": "bug",
+      "html_url": "https://github.com/kubernetes/kubernetes/issues/138412",
+      "issue_number": 138412,
+      "resolution_reason": "conflict_resolved_priority:bug+question",
+      "target_labels_found": "bug|question",
+      "title": "statefulset repliocas mismatch for a rabbitmqcluster"
+    },
+    {
+      "chosen_final_label": "bug",
+      "html_url": "https://github.com/kubernetes/kubernetes/issues/138251",
+      "issue_number": 138251,
+      "resolution_reason": "conflict_resolved_priority:bug+question",
+      "target_labels_found": "bug|question",
+      "title": "Kubelet restart triggers UnexpectedAdmissionError for pods using device plugins in both initContainers and containers"
+    },
+    {
+      "chosen_final_label": "bug",
+      "html_url": "https://github.com/kubernetes/kubernetes/issues/135882",
+      "issue_number": 135882,
+      "resolution_reason": "conflict_resolved_priority:bug+question",
+      "target_labels_found": "bug|question",
+      "title": "kube-apiserver problem"
+    },
+    {
+      "chosen_final_label": "bug",
+      "html_url": "https://github.com/kubernetes/kubernetes/issues/135015",
+      "issue_number": 135015,
+      "resolution_reason": "conflict_resolved_priority:bug+question",
+      "target_labels_found": "bug|question",
+      "title": "Significant increase in network traffic with Kubernetes 1.34.1"
+    },
+    {
+      "chosen_final_label": "bug",
+      "html_url": "https://github.com/kubernetes/kubernetes/issues/134075",
+      "issue_number": 134075,
+      "resolution_reason": "conflict_resolved_priority:bug+question",
+      "target_labels_found": "bug|question",
+      "title": "Orphaned pod \"0008e5b2-6008-45b9-89cd-1aa60f896e24\" found, but volume paths are still present on disk"
+    },
+    {
+      "chosen_final_label": "bug",
+      "html_url": "https://github.com/kubernetes/kubernetes/issues/133884",
+      "issue_number": 133884,
+      "resolution_reason": "conflict_resolved_priority:bug+question",
+      "target_labels_found": "bug|question",
+      "title": "The PodAndContainerStatsFromCRI feature doesn\u2019t expose metrics."
+    },
+    {
+      "chosen_final_label": "bug",
+      "html_url": "https://github.com/kubernetes/kubernetes/issues/132116",
+      "issue_number": 132116,
+      "resolution_reason": "conflict_resolved_priority:bug+question",
+      "target_labels_found": "bug|question",
+      "title": "Incorrect kubectl logs error when node with pod has disappeared"
+    },
+    {
+      "chosen_final_label": "bug",
+      "html_url": "https://github.com/kubernetes/kubernetes/issues/131347",
+      "issue_number": 131347,
+      "resolution_reason": "conflict_resolved_priority:bug+question",
+      "target_labels_found": "bug|question",
+      "title": "kubeadm init does not work"
+    },
+    {
+      "chosen_final_label": "bug",
+      "html_url": "https://github.com/kubernetes/kubernetes/issues/130839",
+      "issue_number": 130839,
+      "resolution_reason": "conflict_resolved_priority:bug+question",
+      "target_labels_found": "bug|question",
+      "title": "NFS mount failed after GKE upgrade me to 1.32 from 1.31"
+    },
+    {
+      "chosen_final_label": "bug",
+      "html_url": "https://github.com/kubernetes/kubernetes/issues/130683",
+      "issue_number": 130683,
+      "resolution_reason": "conflict_resolved_priority:bug+question",
+      "target_labels_found": "bug|question",
+      "title": "Job with no parellelism randomly creates 2 duplicate Pods instead of 1"
+    }
+  ],
+  "conflict_policy": "bug > docs > feature > question",
+  "dropped_unmapped": 0,
+  "generated_at": "2026-05-19T16:58:08.343294+00:00",
+  "labeled_total": 2400,
+  "multi_target_conflicts": 536,
+  "newest_train_date": "2024-08-03T05:42:58Z",
+  "oldest_test_date": "2016-03-13T17:43:45Z",
+  "per_class_temporal_ok": {
+    "bug": true,
+    "docs": true,
+    "feature": true,
+    "question": true
+  },
+  "raw_issues": 3923,
+  "source_hash": "08e9083894563743",
+  "split_note": "Per-class chronological stratification is used intentionally. A strict global chronological split caused the docs class to disappear from validation/test because all docs issues predate the global val/test cutoff. Per-class split preserves all four classes for macro-F1 and per-class F1 evaluation. Test examples are newer than train examples within each class, but not globally newer across all classes.",
+  "target_label_mapping": {
+    "kind/bug": "bug",
+    "kind/documentation": "docs",
+    "kind/feature": "feature",
+    "kind/support": "question"
+  },
+  "temporal_order_ok": false,
+  "test_class_counts": {
+    "bug": 90,
+    "docs": 90,
+    "feature": 90,
+    "question": 90
+  },
+  "test_count": 360,
+  "test_frac": 0.15,
+  "train_class_counts": {
+    "bug": 420,
+    "docs": 420,
+    "feature": 420,
+    "question": 420
+  },
+  "train_count": 1680,
+  "val_class_counts": {
+    "bug": 90,
+    "docs": 90,
+    "feature": 90,
+    "question": 90
+  },
+  "val_count": 360,
+  "val_frac": 0.15
+}

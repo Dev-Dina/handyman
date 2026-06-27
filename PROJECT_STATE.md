@@ -179,12 +179,12 @@ data/experiments/failed/strict_text/         strict preprocessing — rejected, 
 
 | Category | Path | Count | Status |
 |---|---|---|---|
-| unit | tests/unit/ | 212 | 212/212 PASS |
-| smoke | tests/smoke/ | 38 | 38/38 PASS |
+| unit | tests/unit/ | 227 | 227/227 PASS |
+| smoke | tests/smoke/ | 50 | 50/50 PASS |
 | integration | tests/integration/ | 69 | 69/69 PASS |
-| eval | tests/eval/ | 31 | 31/31 PASS |
+| eval | tests/eval/ | 46 | 46/46 PASS |
 | build | tests/build/ | 21 | 21/21 PASS |
-| **Total** | | **353** | **353/353 PASS** |
+| **Total** | | **396** | **396/396 PASS (`pytest -q`)** |
 
 Markers registered in pyproject.toml: `unit`, `smoke`, `integration`, `eval`, `build`.
 See `tests/README.md` for category definitions and run commands.
@@ -229,9 +229,9 @@ none
 
 ### Next 3 tasks
 
-1. EVALS-1: Generation judge eval (faithfulness/answer_relevancy on RAG golden set 5 hand-labeled rows).
+1. EVALS-1: Generation eval — **DONE (deterministic proxy)** via `pipelines/rag/eval_generation.py`; optional semantic LLM-as-judge remains future/manual.
 2. FINAL-DOCS: README + submission block + git tag `v0.1.0-week7`.
-3. Commit pending changes (CI-3, CI-4, WIDGET-AUDIT-1, DOCKER-PROD-READINESS-1, DOCKER-FIX-API-SKLEARN, DOCKER-FIX-MODELSERVER-PATHS, DOCKER-FIX-UI-SERVING, DOCKER-FIX-RAG-CORPUS, DOCKER-FIX-CHAT-PROMPTS, DOCKER-FIX-MEMORY-WIDGET-RUNTIME, UI-UNIFY-1, UI-FIX-DOCKER-SERVICE-URLS).
+3. Commit pending changes (CI-3, CI-4, WIDGET-AUDIT-1, DOCKER-PROD-READINESS-1, DOCKER-FIX-API-SKLEARN, DOCKER-FIX-MODELSERVER-PATHS, DOCKER-FIX-UI-SERVING, DOCKER-FIX-RAG-CORPUS, DOCKER-FIX-CHAT-PROMPTS, DOCKER-FIX-MEMORY-WIDGET-RUNTIME, UI-UNIFY-1, UI-FIX-DOCKER-SERVICE-URLS, WIDGET-FINAL-ALIGNMENT-1, FINAL-UX-STORY-ALIGNMENT-1, EVALS-FINAL-1, RAG-LIVE-HYBRID-AND-JUDGE-1, DEMO-READY-WIDGET-ON-MAIN-AND-CLEANUP-1).
 
 ## Chatbot + Memory + Widget
 
@@ -249,6 +249,11 @@ none
 | WIDGET-2 | React widget bundle + host demo app | **COMPLETE (2026-05-22)** |
 | UI-UNIFY-1 | Streamlit AI Ops Control Center — 10-page unified dashboard | **COMPLETE (2026-05-22)** |
 | UI-FIX-DOCKER-SERVICE-URLS | Split MODEL_SERVER_URL (internal) vs MODEL_SERVER_PUBLIC_URL (browser); set all chatbot env vars in docker-compose | **COMPLETE (2026-05-22)** |
+| WIDGET-FINAL-ALIGNMENT-1 | Bottom-right bubble alignment + theme.position end-to-end; host demo dynamic widget_id (query/localStorage); embed snippet uses API_PUBLIC_URL; Streamlit Evaluation Defense page (11 pages); internal-vs-production copy | **COMPLETE (2026-05-23)** |
+| FINAL-UX-STORY-ALIGNMENT-1 | Sidebar reordered to demo story; "what this page proves" blocks on all 11 pages; Chat Copilot internal-console note + one-click demo prompts; Evaluation Defense lifecycle badges + "how to defend this"; Overview honesty (served vs offline); Streamlit-native polish | **COMPLETE (2026-05-23)** |
+| EVALS-FINAL-1 | Deterministic CI-safe generation eval (`pipelines/rag/eval_generation.py`, JSON+CSV); selected eval reports copied into chatbot image; Eval Defense renders generation metrics; chat rag_query tool gains source_type/query_transform; served-vs-offline wording aligned | **COMPLETE (2026-05-23)** |
+| RAG-LIVE-HYBRID-AND-JUDGE-1 | **E5 hybrid served live in Docker** — model_server `/embed` (CPU torch+transformers, mean-pool+L2 matching offline); E5 chunk embeddings shipped in `artifacts/rag/`; live `/api/v1/rag/query` returns `retriever_used=hybrid` (verified), TF-IDF fallback preserved; optional Vault-gated LLM-as-judge (`--judge groq`); `GET /api/v1/evals/summary` endpoint; API image stays torch-free | **COMPLETE (2026-05-23)** |
+| DEMO-READY-WIDGET-ON-MAIN-AND-CLEANUP-1 | Live Production Widget Preview on Streamlit Overview (iframe → host demo → /widget.js → React widget) + per-widget preview in Widget Manager (`render_widget_preview`/`widget_preview_url`); synced stale docs (canonical brief tracing=OpenTelemetry→Jaeger, bundle 142KB raw/45.9KB gzip measured, live hybrid, memory-vs-RAG-embeddings pgvector clarification) | **COMPLETE (2026-05-23)** |
 
 ### Chatbot implementation status
 
@@ -280,7 +285,7 @@ none
 - [x] WIDGET-1: Widget config API + origin enforcement + CSP; 22 new tests; 314/314 pass
 - [x] WIDGET-2: React widget bundle + `/widget.js` loader + host demo app; `widget/src/` Vite+React; `app/api/routes/widget_loader.py`; `demo/host/index.html`; 9 smoke tests; 323/323 pass
 - [x] UI-UNIFY-1: Streamlit AI Ops Control Center — 10-page unified dashboard; `chatbot/state.py` (session state management), `chatbot/components.py` (status_badge), `chatbot/pages.py` (10 page functions: Overview/System Health/Chat Copilot/RAG Explorer/Classifier Playground/Memory Inspector/Widget Manager/Observability/Artifacts+MinIO/Demo Runbook), `chatbot/main.py` (refactored nav), `chatbot/config.py` (all 8 URLs), `chatbot/api_client.py` (me/rag_query/check_api_health/check_model_server_health/list_widgets/create_widget added); 17 new smoke tests; `tests/smoke/test_chatbot.py`; 353/353 pass; docker compose build chatbot succeeds; http://localhost:8501 → 200
-- [ ] Generation eval: faithfulness/answer_relevancy via LLM judge (after CHAT functional)
+- [x] Generation eval: deterministic token-overlap proxy (`pipelines/rag/eval_generation.py` → `reports/rag/generation_eval_report.json`; faithfulness_proxy/answer_relevancy_proxy/unsupported_claims_proxy over 5 hand-labeled rows; CI-safe, no Groq). Semantic LLM-as-judge optional/future.
 - [ ] Classifier eval harness: runs classification_golden.jsonl against all 3 models
 
 ## Backlog (post-RAG, not blocking)

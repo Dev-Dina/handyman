@@ -19,3 +19,14 @@ class ClassifyResponse(BaseModel):
     confidence: float | None
     model: str
     artifact_path: str
+
+
+class EmbedRequest(BaseModel):
+    texts: list[str] = Field(min_length=1)
+    model: str | None = None
+
+
+class EmbedResponse(BaseModel):
+    embeddings: list[list[float]]
+    model: str
+    dimension: int

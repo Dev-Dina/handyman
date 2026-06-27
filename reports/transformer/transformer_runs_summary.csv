@@ -1,0 +1,5 @@
+run_name,model,epochs,batch_size,max_len,lr,best_val_macro_f1,test_accuracy,test_macro_f1,question_f1,artifact_path,timestamp
+bert-tiny,prajjwal1/bert-tiny,3,16,128,2e-05,0.5622,0.5778,0.5634,0.3624,artifacts\transformer\bert-tiny,2026-05-20T12:34:17.215613+00:00
+electra_small_e5_len384,google/electra-small-discriminator,5,8,384,2e-05,0.704,0.7,0.6909,0.3922,artifacts\transformer\electra_small_e5_len384,2026-05-20T12:39:25.801136+00:00
+codebert_base_e3_len384,microsoft/codebert-base,3,4,384,2e-05,0.6971,0.75,0.7061,0.2909,artifacts\transformer\codebert_base_e3_len384,2026-05-20T13:02:45.194894+00:00
+minilm_l12_e5_len384,microsoft/MiniLM-L12-H384-uncased,5,8,384,2e-05,0.6289,0.6444,0.6332,0.451,artifacts\transformer\minilm_l12_e5_len384,2026-05-20T14:08:16.281062+00:00

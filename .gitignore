@@ -6,8 +6,11 @@ __pycache__/
 venv/
 dist/
 build/
+# tests/build/ holds Docker/compose structural tests — track its source only,
+# never the compiled bytecode the global __pycache__ rule would otherwise catch.
 !tests/build/
-!tests/build/**
+!tests/build/*.py
+tests/build/__pycache__/
 .env
 *.log
 .pytest_cache/
@@ -15,14 +18,27 @@ build/
 .ruff_cache/
 node_modules/
 *.db
-reports/
 data/
 artifacts/
+# regenerable dense-embedding caches for the offline RAG retrieval harness
+reports/rag/embeddings_cache/
+# regenerable per-run report dumps — summaries/comparisons stay tracked, raw sweeps do not
+reports/archive/
+reports/llm/smoke_10/
+reports/figures/
+reports/rag/retrieval/dense_*
+reports/rag/retrieval/hybrid_BAAI_*
+reports/rag/retrieval/hybrid_intfloat_*
+reports/rag/retrieval/rerank_BAAI_*
+reports/rag/retrieval/rerank_intfloat_*
+reports/rag/retrieval/tfidf_section_aware*
 .DS_Store
 CLAUDE.md
 CODEX.md
 AGENTS.md
 _local_dataset_exploration
+# marimo writes regenerable per-run session caches here — keep the .py notebooks, not these
+notebooks/__marimo__/session/
 docs/
 PROJECT_STATE.md
 structure.md

@@ -1,0 +1,5 @@
+class,target_label,clean_count,possible_600_per_class
+bug,kind/bug,956,True
+feature,kind/feature,963,True
+docs,kind/documentation,849,True
+question,kind/support,1000,True

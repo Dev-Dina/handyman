@@ -1,0 +1,95 @@
+{
+  "data_hash": "4ab7d0be5de81a3ae40282832229723e6b46979307e834b935a43980dc393eb0",
+  "generated_at": "2026-05-20T07:34:46.357561+00:00",
+  "labels": [
+    "bug",
+    "feature",
+    "docs",
+    "question"
+  ],
+  "selected_from_validation": {
+    "accuracy": 0.838889,
+    "fit_time_seconds": 1.077605,
+    "macro_f1": 0.840244,
+    "model_name": "LogisticRegression",
+    "per_class_precision_recall_f1": {
+      "bug": {
+        "f1": 0.777778,
+        "precision": 0.712963,
+        "recall": 0.855556,
+        "support": 90
+      },
+      "docs": {
+        "f1": 0.949153,
+        "precision": 0.965517,
+        "recall": 0.933333,
+        "support": 90
+      },
+      "feature": {
+        "f1": 0.826816,
+        "precision": 0.831461,
+        "recall": 0.822222,
+        "support": 90
+      },
+      "question": {
+        "f1": 0.807229,
+        "precision": 0.881579,
+        "recall": 0.744444,
+        "support": 90
+      }
+    },
+    "predict_time_seconds": 0.079878,
+    "weighted_f1": 0.840244
+  },
+  "selection_metric": "validation_macro_f1",
+  "split_counts": {
+    "test_count": 360,
+    "train_count": 1680,
+    "val_count": 360
+  },
+  "test_results": {
+    "accuracy": 0.702778,
+    "fit_time_seconds": 1.077605,
+    "macro_f1": 0.680766,
+    "model_name": "LogisticRegression",
+    "per_class_precision_recall_f1": {
+      "bug": {
+        "f1": 0.672131,
+        "precision": 0.532468,
+        "recall": 0.911111,
+        "support": 90
+      },
+      "docs": {
+        "f1": 0.874251,
+        "precision": 0.948052,
+        "recall": 0.811111,
+        "support": 90
+      },
+      "feature": {
+        "f1": 0.903955,
+        "precision": 0.91954,
+        "recall": 0.888889,
+        "support": 90
+      },
+      "question": {
+        "f1": 0.272727,
+        "precision": 0.428571,
+        "recall": 0.2,
+        "support": 90
+      }
+    },
+    "predict_time_seconds": 0.08505,
+    "weighted_f1": 0.680766
+  },
+  "vectorizer_settings": {
+    "lowercase": true,
+    "max_features": 50000,
+    "min_df": 2,
+    "ngram_range": [
+      1,
+      2
+    ],
+    "strip_accents": "unicode",
+    "sublinear_tf": true
+  }
+}

@@ -54,15 +54,18 @@
   <div class="callout">
     <strong>Before opening this page:</strong>
     <ol>
-      <li>Start the backend: <code>docker compose up -d</code></li>
-      <li>Build the widget: <code>cd widget &amp;&amp; npm install &amp;&amp; npm run build</code></li>
-      <li>Register a user via the Streamlit app or:<br>
-        <code>curl -X POST http://localhost:8000/api/v1/auth/register -H "Content-Type: application/json" -d '{"email":"admin@example.com","password":"yourpassword"}'</code>
-      </li>
-      <li>Create a widget config via the Streamlit admin page or the admin API, copy the <code>public_widget_id</code> UUID.</li>
-      <li>Replace <code>99a70ab8-cbff-4615-9b46-f0f0da8064b7</code> in the <code>&lt;script&gt;</code> tag at the bottom of this file.</li>
-      <li>Open this file directly in a browser — no build step required for the host page.</li>
+      <li>Start the stack: <code>docker compose up -d</code> (builds the widget bundle inside the <code>widget</code> image).</li>
+      <li>Open the Streamlit AI Ops Control Center at <code>http://localhost:8501</code>, log in as an admin, go to <strong>Widget Manager</strong>, and create a widget config. Copy the <code>public_widget_id</code> UUID.</li>
+      <li>In that widget config, set <strong>Allowed origins</strong> to include both
+        <code>http://localhost:3000</code> (the widget iframe fetches its config from this origin)
+        and <code>http://localhost:8080</code> (this host page, allowed to frame the widget via CSP).</li>
+      <li>Open this page with the id in the URL: <code>http://localhost:8080/?widget_id=YOUR-PUBLIC-WIDGET-ID</code>.
+        The id is remembered in <code>localStorage</code>, so subsequent visits to <code>http://localhost:8080</code> reuse it.</li>
     </ol>
+    <p style="margin-top:10px">
+      <strong>Streamlit vs widget:</strong> Streamlit is the internal AI Ops Control Center (maintainer/admin tooling).
+      This bottom-right bubble is the production-shaped embeddable React widget — the surface a real website would ship.
+    </p>
   </div>
 
   <h2>Simulated page content</h2>
@@ -89,23 +92,42 @@
   </ol>
 
   <h2>Embed snippet</h2>
+  <p>
+    A real site pastes one <code>&lt;script&gt;</code> tag with its own
+    <code>data-widget-id</code>. This demo instead resolves the id at runtime from
+    <code>?widget_id=</code> or <code>localStorage</code> so you can swap configs without editing files:
+  </p>
   <pre>&lt;script
   src="http://localhost:8000/widget.js"
-  data-widget-id="99a70ab8-cbff-4615-9b46-f0f0da8064b7"
+  data-widget-id="YOUR-PUBLIC-WIDGET-ID"
   data-api-base-url="http://localhost:8000"
+  data-widget-url="http://localhost:3000/widget-app/"
 &gt;&lt;/script&gt;</pre>
 
   <!--
-    Replace 99a70ab8-cbff-4615-9b46-f0f0da8064b7 with a real public_widget_id UUID from the database.
-    The widget will silently fail to load config if the ID is invalid or the API is offline.
+    Demo id resolution: ?widget_id= query param  ->  localStorage  ->  built-in default.
+    The chosen id is exposed as window.HANDYMAN_WIDGET_ID before the loader runs;
+    the loader (/widget.js) reads it when the script tag has no explicit data-widget-id.
 
-    data-widget-url points to the widget nginx service (port 3000) for Docker deployments.
-    In local dev without Docker, omit data-widget-url — the loader defaults to
-    http://localhost:8000/widget-app/ (FastAPI StaticFiles, requires `npm run build` locally).
+    data-widget-url points to the widget nginx service (port 3000) in Docker.
+    The widget iframe (origin http://localhost:3000) fetches its config from the API,
+    so the widget config's allowed_origins MUST include http://localhost:3000,
+    and http://localhost:8080 to permit this host page to frame it (CSP frame-ancestors).
   -->
+  <script>
+    (function () {
+      var DEFAULT_WIDGET_ID = '99a70ab8-cbff-4615-9b46-f0f0da8064b7';
+      var qp = new URLSearchParams(window.location.search).get('widget_id');
+      if (qp) {
+        try { localStorage.setItem('handyman_widget_id', qp); } catch (e) {}
+      }
+      var stored = null;
+      try { stored = localStorage.getItem('handyman_widget_id'); } catch (e) {}
+      window.HANDYMAN_WIDGET_ID = qp || stored || DEFAULT_WIDGET_ID;
+    })();
+  </script>
   <script
     src="http://localhost:8000/widget.js"
-    data-widget-id="99a70ab8-cbff-4615-9b46-f0f0da8064b7"
     data-api-base-url="http://localhost:8000"
     data-widget-url="http://localhost:3000/widget-app/"
   ></script>

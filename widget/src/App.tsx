@@ -50,17 +50,20 @@ export default function App() {
       .catch(() => setConfigError('Could not load widget configuration.'));
   }, [widgetId, apiBase]);
 
+  const position = config?.theme?.position ?? 'bottom-right';
+
   useEffect(() => {
     window.parent.postMessage(
       {
         type: RESIZE_MESSAGE_TYPE,
         expanded,
+        position,
         width: PANEL_WIDTH_PX,
         height: PANEL_HEIGHT_PX,
       },
       '*',
     );
-  }, [expanded]);
+  }, [expanded, position]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

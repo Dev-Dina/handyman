@@ -57,9 +57,8 @@ exclude = [
     "tests*",
     "scripts*",
     "ml*",
-    "rag*",
     "evals*",
-    "chatbot_streamlit*",
+    "chatbot*",
     "widget*",
     "demo*",
 ]

@@ -293,6 +293,24 @@ The cross-encoder reorders top-20 retrieved by quality, but E5 hybrid already re
 right chunks at rank 1-5 more reliably than BGE-small; the reranker then misorders them.
 
 **Final pipeline: E5 hybrid alpha=0.7, no reranker.**
+Deployment: E5 hybrid is **served live in Docker**. model_server exposes a CPU `/embed`
+endpoint (transformers AutoModel, masked mean-pool + L2 — matching the offline encoder), and
+the E5 chunk embeddings ship in the API image (`artifacts/rag/intfloat_e5_small_v2_chunks.npy`).
+Live `/api/v1/rag/query` returns `retriever_used=hybrid` (hit@5=0.68 offline-measured).
+**TF-IDF remains the deterministic fallback** (and CI gate) when `/embed` or the artifact is
+unavailable; the UI surfaces `retriever_used` so the active path is never hidden. Torch lives
+only in the model_server image.
+
+## Generation eval
+
+**Status:** PARTIAL — deterministic CI-safe proxy.
+
+Generation quality is scored by `pipelines/rag/eval_generation.py` over the 5 hand-labeled
+RAG golden rows: `faithfulness_proxy` / `answer_relevancy_proxy` / `unsupported_claims_proxy`
+via explainable token-overlap (stopword-filtered) between the extractive answer, the
+retrieved context, and the `ideal_answer`. No Groq, no API key, no network.
+This is a **proxy, not a semantic LLM judge**; an optional LLM-as-judge remains future/manual.
+Report: `reports/rag/generation_eval_report.json` (+ `.csv`).
 
 ## Query transformation
 

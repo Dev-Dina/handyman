@@ -1,0 +1,43 @@
+{
+  "generated_at": "2026-05-23T09:09:27.427399+00:00",
+  "model": "LogisticRegression TF-IDF",
+  "artifact_path": "C:\\Users\\LEGION\\Desktop\\AIE\\Assignments\\Week7\\Code\\handyman\\artifacts\\classical\\best_model.joblib",
+  "golden_path": "C:\\Users\\LEGION\\Desktop\\AIE\\Assignments\\Week7\\Code\\handyman\\evals\\golden\\classification_golden.jsonl",
+  "raw_issues_path": "C:\\Users\\LEGION\\Desktop\\AIE\\Assignments\\Week7\\Code\\handyman\\data\\raw\\kubernetes_issues.jsonl",
+  "input_text_source": "raw_issue_title_body_with_golden_fallback",
+  "row_count": 25,
+  "thresholds": {
+    "macro_f1_min": 0.65
+  },
+  "threshold_passed": true,
+  "accuracy": 0.72,
+  "macro_f1": 0.6691,
+  "per_class_f1": {
+    "bug": 0.8,
+    "feature": 0.8571,
+    "docs": 0.7692,
+    "question": 0.25
+  },
+  "per_class": {
+    "bug": {
+      "precision": 0.75,
+      "recall": 0.8571,
+      "f1": 0.8
+    },
+    "feature": {
+      "precision": 0.75,
+      "recall": 1.0,
+      "f1": 0.8571
+    },
+    "docs": {
+      "precision": 0.7143,
+      "recall": 0.8333,
+      "f1": 0.7692
+    },
+    "question": {
+      "precision": 0.5,
+      "recall": 0.1667,
+      "f1": 0.25
+    }
+  }
+}

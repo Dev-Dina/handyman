@@ -173,6 +173,72 @@ async def test_rag_query_tool_calls_retrieve():
     assert "text" in data["results"][0]
 
 
+def test_rag_query_tool_schema_has_source_and_transform():
+    from app.services.chat.tool_registry import TOOL_DEFINITIONS
+
+    rag = next(t for t in TOOL_DEFINITIONS if t["function"]["name"] == "rag_query")
+    props = rag["function"]["parameters"]["properties"]
+    assert set(props["source_type"]["enum"]) == {"docs", "issue", "comment"}
+    assert set(props["query_transform"]["enum"]) == {"none", "technical_terms"}
+    assert "top_k" in props
+
+
+@pytest.mark.asyncio
+async def test_rag_query_tool_passes_source_and_transform():
+    from app.services.chat.tool_registry import dispatch_tool
+
+    mock = AsyncMock(return_value=([{"text": "x", "source_type": "docs"}], "tfidf"))
+    with patch("app.services.chat.tool_registry.retrieve", new=mock):
+        result = await dispatch_tool(
+            "rag_query",
+            {
+                "query": "what are services",
+                "source_type": "docs",
+                "query_transform": "technical_terms",
+            },
+            ["rag_query"],
+        )
+    kwargs = mock.call_args.kwargs
+    assert kwargs["source_type"] == "docs"
+    assert kwargs["query_transform"] == "technical_terms"
+    data = json.loads(result)
+    assert data["source_type"] == "docs"
+    assert data["query_transform"] == "technical_terms"
+
+
+@pytest.mark.asyncio
+async def test_rag_query_tool_coerces_invalid_args_safely():
+    from app.services.chat.tool_registry import dispatch_tool
+
+    mock = AsyncMock(return_value=([], "tfidf"))
+    with patch("app.services.chat.tool_registry.retrieve", new=mock):
+        await dispatch_tool(
+            "rag_query",
+            {
+                "query": "q",
+                "source_type": "not-a-type",
+                "query_transform": "bogus",
+            },
+            ["rag_query"],
+        )
+    kwargs = mock.call_args.kwargs
+    assert kwargs["source_type"] is None  # invalid → no filter
+    assert kwargs["query_transform"] == "none"  # invalid → default
+
+
+@pytest.mark.asyncio
+async def test_rag_query_tool_query_only_backward_compatible():
+    from app.services.chat.tool_registry import dispatch_tool
+
+    mock = AsyncMock(return_value=([], "tfidf"))
+    with patch("app.services.chat.tool_registry.retrieve", new=mock):
+        await dispatch_tool("rag_query", {"query": "q"}, ["rag_query"])
+    kwargs = mock.call_args.kwargs
+    assert kwargs["source_type"] is None
+    assert kwargs["query_transform"] == "none"
+    assert kwargs["top_k"] == 5
+
+
 # ---------------------------------------------------------------------------
 # classify_issue tool returns unavailable when modelserver is down
 # ---------------------------------------------------------------------------

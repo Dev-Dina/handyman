@@ -1,0 +1,10 @@
+# Console design tokens — base theme for the Maintainer's Copilot AI Ops console.
+# Native Streamlit theme (applies to all widgets); refined/extended by the single
+# CSS layer in chatbot/components.py:inject_global_css(). UI-only.
+[theme]
+base = "dark"
+primaryColor = "#6366F1"              # indigo-500 — brand accent (aligns with the React widget)
+backgroundColor = "#0F172A"           # slate-900 — app canvas
+secondaryBackgroundColor = "#1E293B"  # slate-800 — cards, sidebar, inputs, code blocks
+textColor = "#E2E8F0"                 # slate-200 — primary text
+font = "sans serif"                   # Inter is layered on via inject_global_css()

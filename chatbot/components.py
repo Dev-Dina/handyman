@@ -7,6 +7,163 @@ from typing import Any
 
 import streamlit as st
 
+# ── Global design system — the SINGLE CSS-injection layer ────────────────────
+# All custom console CSS lives in inject_global_css(). Pages must not inject
+# their own styles; they consume the theme + the helper classes defined here.
+
+
+def inject_global_css(authenticated: bool = True) -> None:
+    """Inject the console's global design system. Call once at the top of main().
+
+    `authenticated=False` additionally hides Streamlit's sidebar expand toggle so
+    the pre-auth Sign In view shows no sidebar chrome at all (Phase 1 gating leak).
+    Defensive rules keep embedded component iframes (the widget preview) visible.
+    """
+    css = """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+        --brand: #6366F1;           /* indigo-500 — brand accent */
+        --brand-strong: #4F46E5;    /* indigo-600 — hover/active */
+        --surface: #1E293B;         /* slate-800 — cards / sidebar / inputs */
+        --surface-hover: #273449;
+        --border: rgba(148, 163, 184, 0.18);
+        --text: #E2E8F0;            /* slate-200 */
+        --muted: #94A3B8;           /* slate-400 */
+        --radius: 12px;
+    }
+
+    /* Typography — Inter across the app, with a system fallback chain */
+    html, body, .stApp, [data-testid="stAppViewContainer"], [data-testid="stSidebar"],
+    button, input, textarea, select {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    /* Spacing rhythm — roomier, capped main column */
+    [data-testid="stMainBlockContainer"], .block-container {
+        padding-top: 2.4rem;
+        padding-bottom: 3rem;
+        max-width: 1180px;
+    }
+
+    /* Sidebar surface */
+    [data-testid="stSidebar"] {
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+    }
+
+    /* Metric → card */
+    [data-testid="stMetric"] {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 0.9rem 1.1rem;
+    }
+    [data-testid="stMetricLabel"] p { color: var(--muted); font-weight: 500; }
+
+    /* Expander → card */
+    [data-testid="stExpander"] {
+        border: 1px solid var(--border) !important;
+        border-radius: var(--radius) !important;
+        background: var(--surface);
+        overflow: hidden;
+    }
+
+    /* Buttons — shared shape + motion */
+    .stButton > button,
+    [data-testid="stBaseButton-primary"], [data-testid="stBaseButton-secondary"] {
+        border-radius: 10px;
+        font-weight: 600;
+        transition: transform .05s ease, box-shadow .18s ease,
+                    background .18s ease, border-color .18s ease;
+    }
+    .stButton > button:hover { transform: translateY(-1px); }
+    .stButton > button:active { transform: translateY(0); }
+    /* Primary */
+    .stButton > button[kind="primary"], [data-testid="stBaseButton-primary"] {
+        background: var(--brand); border: 1px solid var(--brand); color: #fff;
+    }
+    .stButton > button[kind="primary"]:hover, [data-testid="stBaseButton-primary"]:hover {
+        background: var(--brand-strong); border-color: var(--brand-strong);
+        box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
+    }
+    /* Secondary */
+    .stButton > button[kind="secondary"], [data-testid="stBaseButton-secondary"] {
+        background: transparent; border: 1px solid var(--border); color: var(--text);
+    }
+    .stButton > button[kind="secondary"]:hover, [data-testid="stBaseButton-secondary"]:hover {
+        border-color: var(--brand); color: #fff; background: var(--surface-hover);
+    }
+
+    /* Inputs */
+    [data-testid="stTextInput"] input, [data-testid="stTextArea"] textarea,
+    [data-baseweb="input"], [data-baseweb="select"] > div {
+        border-radius: 10px !important;
+    }
+    [data-testid="stTextInput"] input:focus, [data-testid="stTextArea"] textarea:focus {
+        border-color: var(--brand) !important;
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25) !important;
+    }
+
+    /* Defensive — never hide/clip embedded component iframes (widget preview) */
+    [data-testid="stIFrame"], [data-testid="stIFrame"] iframe { display: block; }
+    iframe { border: none; }
+
+    /* Reusable helper classes — available for pages, not yet applied */
+    .console-section-header {
+        margin: 0.2rem 0 1rem 0; padding-left: 0.75rem;
+        border-left: 3px solid var(--brand);
+    }
+    .console-section-title {
+        font-size: 1.15rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em;
+    }
+    .console-section-sub { font-size: 0.85rem; color: var(--muted); margin-top: 0.15rem; }
+    .console-card {
+        background: var(--surface); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 1rem 1.2rem;
+    }
+    .console-card-label {
+        font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted);
+    }
+    .console-card-value {
+        font-size: 1.6rem; font-weight: 700; color: var(--text); margin-top: 0.15rem;
+    }
+    .console-card-caption { font-size: 0.8rem; color: var(--muted); margin-top: 0.25rem; }
+    </style>
+    """
+    st.markdown(css, unsafe_allow_html=True)
+
+    if not authenticated:
+        st.markdown(
+            "<style>"
+            '[data-testid="stSidebarCollapsedControl"],'
+            '[data-testid="collapsedControl"]{display:none !important;}'
+            "</style>",
+            unsafe_allow_html=True,
+        )
+
+
+def section_header(title: str, subtitle: str | None = None) -> None:
+    """Styled section header (accent bar + title). Available; not yet applied to pages."""
+    sub = f'<div class="console-section-sub">{subtitle}</div>' if subtitle else ""
+    st.markdown(
+        f'<div class="console-section-header">'
+        f'<div class="console-section-title">{title}</div>{sub}</div>',
+        unsafe_allow_html=True,
+    )
+
+
+def metric_card(label: str, value: str, caption: str | None = None) -> None:
+    """Styled metric card. Available; not yet applied to pages."""
+    cap = f'<div class="console-card-caption">{caption}</div>' if caption else ""
+    st.markdown(
+        f'<div class="console-card">'
+        f'<div class="console-card-label">{label}</div>'
+        f'<div class="console-card-value">{value}</div>{cap}</div>',
+        unsafe_allow_html=True,
+    )
+
 
 def status_badge(ok: bool | None) -> str:
     if ok is True:

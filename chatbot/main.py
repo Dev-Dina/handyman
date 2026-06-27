@@ -14,6 +14,7 @@ import uuid
 import streamlit as st
 
 from chatbot.api_client import login
+from chatbot.components import inject_global_css
 from chatbot.pages import (
     page_artifacts,
     page_chat,
@@ -113,6 +114,7 @@ def main() -> None:
         layout="wide",
         initial_sidebar_state="expanded" if st.session_state.logged_in else "collapsed",
     )
+    inject_global_css(authenticated=st.session_state.logged_in)
 
     # Auth gate: a logged-out visitor gets only the centered Sign In view. No
     # sidebar, nav, or user chrome is rendered until this check passes.

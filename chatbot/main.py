@@ -82,17 +82,13 @@ def _login_page() -> None:
             st.rerun()
 
 
-def main() -> None:
-    st.set_page_config(
-        page_title="Maintainer's Copilot — AI Ops",
-        layout="wide",
-    )
-    init_state()
+def _render_authenticated_app() -> None:
+    """Render the sidebar nav and dispatch the selected page.
 
-    if not st.session_state.logged_in:
-        _login_page()
-        return
-
+    Only reached after the auth gate in main() passes, so the sidebar chrome
+    and the _PAGES/_PAGE_FN navigation are never constructed for a logged-out
+    visitor.
+    """
     user: dict | None = st.session_state.user
 
     with st.sidebar:
@@ -108,6 +104,23 @@ def main() -> None:
             logout()
 
     _PAGE_FN[page]()
+
+
+def main() -> None:
+    init_state()
+    st.set_page_config(
+        page_title="Maintainer's Copilot — AI Ops",
+        layout="wide",
+        initial_sidebar_state="expanded" if st.session_state.logged_in else "collapsed",
+    )
+
+    # Auth gate: a logged-out visitor gets only the centered Sign In view. No
+    # sidebar, nav, or user chrome is rendered until this check passes.
+    if not st.session_state.logged_in:
+        _login_page()
+        return
+
+    _render_authenticated_app()
 
 
 if __name__ == "__main__":

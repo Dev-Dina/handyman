@@ -22,6 +22,16 @@ data/
 artifacts/
 # regenerable dense-embedding caches for the offline RAG retrieval harness
 reports/rag/embeddings_cache/
+# regenerable per-run report dumps — summaries/comparisons stay tracked, raw sweeps do not
+reports/archive/
+reports/llm/smoke_10/
+reports/figures/
+reports/rag/retrieval/dense_*
+reports/rag/retrieval/hybrid_BAAI_*
+reports/rag/retrieval/hybrid_intfloat_*
+reports/rag/retrieval/rerank_BAAI_*
+reports/rag/retrieval/rerank_intfloat_*
+reports/rag/retrieval/tfidf_section_aware*
 .DS_Store
 CLAUDE.md
 CODEX.md

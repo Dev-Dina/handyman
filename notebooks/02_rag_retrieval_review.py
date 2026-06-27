@@ -9,7 +9,6 @@ def _():
     import json
 
     import marimo as mo
-    import matplotlib.pyplot as plt
     import pandas as pd
 
     try:

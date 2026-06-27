@@ -3,10 +3,6 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    pass
 
 try:
     from app.infra.redaction import redact as _redact
@@ -16,11 +12,6 @@ except ImportError:
 # ---------------------------------------------------------------------------
 # Compiled patterns
 # ---------------------------------------------------------------------------
-
-_RE_VERSION = re.compile(
-    r"\b(?:Kubernetes\s+|k8s\s+|v)?v?(\d+\.\d+(?:\.\d+)?(?:-[a-zA-Z0-9.]+)?)\b",
-    re.IGNORECASE,
-)
 
 _RE_VERSION_STRICT = re.compile(
     r"""
@@ -102,21 +93,6 @@ _RE_RESOURCE = re.compile(
 
 _RE_PATH = re.compile(
     r"(?:^|(?<=\s)|(?<=[\"'`(]))(/(?:[^/\s\"'`)\]>]+/)*[^/\s\"'`)\]>]+)",
-)
-
-_RE_IMAGE = re.compile(
-    r"""
-    (?:
-        [a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?  # registry host
-        (?:\.[a-zA-Z]{2,})+                                # TLD(s) — makes it a registry
-        (?::\d{1,5})?                                       # optional port
-        /
-    )?
-    [a-z0-9](?:[a-z0-9._\-/]*[a-z0-9])?                   # image path
-    (?::[a-zA-Z0-9._\-]+)?                                  # tag
-    (?:@sha256:[a-f0-9]{64})?                               # digest
-    """,
-    re.VERBOSE,
 )
 
 _RE_IMAGE_STRICT = re.compile(

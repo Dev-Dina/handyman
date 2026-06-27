@@ -130,6 +130,81 @@ def inject_global_css(authenticated: bool = True) -> None:
         font-size: 1.6rem; font-weight: 700; color: var(--text); margin-top: 0.15rem;
     }
     .console-card-caption { font-size: 0.8rem; color: var(--muted); margin-top: 0.25rem; }
+
+    /* ── Login split landing — scoped to the row containing .login-left ── */
+    [data-testid="stHorizontalBlock"]:has(.login-left) { align-items: stretch; }
+    [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stColumn"] {
+        display: flex; flex-direction: column; justify-content: center;
+    }
+    /* login form: strip default chrome, dark inputs, full-height submit */
+    [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stForm"] {
+        border: none; padding: 0; background: transparent; box-shadow: none;
+    }
+    [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stTextInput"] [data-baseweb="base-input"],
+    [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stTextInput"] input {
+        background-color: #1E293B !important;
+        color: #F1F5F9 !important;
+    }
+    [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stTextInput"] [data-baseweb="base-input"] {
+        border: 1px solid #334155 !important;
+        border-radius: 10px !important;
+        min-height: 42px !important;
+    }
+    [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stTextInput"] input::placeholder {
+        color: #64748B !important;
+    }
+    [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stFormSubmitButton"] button {
+        height: 44px;
+    }
+
+    /* Left marketing panel */
+    .login-left {
+        min-height: 520px;
+        display: flex; flex-direction: column; justify-content: center;
+        padding: 2.5rem 2rem 2.5rem 0.25rem;
+    }
+    .login-logo { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.6rem; }
+    .login-logo-mark {
+        width: 34px; height: 34px; border-radius: 9px; background: var(--brand);
+        color: #fff; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+    }
+    .login-logo-mark svg { width: 19px; height: 19px; }
+    .login-logo-text { font-size: 1rem; font-weight: 600; color: #F1F5F9; }
+    .login-pill {
+        display: inline-flex; align-items: center; gap: 0.45rem; width: fit-content;
+        background: var(--surface); border: 1px solid var(--border);
+        color: #CBD5E1; font-size: 0.78rem; font-weight: 500;
+        padding: 0.3rem 0.7rem; border-radius: 999px; margin-bottom: 1.5rem;
+    }
+    .login-pill-dot {
+        width: 7px; height: 7px; border-radius: 50%; background: #22C55E;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+    }
+    .login-headline {
+        font-size: 30px; font-weight: 500; line-height: 1.2; color: #F1F5F9;
+        letter-spacing: -0.02em; margin-bottom: 1rem; max-width: 20ch;
+    }
+    .login-sub {
+        font-size: 0.95rem; color: var(--muted); line-height: 1.55;
+        max-width: 46ch; margin-bottom: 2rem;
+    }
+    .login-caps { display: flex; flex-direction: column; gap: 0.9rem; }
+    .login-cap {
+        display: flex; align-items: center; gap: 0.7rem;
+        color: #E2E8F0; font-size: 0.92rem; font-weight: 500;
+    }
+    .login-cap-icon {
+        width: 30px; height: 30px; border-radius: 8px; flex: 0 0 auto;
+        background: rgba(99, 102, 241, 0.12); color: #818CF8;
+        display: inline-flex; align-items: center; justify-content: center;
+    }
+    .login-cap-icon svg { width: 16px; height: 16px; }
+
+    /* Right sign-in panel */
+    .login-signin-title { font-size: 21px; font-weight: 500; color: #F1F5F9; }
+    .login-signin-sub { font-size: 0.88rem; color: var(--muted); margin: 0.25rem 0 1.2rem 0; }
+    .login-signup-hint { font-size: 0.85rem; color: var(--muted); margin-top: 1rem; }
+    .login-signup-link { color: #818CF8; font-weight: 500; }
     </style>
     """
     st.markdown(css, unsafe_allow_html=True)

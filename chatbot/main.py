@@ -59,28 +59,102 @@ _PAGE_FN = {
 }
 
 
+# Inline-SVG icons (stroke=currentColor → coloured by the CSS layer). If a future
+# sanitizer strips SVG, the adjacent text labels still render — nothing breaks.
+_ICON_WRENCH = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+    'stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 '
+    '1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 '
+    '0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>'
+)
+_ICON_TAG = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+    'stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 '
+    '7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>'
+    '<line x1="7" y1="7" x2="7.01" y2="7"/></svg>'
+)
+_ICON_DATABASE = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+    'stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" '
+    'ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 '
+    '3 9 3s9-1.34 9-3V5"/></svg>'
+)
+_ICON_CHAT = (
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+    'stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 '
+    '1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 '
+    '1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>'
+    "</svg>"
+)
+
+_LOGIN_LEFT_HTML = f"""
+<div class="login-left">
+  <div class="login-logo">
+    <span class="login-logo-mark">{_ICON_WRENCH}</span>
+    <span class="login-logo-text">Maintainer's Copilot</span>
+  </div>
+  <div class="login-pill"><span class="login-pill-dot"></span>AI ops console</div>
+  <div class="login-headline">Triage, route, and answer maintainer issues — fast.</div>
+  <div class="login-sub">A copilot that classifies incoming issues, retrieves the
+  right docs, and drafts grounded replies with full trace visibility.</div>
+  <div class="login-caps">
+    <div class="login-cap"><span class="login-cap-icon">{_ICON_TAG}</span>
+      <span>Multi-label issue classification</span></div>
+    <div class="login-cap"><span class="login-cap-icon">{_ICON_DATABASE}</span>
+      <span>Hybrid RAG over your corpus</span></div>
+    <div class="login-cap"><span class="login-cap-icon">{_ICON_CHAT}</span>
+      <span>Tool-calling chat with trace IDs</span></div>
+  </div>
+</div>
+"""
+
+_LOGIN_SIGNIN_HEAD_HTML = (
+    '<div class="login-signin-title">Sign in</div>'
+    '<div class="login-signin-sub">Welcome back. Enter your details.</div>'
+)
+
+_LOGIN_SIGNUP_HINT_HTML = (
+    '<div class="login-signup-hint">No account? '
+    '<span class="login-signup-link">Create one</span></div>'
+)
+
+
 def _login_page() -> None:
-    st.title("Maintainer's Copilot")
-    st.subheader("Sign In")
+    """Split landing: marketing on the left, the real sign-in form on the right.
 
-    with st.form("login_form"):
-        email = st.text_input("Email")
-        password = st.text_input("Password", type="password")
-        submitted = st.form_submit_button("Login")
+    Logged-out view only (no sidebar/nav — Phase 1 gating). Presentation only;
+    the email/password form still calls login() → /api/v1/auth/login unchanged.
+    """
+    left, right = st.columns([1.15, 1], gap="large")
 
-    if submitted:
-        if not email or not password:
-            st.error("Email and password are required.")
-            return
-        result = login(email, password)
-        if "error" in result:
-            st.error(result["error"])
-        else:
-            st.session_state.logged_in = True
-            st.session_state.access_token = result["access_token"]
-            st.session_state.user = result["user"]
-            st.session_state.conversation_id = str(uuid.uuid4())
-            st.rerun()
+    with left:
+        st.markdown(_LOGIN_LEFT_HTML, unsafe_allow_html=True)
+
+    with right:
+        st.markdown(_LOGIN_SIGNIN_HEAD_HTML, unsafe_allow_html=True)
+        with st.form("login_form"):
+            email = st.text_input("Email", placeholder="you@example.com")
+            password = st.text_input(
+                "Password", type="password", placeholder="••••••••"
+            )
+            submitted = st.form_submit_button(
+                "Sign in", type="primary", use_container_width=True
+            )
+        st.markdown(_LOGIN_SIGNUP_HINT_HTML, unsafe_allow_html=True)
+
+        if submitted:
+            if not email or not password:
+                st.error("Email and password are required.")
+                return
+            result = login(email, password)
+            if "error" in result:
+                st.error(result["error"])
+            else:
+                st.session_state.logged_in = True
+                st.session_state.access_token = result["access_token"]
+                st.session_state.user = result["user"]
+                st.session_state.conversation_id = str(uuid.uuid4())
+                st.rerun()
 
 
 def _render_authenticated_app() -> None:

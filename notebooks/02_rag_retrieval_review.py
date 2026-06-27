@@ -32,7 +32,7 @@ def _():
         with path.open("r", encoding="utf-8") as handle:
             return json.load(handle)
 
-    return EVALS_DIR, REPORTS_DIR, mo, pd, plt, read_json
+    return EVALS_DIR, REPORTS_DIR, mo, pd, read_json
 
 
 @app.cell
@@ -99,19 +99,7 @@ def _(REPORTS_DIR, pd, read_json):
     ]
     chunking_table = pd.DataFrame(chunk_rows)
     chunking_table
-    return chunking, chunking_table
-
-
-@app.cell
-def _(chunking_table, plt):
-    fig, ax = plt.subplots(figsize=(6, 4))
-    ax.bar(chunking_table["strategy"], chunking_table["chunks"])
-    ax.set_title("Chunk Counts By Strategy")
-    ax.set_xlabel("Strategy")
-    ax.set_ylabel("Chunk count")
-    fig.tight_layout()
-    fig
-    return
+    return (chunking,)
 
 
 @app.cell
@@ -148,53 +136,13 @@ def _(embedding_table, mo):
 
 
 @app.cell
-def _(embedding_table, plt):
-    fig, ax = plt.subplots(figsize=(8, 4))
-    ax.bar(embedding_table["model"], embedding_table["mrr_at_10"])
-    ax.set_title("Embedding Comparison MRR@10")
-    ax.set_xlabel("Model")
-    ax.set_ylabel("MRR@10")
-    ax.tick_params(axis="x", rotation=35)
-    fig.tight_layout()
-    fig
-    return
-
-
-@app.cell
 def _(REPORTS_DIR, pd, read_json):
     hybrid = read_json(
         REPORTS_DIR / "rag" / "retrieval" / "hybrid_alpha_comparison.json"
     )
     hybrid_table = pd.DataFrame(hybrid["runs"]).sort_values("rank")
     hybrid_table[["rank", "model", "alpha", "hit_at_5", "mrr_at_10"]]
-    return hybrid, hybrid_table
-
-
-@app.cell
-def _(hybrid_table, mo):
-    mo.vstack(
-        [
-            mo.md("## Hybrid retrieval"),
-            hybrid_table[["rank", "model", "alpha", "hit_at_5", "mrr_at_10"]],
-        ]
-    )
-    return
-
-
-@app.cell
-def _(hybrid_table, plt):
-    fig, ax = plt.subplots(figsize=(8, 4))
-    for model, group in hybrid_table.groupby("model"):
-        ordered = group.sort_values("alpha")
-        ax.plot(ordered["alpha"], ordered["hit_at_5"], marker="o", label=model)
-    ax.set_title("Hybrid Alpha Sweep Hit@5")
-    ax.set_xlabel("Dense alpha")
-    ax.set_ylabel("Hit@5")
-    ax.set_ylim(0, 1)
-    ax.legend()
-    fig.tight_layout()
-    fig
-    return
+    return (hybrid,)
 
 
 @app.cell
@@ -223,7 +171,7 @@ def _(mo, rerank_table):
                 ## Reranker review
 
                 The reranker was evaluated and rejected for the final E5
-                pipeline because it reduced hit@5 and added complexity/latency
+                pipeline because it added complexity/latency
                 relative to the selected hybrid run.
                 """
             ),

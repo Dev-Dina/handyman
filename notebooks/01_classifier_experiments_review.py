@@ -31,7 +31,7 @@ def _():
         with path.open("r", encoding="utf-8") as handle:
             return json.load(handle)
 
-    return REPORTS_DIR, mo, pd, plt, read_json
+    return REPORTS_DIR, mo, pd, read_json
 
 
 @app.cell
@@ -74,19 +74,6 @@ def _(REPORTS_DIR, pd, read_json):
 @app.cell
 def _(mo, model_comparison):
     mo.vstack([mo.md("## Official model comparison"), model_comparison])
-    return
-
-
-@app.cell
-def _(model_comparison, plt):
-    fig, ax = plt.subplots(figsize=(7, 4))
-    ax.bar(model_comparison["track"], model_comparison["macro_f1"])
-    ax.set_title("Official Test Macro-F1")
-    ax.set_xlabel("Track")
-    ax.set_ylabel("Macro-F1")
-    ax.set_ylim(0, 1)
-    fig.tight_layout()
-    fig
     return
 
 
@@ -153,20 +140,6 @@ def _(experiment_inventory, mo):
 
 
 @app.cell
-def _(experiment_inventory, plt):
-    fig, ax = plt.subplots(figsize=(9, 4))
-    ax.bar(experiment_inventory["experiment"], experiment_inventory["macro_f1"])
-    ax.set_title("Official And Failed Experiment Macro-F1")
-    ax.set_xlabel("Experiment")
-    ax.set_ylabel("Macro-F1")
-    ax.set_ylim(0, 1)
-    ax.tick_params(axis="x", rotation=35)
-    fig.tight_layout()
-    fig
-    return
-
-
-@app.cell
 def _(mo):
     mo.md("""
     ## Failed experiment review
@@ -208,42 +181,6 @@ def _(mo):
 
 
 @app.cell
-def _(official_cm, plt):
-    fig, ax = plt.subplots(figsize=(5, 4))
-    image = ax.imshow(official_cm.values)
-    ax.set_title("Official LR Confusion Matrix")
-    ax.set_xticks(range(len(official_cm.columns)), official_cm.columns, rotation=45)
-    ax.set_yticks(range(len(official_cm.index)), official_cm.index)
-    ax.set_xlabel("Predicted label")
-    ax.set_ylabel("True label")
-    for row_index, row in enumerate(official_cm.values):
-        for col_index, value in enumerate(row):
-            ax.text(col_index, row_index, int(value), ha="center", va="center")
-    fig.colorbar(image, ax=ax)
-    fig.tight_layout()
-    fig
-    return
-
-
-@app.cell
-def _(augmented_cm, plt):
-    fig, ax = plt.subplots(figsize=(5, 4))
-    image = ax.imshow(augmented_cm.values)
-    ax.set_title("Support-Augmented Confusion Matrix")
-    ax.set_xticks(range(len(augmented_cm.columns)), augmented_cm.columns, rotation=45)
-    ax.set_yticks(range(len(augmented_cm.index)), augmented_cm.index)
-    ax.set_xlabel("Predicted label")
-    ax.set_ylabel("True label")
-    for row_index, row in enumerate(augmented_cm.values):
-        for col_index, value in enumerate(row):
-            ax.text(col_index, row_index, int(value), ha="center", va="center")
-    fig.colorbar(image, ax=ax)
-    fig.tight_layout()
-    fig
-    return
-
-
-@app.cell
 def _(augmented_cm, official_cm, pd):
     prediction_distribution = pd.DataFrame(
         {
@@ -258,7 +195,7 @@ def _(augmented_cm, official_cm, pd):
         - prediction_distribution["predicted_official"]
     )
     prediction_distribution
-    return (prediction_distribution,)
+    return
 
 
 @app.cell
@@ -271,20 +208,6 @@ def _(mo):
     the project specifically checks for bug overprediction and question
     underprediction instead of trusting accuracy alone.
     """)
-    return
-
-
-@app.cell
-def _(plt, prediction_distribution):
-    fig, ax = plt.subplots(figsize=(7, 4))
-    prediction_distribution[["predicted_official", "predicted_augmented"]].plot(
-        kind="bar", ax=ax
-    )
-    ax.set_title("Predicted Label Distribution")
-    ax.set_xlabel("Label")
-    ax.set_ylabel("Predicted count")
-    fig.tight_layout()
-    fig
     return
 
 

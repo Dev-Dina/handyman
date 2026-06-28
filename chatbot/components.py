@@ -180,8 +180,16 @@ def inject_global_css(authenticated: bool = True) -> None:
 
     /* ── Login split landing — scoped to the row containing .login-left ── */
     [data-testid="stHorizontalBlock"]:has(.login-left) { align-items: stretch; }
+    /* Top-anchor BOTH panels to a shared baseline so the logo (left) and the
+       "Sign in" heading (right) start on the same line. */
     [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stColumn"] {
-        display: flex; flex-direction: column; justify-content: center;
+        display: flex; flex-direction: column; justify-content: flex-start;
+        padding-top: 1.25rem;
+    }
+    /* Faint hairline divider between the product story and the sign-in form. */
+    [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stColumn"]:first-child {
+        border-right: 1px solid rgba(148, 163, 184, 0.16);
+        padding-right: 2.25rem;
     }
     /* login form: strip default chrome, dark inputs, full-height submit */
     [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stForm"] {
@@ -220,11 +228,11 @@ def inject_global_css(authenticated: bool = True) -> None:
         height: 44px;
     }
 
-    /* Left marketing panel */
+    /* Left marketing panel — top-anchored (the column supplies the top padding) */
     .login-left {
-        min-height: 520px;
-        display: flex; flex-direction: column; justify-content: center;
-        padding: 2.5rem 2rem 2.5rem 0.25rem;
+        min-height: 460px;
+        display: flex; flex-direction: column; justify-content: flex-start;
+        padding: 0 0 1rem 0.25rem;
     }
     .login-logo { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.6rem; }
     .login-logo-mark {
@@ -232,7 +240,7 @@ def inject_global_css(authenticated: bool = True) -> None:
         color: #fff; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
     }
     .login-logo-mark svg { width: 19px; height: 19px; }
-    .login-logo-text { font-size: 1rem; font-weight: 600; color: #F1F5F9; }
+    .login-logo-text { font-size: 1.05rem; font-weight: 600; color: #F1F5F9; }
     .login-pill {
         display: inline-flex; align-items: center; gap: 0.45rem; width: fit-content;
         background: var(--surface); border: 1px solid var(--border);
@@ -244,17 +252,18 @@ def inject_global_css(authenticated: bool = True) -> None:
         box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
     }
     .login-headline {
-        font-size: 30px; font-weight: 500; line-height: 1.2; color: #F1F5F9;
-        letter-spacing: -0.02em; margin-bottom: 1rem; max-width: 20ch;
+        font-size: clamp(1.9rem, 1.2vw + 1.4rem, 2.6rem);
+        font-weight: 600; line-height: 1.14; color: #F1F5F9;
+        letter-spacing: -0.02em; margin-bottom: 1.1rem; max-width: 16ch;
     }
     .login-sub {
-        font-size: 0.95rem; color: var(--muted); line-height: 1.55;
-        max-width: 46ch; margin-bottom: 2rem;
+        font-size: clamp(0.98rem, 0.35vw + 0.88rem, 1.12rem);
+        color: var(--muted); line-height: 1.55; max-width: 44ch; margin-bottom: 2rem;
     }
     .login-caps { display: flex; flex-direction: column; gap: 0.9rem; }
     .login-cap {
         display: flex; align-items: center; gap: 0.7rem;
-        color: #E2E8F0; font-size: 0.92rem; font-weight: 500;
+        color: #E2E8F0; font-size: 0.98rem; font-weight: 500;
     }
     .login-cap-icon {
         width: 30px; height: 30px; border-radius: 8px; flex: 0 0 auto;
@@ -336,7 +345,7 @@ def widget_preview_url(widget_id: str | None, host_demo_url: str) -> str:
 
 
 def render_widget_preview(
-    widget_id: str | None, host_demo_url: str, height: int = 720
+    widget_id: str | None, host_demo_url: str, height: int = 900
 ) -> None:
     """Embed the external host demo (which loads /widget.js → the React widget).
 

@@ -42,7 +42,7 @@ def page_overview() -> None:
         "Both surfaces call the same FastAPI backend. Streamlit is for maintainers/admins; "
         "the widget is for end users / host-site visitors."
     )
-    render_widget_preview(DEFAULT_WIDGET_ID, HOST_DEMO_URL, height=540)
+    render_widget_preview(DEFAULT_WIDGET_ID, HOST_DEMO_URL, height=900)
 
     st.divider()
 

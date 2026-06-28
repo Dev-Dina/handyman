@@ -68,6 +68,8 @@ docker compose exec vault vault kv put secret/llm groq_api_key="gsk_your_real_ke
 
 Without `secret/llm/groq_api_key`, `/api/v1/chat` returns 503. All other features work.
 
+> **Dev Vault is ephemeral** (`server -dev`, no volume): every `vault` container recreate (rebuild, daemon restart) wipes `secret/llm/groq_api_key` — `vault-init.sh` only restores the `secret/handyman` placeholders, so re-run the reseed command above after any recreate.
+
 ## Vault secrets reference
 
 | Path | Key | Seeded by vault-init.sh | Production requirement |

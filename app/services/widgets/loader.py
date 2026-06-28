@@ -50,6 +50,7 @@ _LOADER_TEMPLATE: str = """\
     'border-radius:50%',
     'overflow:hidden',
     'background:transparent',
+    'box-shadow:0 6px 18px rgba(0,0,0,0.22)',
   ].join(';');
 
   function applyCorner(pos) {
@@ -69,11 +70,13 @@ _LOADER_TEMPLATE: str = """\
     if (event.data.expanded) {
       iframe.style.width = '380px';
       iframe.style.height = '600px';
-      iframe.style.borderRadius = '12px';
+      iframe.style.borderRadius = '16px';
+      iframe.style.boxShadow = '0 12px 32px rgba(0,0,0,0.18)';
     } else {
       iframe.style.width = '64px';
       iframe.style.height = '64px';
       iframe.style.borderRadius = '50%';
+      iframe.style.boxShadow = '0 6px 18px rgba(0,0,0,0.22)';
     }
   });
 

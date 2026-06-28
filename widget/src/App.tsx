@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { CSSProperties, useEffect, useRef, useState } from 'react';
 import {
   ChatMessage,
   WidgetConfig,
@@ -94,13 +94,16 @@ export default function App() {
     }
   };
 
-  const primaryColor = config?.theme?.color ?? '#4f46e5';
+  const primaryColor = config?.theme?.color ?? '#6366F1';
+  // Expose the brand colour to the stylesheet as --brand so the header, send
+  // button, user bubbles and focus ring all stay in sync with one source.
+  const brandStyle = { ['--brand']: primaryColor } as CSSProperties;
 
   if (!expanded) {
     return (
       <button
         className="bubble"
-        style={{ background: primaryColor }}
+        style={brandStyle}
         onClick={() => setExpanded(true)}
         aria-label="Open chat"
       >
@@ -110,9 +113,9 @@ export default function App() {
   }
 
   return (
-    <div className="panel">
-      <div className="panel-header" style={{ background: primaryColor }}>
-        <span>Chat</span>
+    <div className="panel" style={brandStyle}>
+      <div className="panel-header">
+        <span className="title">Chat</span>
         <button
           className="close-btn"
           onClick={() => setExpanded(false)}

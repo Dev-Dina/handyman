@@ -49,7 +49,9 @@ def _load_groq_api_key() -> str:
     vault_addr = os.getenv("VAULT_ADDR", "http://localhost:8200")
     vault_token = os.getenv("VAULT_DEV_ROOT_TOKEN", "")
     vc = VaultClient(addr=vault_addr, token=vault_token)
-    return vc.get_secret_from_path("llm", "groq_api_key")
+    # .strip() guards against a secret stored with a trailing newline (a CRLF from a
+    # Windows .env seed), which would otherwise yield an illegal Authorization header.
+    return vc.get_secret_from_path("llm", "groq_api_key").strip()
 
 
 def _resolve_tools(enabled_tools: list[str] | None) -> list[str]:

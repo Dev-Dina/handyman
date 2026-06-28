@@ -7,6 +7,8 @@ _PATTERNS: list[tuple[re.Pattern, str]] = [
     (re.compile(r"sk-[A-Za-z0-9_\-]{16,}"), _REDACTED),
     # Anthropic sk-ant- style
     (re.compile(r"sk-ant-[A-Za-z0-9_\-]{16,}"), _REDACTED),
+    # Groq keys (gsk_ prefix) — distinct from the sk- family above
+    (re.compile(r"gsk_[A-Za-z0-9]{20,}"), _REDACTED),
     # Generic api_key / apikey assignments (key=value or key: value)
     (re.compile(r"(?i)(api[_-]?key\s*[=:]\s*)[^\s,&\"']+"), rf"\1{_REDACTED}"),
     # GitHub classic tokens
@@ -22,6 +24,10 @@ _PATTERNS: list[tuple[re.Pattern, str]] = [
         ),
         rf"\1{_REDACTED}",
     ),
+    # Bare bearer/basic/token scheme anywhere — e.g. a credential leaked inside an
+    # error string ("Illegal header value b'Bearer gsk_...'") with no "authorization:"
+    # prefix. Redact the credential, keep the scheme word.
+    (re.compile(r"(?i)\b(Bearer|Basic|Token)\s+\S+"), rf"\1 {_REDACTED}"),
     # password= / password: assignments
     (re.compile(r"(?i)(password\s*[=:]\s*)[^\s,&\"']+"), rf"\1{_REDACTED}"),
     # PEM private key blocks

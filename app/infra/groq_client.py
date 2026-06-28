@@ -27,7 +27,10 @@ class GroqClient:
         base_url: str = GROQ_BASE_URL,
         timeout: float = DEFAULT_TIMEOUT_SECONDS,
     ) -> None:
-        self._api_key = api_key
+        # Strip stray whitespace/newlines so a CRLF-terminated secret (common when
+        # the key is seeded from a Windows .env) cannot produce an illegal
+        # Authorization header value.
+        self._api_key = api_key.strip()
         self._base_url = base_url.rstrip("/")
         self._timeout = timeout
 
@@ -81,6 +84,12 @@ class GroqClient:
         except httpx.HTTPStatusError as exc:
             raise GroqUnavailableError(
                 f"Groq HTTP error {exc.response.status_code}"
+            ) from exc
+        except httpx.LocalProtocolError as exc:
+            # Request could not be built (e.g. an illegal header from a malformed
+            # key). Deliberately omit str(exc): it embeds the Authorization value.
+            raise GroqUnavailableError(
+                "Groq request could not be constructed (malformed credentials)."
             ) from exc
         except (KeyError, IndexError) as exc:
             raise GroqUnavailableError(

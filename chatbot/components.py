@@ -40,19 +40,24 @@ def inject_global_css(authenticated: bool = True) -> None:
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
 
-    /* Global light text on the dark canvas — EVERY page (not scoped to login).
-       Streamlit's native textColor was not reaching page content reliably, so set
-       it explicitly. Targets text elements (not a universal selector), so the
-       login split's .login-* colours are untouched. */
-    .stApp { color: var(--text); }
-    [data-testid="stMarkdownContainer"], [data-testid="stMarkdownContainer"] p,
-    [data-testid="stMarkdownContainer"] li, [data-testid="stMarkdownContainer"] strong,
-    [data-testid="stMarkdownContainer"] td, [data-testid="stMarkdownContainer"] th,
-    [data-testid="stText"], [data-testid="stWidgetLabel"], [data-testid="stWidgetLabel"] p,
-    [data-testid="stMetricValue"], h1, h2, h3, h4, h5, h6 {
+    /* Light text by INHERITANCE — set the base colour on the app roots and let it
+       cascade to every descendant by default, so nothing can fall back to the
+       light-theme near-black. Only the specific cases below are overridden. The
+       login split's .login-* rules are more specific, so they keep their colours. */
+    [data-testid="stAppViewContainer"], .stApp, [data-testid="stSidebar"],
+    [data-testid="stMarkdownContainer"] {
+        color: var(--text);
+    }
+    /* A few Streamlit component subtrees hard-code the light-theme colour and do
+       not inherit — re-point just those at the light base. */
+    [data-testid="stExpander"] summary,
+    [data-testid="stCheckbox"] label, [data-testid="stRadio"] label,
+    [data-testid="stChatMessage"], [data-baseweb="tab"] {
         color: var(--text) !important;
     }
-    h1, h2, h3 { color: #F1F5F9 !important; }
+    /* Headings brighter; links + captions distinct. */
+    .stApp h1, .stApp h2, .stApp h3,
+    [data-testid="stMarkdownContainer"] :is(h1, h2, h3) { color: #F1F5F9; }
     [data-testid="stMarkdownContainer"] a { color: #818CF8 !important; }
     [data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] * {
         color: var(--muted) !important;
@@ -124,9 +129,33 @@ def inject_global_css(authenticated: bool = True) -> None:
         box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25) !important;
     }
 
-    /* Defensive — never hide/clip embedded component iframes (widget preview) */
-    [data-testid="stIFrame"], [data-testid="stIFrame"] iframe { display: block; }
-    iframe { border: none; }
+    /* Embedded host-page preview — the host demo is a light external-site page we
+       cannot reach across the iframe boundary, so present it as a deliberate framed
+       "browser preview" card on the dark canvas (its light background is intentional,
+       not a bleed). Never hide/clip the iframe. */
+    [data-testid="stIFrame"] {
+        display: block;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        background: #ffffff;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+    [data-testid="stIFrame"] iframe { display: block; border: none; }
+
+    /* Chat surfaces — dark theme (bubbles + input bar) */
+    [data-testid="stChatMessage"] {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+    }
+    [data-testid="stChatInput"],
+    [data-testid="stChatInput"] [data-baseweb="base-input"],
+    [data-testid="stChatInput"] textarea {
+        background: var(--surface) !important;
+        color: var(--text) !important;
+    }
+    [data-testid="stChatInput"] textarea::placeholder { color: var(--muted) !important; }
 
     /* Reusable helper classes — available for pages, not yet applied */
     .console-section-header {

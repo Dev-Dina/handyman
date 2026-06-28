@@ -8,3 +8,9 @@ backgroundColor = "#0F172A"           # slate-900 — app canvas
 secondaryBackgroundColor = "#1E293B"  # slate-800 — cards, sidebar, inputs, code blocks
 textColor = "#E2E8F0"                 # slate-200 — primary text
 font = "sans serif"                   # Inter is layered on via inject_global_css()
+
+[client]
+# chatbot/pages/ is a Python code package, not Streamlit multipage routes. Suppress
+# the auto-generated multipage sidebar nav so it cannot leak pre-auth — the custom
+# nav is built only after the auth gate in main().
+showSidebarNavigation = false

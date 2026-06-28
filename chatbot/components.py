@@ -40,6 +40,24 @@ def inject_global_css(authenticated: bool = True) -> None:
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
 
+    /* Global light text on the dark canvas — EVERY page (not scoped to login).
+       Streamlit's native textColor was not reaching page content reliably, so set
+       it explicitly. Targets text elements (not a universal selector), so the
+       login split's .login-* colours are untouched. */
+    .stApp { color: var(--text); }
+    [data-testid="stMarkdownContainer"], [data-testid="stMarkdownContainer"] p,
+    [data-testid="stMarkdownContainer"] li, [data-testid="stMarkdownContainer"] strong,
+    [data-testid="stMarkdownContainer"] td, [data-testid="stMarkdownContainer"] th,
+    [data-testid="stText"], [data-testid="stWidgetLabel"], [data-testid="stWidgetLabel"] p,
+    [data-testid="stMetricValue"], h1, h2, h3, h4, h5, h6 {
+        color: var(--text) !important;
+    }
+    h1, h2, h3 { color: #F1F5F9 !important; }
+    [data-testid="stMarkdownContainer"] a { color: #818CF8 !important; }
+    [data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] * {
+        color: var(--muted) !important;
+    }
+
     /* Spacing rhythm — roomier, capped main column */
     [data-testid="stMainBlockContainer"], .block-container {
         padding-top: 2.4rem;
@@ -140,18 +158,34 @@ def inject_global_css(authenticated: bool = True) -> None:
     [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stForm"] {
         border: none; padding: 0; background: transparent; box-shadow: none;
     }
-    [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stTextInput"] [data-baseweb="base-input"],
-    [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stTextInput"] input {
+    /* Outer input shell carries the border/fill (wraps BOTH the text field and the
+       password show/hide toggle), so the eye sits cleanly inside — not in a
+       detached boxed segment. Email + password then look identical. */
+    [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stTextInput"] [data-baseweb="input"] {
         background-color: #1E293B !important;
-        color: #F1F5F9 !important;
-    }
-    [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stTextInput"] [data-baseweb="base-input"] {
         border: 1px solid #334155 !important;
         border-radius: 10px !important;
         min-height: 42px !important;
+        overflow: hidden;
+    }
+    /* Inner wrapper + the input itself are transparent/borderless (no double box) */
+    [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stTextInput"] [data-baseweb="base-input"],
+    [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stTextInput"] input {
+        background-color: transparent !important;
+        border: none !important;
+        color: #F1F5F9 !important;
     }
     [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stTextInput"] input::placeholder {
         color: #64748B !important;
+    }
+    /* Password show/hide eye — blend into the field, aligned right */
+    [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stTextInput"] [data-baseweb="input"] button {
+        background: transparent !important;
+        border: none !important;
+        color: #94A3B8 !important;
+    }
+    [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stTextInput"] [data-baseweb="input"] button:hover {
+        color: #E2E8F0 !important;
     }
     [data-testid="stHorizontalBlock"]:has(.login-left) [data-testid="stFormSubmitButton"] button {
         height: 44px;

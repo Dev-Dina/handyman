@@ -242,6 +242,65 @@ def inject_global_css(authenticated: bool = True) -> None:
        border-bottom) to the theme border colour, main canvas and sidebar alike. */
     [data-testid="stMarkdownContainer"] hr { border-bottom-color: var(--border) !important; }
 
+    /* ── Sidebar: branded header, identity badge, nav menu, logout ────────────
+       Scoped to the sidebar. The nav stays a real st.radio (selection state wiring
+       untouched); CSS turns each option into a hoverable row with an indigo
+       selected state. Per-element scoping via the st-key-<key> classes Streamlit
+       emits for keyed widgets (nav_page, logout_btn) and the sb_user container.
+       Placed after the global button rules so it wins source-order ties. */
+
+    /* Branded header — compact wordmark with a small brand mark before the title */
+    [data-testid="stSidebar"] h1 {
+        font-size: 1.18rem; font-weight: 700; letter-spacing: -0.01em;
+        display: flex; align-items: center;
+    }
+    [data-testid="stSidebar"] h1::before {
+        content: ""; width: 9px; height: 9px; margin-right: 0.55rem;
+        border-radius: 3px; background: var(--brand); flex: 0 0 auto;
+    }
+
+    /* Identity badge — the keyed sb_user container becomes a compact card */
+    [data-testid="stSidebar"] .st-key-sb_user {
+        background: var(--surface-hover); border: 1px solid var(--border);
+        border-radius: 10px; padding: 0.55rem 0.7rem; margin: 0.15rem 0 0.35rem;
+        gap: 0.1rem;
+    }
+    [data-testid="stSidebar"] .st-key-sb_user [data-testid="stVerticalBlock"] { gap: 0.1rem; }
+    [data-testid="stSidebar"] .st-key-sb_user [data-testid="stMarkdownContainer"] p {
+        margin: 0; font-size: 0.85rem; color: var(--text); word-break: break-all;
+    }
+
+    /* Nav section label ("Navigate") → small uppercase eyebrow */
+    [data-testid="stSidebar"] .st-key-nav_page [data-testid="stWidgetLabel"] p {
+        font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+        letter-spacing: 0.06em; color: var(--muted);
+    }
+    /* Nav rows — each radio option becomes a full-width hoverable row; the
+       selected row gets an indigo tint + left accent (its dot is already
+       brand-coloured by primaryColor). Detected via :has(input:checked). */
+    [data-testid="stSidebar"] .st-key-nav_page [data-baseweb="radio"] {
+        width: 100%; padding: 0.4rem 0.55rem; margin: 1px 0;
+        border-radius: 8px; border-left: 3px solid transparent;
+        transition: background .15s ease, border-color .15s ease; cursor: pointer;
+    }
+    [data-testid="stSidebar"] .st-key-nav_page [data-baseweb="radio"]:hover {
+        background: var(--surface-hover);
+    }
+    [data-testid="stSidebar"] .st-key-nav_page [data-baseweb="radio"]:has(input:checked) {
+        background: rgba(99, 102, 241, 0.14); border-left-color: var(--brand);
+    }
+
+    /* Logout — neutral at rest, destructive cue on hover (distinct from nav) */
+    [data-testid="stSidebar"] .st-key-logout_btn button {
+        background: transparent; border: 1px solid var(--border); color: var(--muted);
+    }
+    [data-testid="stSidebar"] .st-key-logout_btn button:hover {
+        border-color: #EF4444; color: #FCA5A5; background: rgba(239, 68, 68, 0.08);
+    }
+
+    /* Sidebar dividers — tighter rhythm (colour already retoned globally above) */
+    [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] hr { margin: 0.7rem 0; }
+
     /* Reusable helper classes — available for pages, not yet applied */
     .console-section-header {
         margin: 0.2rem 0 1rem 0; padding-left: 0.75rem;

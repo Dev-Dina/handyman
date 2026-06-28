@@ -170,8 +170,11 @@ def _render_authenticated_app() -> None:
         st.title("Maintainer's Copilot")
         st.caption("AI Ops Control Center")
         if user:
-            st.write(f"**{user.get('email', '')}**")
-            st.caption(f"Role: {user.get('role', '')}")
+            # Keyed container → a single .st-key-sb_user wrapper the CSS styles as
+            # an identity badge. Grouping only; no widget state lives here.
+            with st.container(key="sb_user"):
+                st.write(f"**{user.get('email', '')}**")
+                st.caption(f"Role: {user.get('role', '')}")
         st.divider()
         page = st.radio("Navigate", _PAGES, key="nav_page")
         st.divider()

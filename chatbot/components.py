@@ -157,6 +157,91 @@ def inject_global_css(authenticated: bool = True) -> None:
     }
     [data-testid="stChatInput"] textarea::placeholder { color: var(--muted) !important; }
 
+    /* ── Feedback & data-display surfaces ─────────────────────────────────────
+       The rules above cover inputs/buttons/metrics/expanders/chat; these retone
+       the remaining default-Streamlit widgets (alerts, JSON, code, tables,
+       dividers) to the same card/accent language so the console matches the
+       bespoke login. One global rule each — no per-page CSS, no custom alert
+       components. Selectors verified against Streamlit 1.57's compiled DOM. */
+
+    /* Alerts (st.info / st.warning / st.error / st.success) → surface card with a
+       semantic left-accent stripe. The variant testid lives on the content node
+       (stAlertContent{Info,Warning,Error,Success}); :has() colours the stripe.
+       !important is needed to beat the emotion styled-component background. */
+    [data-testid="stAlertContainer"] {
+        background: var(--surface) !important;
+        color: var(--text) !important;
+        border: 1px solid var(--border) !important;
+        border-left: 3px solid var(--muted) !important;
+        border-radius: 10px !important;
+    }
+    [data-testid="stAlertContainer"]:has([data-testid="stAlertContentInfo"]) {
+        border-left-color: #818CF8 !important;     /* indigo */
+    }
+    [data-testid="stAlertContainer"]:has([data-testid="stAlertContentWarning"]) {
+        border-left-color: #FBBF24 !important;     /* amber */
+    }
+    [data-testid="stAlertContainer"]:has([data-testid="stAlertContentError"]) {
+        border-left-color: #EF4444 !important;     /* red */
+    }
+    [data-testid="stAlertContainer"]:has([data-testid="stAlertContentSuccess"]) {
+        border-left-color: #22C55E !important;     /* green */
+    }
+
+    /* JSON viewer (st.json) → frame as a card and repaint the react-json-view
+       background to the surface so it stops reading as a foreign (monokai) dark
+       slab inside the already-dark expanders. Covers every st.json at once,
+       including the shared render_tool_call() used by chat + classifier. */
+    [data-testid="stJson"] {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    [data-testid="stJson"] .react-json-view {
+        background: var(--surface) !important;
+        padding: 0.6rem 0.8rem;
+    }
+
+    /* Code blocks (st.code) → Prism renders on a transparent background, so a
+       surface card frames it cleanly without overriding the syntax colours. */
+    [data-testid="stCode"] {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    /* Markdown pipe tables (tech-stack decisions, served-vs-evaluated, etc.) →
+       carded dark table with padded cells and a subtle header band. Uses
+       border-collapse:separate so overflow+radius can round the corners; single
+       grid lines via per-cell right/bottom borders (last row/col cleared). */
+    [data-testid="stMarkdownContainer"] table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: var(--surface) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: var(--radius);
+        overflow: hidden;
+    }
+    [data-testid="stMarkdownContainer"] :is(th, td) {
+        border-bottom: 1px solid var(--border) !important;
+        border-right: 1px solid var(--border) !important;
+        padding: 0.5rem 0.85rem !important;
+        text-align: left;
+        color: var(--text) !important;
+    }
+    [data-testid="stMarkdownContainer"] :is(th, td):last-child { border-right: none !important; }
+    [data-testid="stMarkdownContainer"] tr:last-child td { border-bottom: none !important; }
+    [data-testid="stMarkdownContainer"] th {
+        background: var(--surface-hover) !important;
+        font-weight: 600;
+    }
+
+    /* Dividers (st.divider → <hr>) → retone the default gray rule (a styled
+       border-bottom) to the theme border colour, main canvas and sidebar alike. */
+    [data-testid="stMarkdownContainer"] hr { border-bottom-color: var(--border) !important; }
+
     /* Reusable helper classes — available for pages, not yet applied */
     .console-section-header {
         margin: 0.2rem 0 1rem 0; padding-left: 0.75rem;

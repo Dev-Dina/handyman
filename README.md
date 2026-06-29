@@ -19,11 +19,12 @@ Open-source maintainers drown in repetitive issue triage: *what kind of issue is
 
 ## Demo
 
-| Internal AI Ops console (Streamlit) | Embeddable widget (React) |
+|  |  |
 |---|---|
-| ![Ops console](screenshots/ops-console.png) _(screenshot placeholder)_ | ![Chat widget](screenshots/widget.png) _(screenshot placeholder)_ |
+| **Sign-in landing — AI Ops console**<br>![Sign-in landing for the AI Ops console](screenshots/01-login.png) | **Tool-calling chat with trace IDs**<br>![Tool-calling chat copilot](screenshots/02-chat.png) |
+| **Evaluation defense — metrics and gates**<br>![Evaluation defense metrics](screenshots/03-evals.png) | **Hybrid RAG explorer**<br>![Hybrid RAG retrieval explorer](screenshots/04-rag.png) |
 
-> Drop images into `screenshots/` to replace the placeholders. `docker compose up --build` then open http://localhost:8501 (console) and http://localhost:8080 (widget demo).
+> Screenshots from the running stack. `docker compose up --build`, then open http://localhost:8501 (console) and http://localhost:8080 (widget demo).
 
 ## Architecture
 

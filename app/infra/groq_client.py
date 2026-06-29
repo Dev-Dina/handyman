@@ -12,6 +12,10 @@ from __future__ import annotations
 import httpx
 
 from app.domain.errors import GroqUnavailableError
+from app.infra.logging import get_logger
+from app.infra.redaction import redact
+
+logger = get_logger(__name__)
 
 GROQ_BASE_URL: str = "https://api.groq.com/openai/v1"
 PRIMARY_MODEL: str = "llama-3.3-70b-versatile"
@@ -82,8 +86,15 @@ class GroqClient:
                 f"Groq timed out after {self._timeout}s"
             ) from exc
         except httpx.HTTPStatusError as exc:
+            # Log the real provider status + body server-side (redacted) for
+            # debugging; never surface a raw provider error code/text to the UI.
+            logger.warning(
+                "groq.http_status_error",
+                status=exc.response.status_code,
+                detail=redact(exc.response.text)[:500],
+            )
             raise GroqUnavailableError(
-                f"Groq HTTP error {exc.response.status_code}"
+                "The chat service is temporarily unavailable. Please try again."
             ) from exc
         except httpx.LocalProtocolError as exc:
             # Request could not be built (e.g. an illegal header from a malformed

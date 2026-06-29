@@ -97,16 +97,30 @@ async def run_chat(
                 ) from exc
             _client = GroqClient(api_key=api_key)
 
+        tools_to_use = _resolve_tools(enabled_tools)
+
         system_prompt = load_system_prompt()
+        if tools_to_use:
+            # The static prompt describes every tool, but only a subset is enabled
+            # per request. Tell the model which tools it may actually use so it does
+            # not emit a call Groq would reject with HTTP 400 (tool_use_failed).
+            system_prompt += (
+                "\n\n## Tools enabled for this request\n"
+                f"You may call ONLY these tools: {', '.join(tools_to_use)}. "
+                "Do not call any other tool."
+            )
         messages: list[dict] = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": message},
         ]
 
-        tools_to_use = _resolve_tools(enabled_tools)
-        active_tool_defs = [
-            t for t in TOOL_DEFINITIONS if t["function"]["name"] in tools_to_use
-        ]
+        # Advertise the full tool catalogue to Groq regardless of which subset is
+        # enabled. Groq validates each generated tool call against request.tools and
+        # rejects the whole turn (HTTP 400 tool_use_failed) if the model calls a tool
+        # that isn't listed — which a restricted request (e.g. classify-only) would
+        # otherwise trigger. The system prompt already describes every tool, so this
+        # discloses nothing new; enabled_tools is still enforced at dispatch below.
+        advertised_tools = TOOL_DEFINITIONS if tools_to_use else None
 
         tool_call_records: list[dict] = []
         model_used = PRIMARY_MODEL
@@ -121,7 +135,7 @@ async def run_chat(
                 choice = await _client.chat(
                     messages=messages,
                     model=model_used,
-                    tools=active_tool_defs if active_tool_defs else None,
+                    tools=advertised_tools,
                 )
 
             assistant_msg = choice.get("message", {})

@@ -148,10 +148,10 @@ TOOL_DEFINITIONS: list[dict] = [
                     },
                     "body": {
                         "type": "string",
-                        "description": "Issue body text",
+                        "description": "Issue body text (optional — omit for title-only issues)",
                     },
                 },
-                "required": ["title", "body"],
+                "required": ["title"],
             },
         },
     },

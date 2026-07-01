@@ -8,8 +8,7 @@
 ![Postgres](https://img.shields.io/badge/Postgres-pgvector-4169E1?logo=postgresql&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-compose-2496ED?logo=docker&logoColor=white)
 ![Tests](https://img.shields.io/badge/tests-pytest%20(5%20layers)-0A9EDC?logo=pytest&logoColor=white)
-<!-- Add the live CI badge once the repo is on GitHub:
-![CI](https://github.com/<OWNER>/<REPO>/actions/workflows/ci.yml/badge.svg) -->
+[![CI](https://github.com/Dev-Dina/handyman/actions/workflows/ci.yml/badge.svg)](https://github.com/Dev-Dina/handyman/actions/workflows/ci.yml)
 
 ---
 
